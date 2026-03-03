@@ -1,0 +1,11 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "editor.tabSize": 2,
+  "eslint.runtime": "bun",
+  "eslint.execArgv": [
+    "--bun"
+  ],
+  "eslint.useFlatConfig": true
+}
