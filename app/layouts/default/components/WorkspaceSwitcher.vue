@@ -110,7 +110,7 @@ const deleteWorkspace = (ws: Workspace) => {
             size="lg"
             class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
           >
-            <div class="grid flex-1 text-left text-sm leading-tight">
+            <div class="grid flex-1 text-left text-sm leading-tight ml-2">
               <span class="truncate font-medium">
                 {{ dbStore.selectedWorkspace.name }}
               </span>
