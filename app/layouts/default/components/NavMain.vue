@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { LucideIcon } from 'lucide-vue-next'
-import { ChevronRight } from 'lucide-vue-next'
+import { ChevronRight, Toolbox } from 'lucide-vue-next'
 
 import {
   Collapsible,
@@ -20,47 +20,58 @@ import {
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar'
 
-defineProps<{
-  items: {
-    title: string
-    url: string
-    icon: LucideIcon
-    isActive?: boolean
-    items?: {
-      title: string
-      url: string
-    }[]
-  }[]
-}>()
+const menuItems = computed(() => {
+  return [{
+    title: '*** Ayudantes',
+    icon: Toolbox,
+    isActive: true,
+    items: [
+      {
+        title: '*** Rebalanceo de fondos',
+        url: '#',
+      },
+    ],
+  }]
+})
 </script>
 
 <template>
   <SidebarGroup>
-    <SidebarGroupLabel>Platform</SidebarGroupLabel>
+    <SidebarGroupLabel>** Herramientas</SidebarGroupLabel>
     <SidebarMenu>
       <Collapsible
-        v-for="item in items"
+        v-for="item in menuItems"
         :key="item.title"
+        v-slot="{ open }"
         asChild
         :defaultOpen="item.isActive"
       >
         <SidebarMenuItem>
+          <template v-if="item.items?.length">
+            <CollapsibleTrigger asChild>
+              <SidebarMenuButton :tooltip="item.title">
+                <component :is="item.icon" />
+                <span>{{ item.title }}</span>
+              </SidebarMenuButton>
+            </CollapsibleTrigger>
+          </template>
           <SidebarMenuButton
+            v-else
             asChild
             :tooltip="item.title"
           >
-            <a :href="item.url">
+            <!-- <a :href="item.url">
               <component :is="item.icon" />
               <span>{{ item.title }}</span>
-            </a>
+            </a> -->
           </SidebarMenuButton>
           <template v-if="item.items?.length">
-            <CollapsibleTrigger asChild>
-              <SidebarMenuAction class="data-[state=open]:rotate-90">
-                <ChevronRight />
-                <span class="sr-only">Toggle</span>
-              </SidebarMenuAction>
-            </CollapsibleTrigger>
+            <SidebarMenuAction
+              class="hover:!bg-transparent hover:!text-sidebar-foreground !peer-hover/menu-button:text-sidebar-foreground"
+            >
+              <ChevronRight :class="open ? 'rotate-90' : ''" />
+              <span class="sr-only">Toggle</span>
+            </SidebarMenuAction>
             <CollapsibleContent>
               <SidebarMenuSub>
                 <SidebarMenuSubItem

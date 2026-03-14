@@ -20,16 +20,21 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 
-const props = defineProps<{
-  teams: {
-    name: string
-    logo: Component
-    plan: string
-  }[]
-}>()
+const workspaces = computed(() => {
+  return [
+    {
+      name: 'Acme Inc.',
+      description: 'Professional',
+    },
+    {
+      name: 'Globex Corporation',
+      description: 'Enterprise',
+    },
+  ]
+})
 
 const { isMobile } = useSidebar()
-const activeTeam = ref(props.teams[0])
+const activeTeam = ref(workspaces.value[0])
 </script>
 
 <template>
@@ -41,17 +46,11 @@ const activeTeam = ref(props.teams[0])
             size="lg"
             class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
           >
-            <div class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-              <component
-                :is="!activeTeam.logo"
-                class="size-4"
-              />
-            </div>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-medium">
                 {{ activeTeam.name }}
               </span>
-              <span class="truncate text-xs">{{ activeTeam.plan }}</span>
+              <span class="truncate text-xs">{{ activeTeam.description }}</span>
             </div>
             <ChevronsUpDown class="ml-auto" />
           </SidebarMenuButton>
@@ -66,19 +65,12 @@ const activeTeam = ref(props.teams[0])
             Teams
           </DropdownMenuLabel>
           <DropdownMenuItem
-            v-for="(team, index) in teams"
-            :key="team.name"
+            v-for="(workspace) in workspaces"
+            :key="workspace.name"
             class="gap-2 p-2"
-            @click="activeTeam = team"
+            @click="activeTeam = workspace"
           >
-            <div class="flex size-6 items-center justify-center rounded-sm border">
-              <component
-                :is="team.logo"
-                class="size-3.5 shrink-0"
-              />
-            </div>
-            {{ team.name }}
-            <DropdownMenuShortcut>⌘{{ index + 1 }}</DropdownMenuShortcut>
+            {{ workspace.name }}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem class="gap-2 p-2">

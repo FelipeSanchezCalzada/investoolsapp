@@ -6,6 +6,8 @@ export default defineNuxtConfig({
     'shadcn-nuxt',
     '@vueuse/nuxt',
     '@nuxtjs/color-mode',
+    '@pinia/nuxt',
+    '@vueuse/nuxt',
   ],
   devtools: { enabled: true },
   css: [
@@ -25,6 +27,12 @@ export default defineNuxtConfig({
     config: {
       stylistic: true,
     },
+  },
+  pinia: {
+    storesDirs: [
+      // 'stores',
+      // 'db',
+    ],
   },
   shadcn: {
     prefix: '',
