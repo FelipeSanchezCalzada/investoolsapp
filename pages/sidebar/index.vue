@@ -1,6 +1,4 @@
 <script lang="ts">
-export const iframeHeight = "800px"
-export const description = "A sidebar with a header and a search form."
 </script>
 
 <script setup lang="ts">
@@ -10,6 +8,9 @@ import {
   SidebarInset,
   SidebarProvider,
 } from '@/components/ui/sidebar'
+
+export const iframeHeight = '800px'
+export const description = 'A sidebar with a header and a search form.'
 </script>
 
 <template>

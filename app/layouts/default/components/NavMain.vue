@@ -18,6 +18,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar'
+import { PAGE_NAMES } from '~/pages/routeNames'
 
 const menuItems = computed(() => {
   return [{
@@ -27,7 +28,7 @@ const menuItems = computed(() => {
     items: [
       {
         title: 'Rebalanceo de fondos',
-        url: '#',
+        routeName: PAGE_NAMES.HELPERS.PORTFOLIO_REBALANCING,
       },
     ],
   }]
@@ -77,10 +78,13 @@ const menuItems = computed(() => {
                   v-for="subItem in item.items"
                   :key="subItem.title"
                 >
-                  <SidebarMenuSubButton asChild>
-                    <a :href="subItem.url">
+                  <SidebarMenuSubButton
+                    asChild
+                    :class="{ 'font-semibold text-sidebar-foreground': $route.name === subItem.routeName }"
+                  >
+                    <NuxtLink :to="{ name: subItem.routeName }">
                       <span>{{ subItem.title }}</span>
-                    </a>
+                    </NuxtLink>
                   </SidebarMenuSubButton>
                 </SidebarMenuSubItem>
               </SidebarMenuSub>
