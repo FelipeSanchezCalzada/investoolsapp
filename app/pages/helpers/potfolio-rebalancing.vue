@@ -499,12 +499,14 @@ function formatPercentage(value: number): string {
               @update:modelValue="(val) => transfer.done = !!val"
             />
 
-            <div :class="cn(
-              'flex items-center justify-center size-8 rounded-full text-sm font-semibold shrink-0',
-              transfer.done
-                ? 'bg-muted/30 text-muted-foreground/50'
-                : 'bg-primary/10 text-primary',
-            )">
+            <div
+              :class="cn(
+                'flex items-center justify-center size-8 rounded-full text-sm font-semibold shrink-0',
+                transfer.done
+                  ? 'bg-muted/30 text-muted-foreground/50'
+                  : 'bg-primary/10 text-primary',
+              )"
+            >
               {{ index + 1 }}
             </div>
 
@@ -543,12 +545,14 @@ function formatPercentage(value: number): string {
                   Destino
                 </Badge>
                 <div class="flex flex-col min-w-0">
-                  <span :class="cn(
-                    'text-sm font-medium truncate',
-                    transfer.done
-                      ? 'text-muted-foreground/50'
-                      : 'text-green-800 dark:text-green-400',
-                  )">{{ transfer.toName }}</span>
+                  <span
+                    :class="cn(
+                      'text-sm font-medium truncate',
+                      transfer.done
+                        ? 'text-muted-foreground/50'
+                        : 'text-green-800 dark:text-green-400',
+                    )"
+                  >{{ transfer.toName }}</span>
                   <span :class="cn('text-xs font-mono', transfer.done ? 'text-muted-foreground/40' : 'text-green-700/70 dark:text-green-500/70')">{{ transfer.toIsin }}</span>
                 </div>
               </div>
