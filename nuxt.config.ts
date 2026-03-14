@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vueuse/nuxt',
   ],
+  ssr: false,
   devtools: { enabled: true },
   css: [
     './app/assets/css/tailwind.css',
