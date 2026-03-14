@@ -38,6 +38,7 @@ enum CreateUpdateWorkspaceDialogMode {
 const { isMobile } = useSidebar()
 const dbStore = useFrontDB()
 
+const dropdownOpen = ref(false)
 const wsName = ref('')
 const wsDescription = ref('')
 const oldWorkspaceToUpdate = ref<Workspace>()
@@ -81,10 +82,11 @@ const onDialogSubmit = () => {
   if (createUpdateWorkspaceDialogMode.value === CreateUpdateWorkspaceDialogMode.CREATE) {
     createWorkspace()
   }
-  else {
+  if (createUpdateWorkspaceDialogMode.value === CreateUpdateWorkspaceDialogMode.UPDATE) {
     updateWorkspace()
   }
   createUpdateWorkspaceDialogMode.value = CreateUpdateWorkspaceDialogMode.NOTHING
+  dropdownOpen.value = false
 }
 
 const canDeleteWorkspaces = computed(() => dbStore.workspaces.length > 1)
@@ -99,7 +101,10 @@ const deleteWorkspace = (ws: Workspace) => {
 <template>
   <SidebarMenu>
     <SidebarMenuItem>
-      <DropdownMenu v-if="dbStore.selectedWorkspace">
+      <DropdownMenu
+        v-if="dbStore.selectedWorkspace"
+        v-model:open="dropdownOpen"
+      >
         <DropdownMenuTrigger asChild>
           <SidebarMenuButton
             size="lg"
