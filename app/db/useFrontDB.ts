@@ -18,6 +18,7 @@ export const useFrontDB = defineStore('frontDB', () => {
   const isInitialized = ref(false)
 
   const storageFrontDB = useLocalStorage<StorageFrontDB>('frontDB', EMPTY_DB)
+  const workspaces = computed(() => storageFrontDB.value.data.workspaces)
   const selectedWorkspace = ref<Workspace>()
 
   const initializeDB = () => {
@@ -28,7 +29,7 @@ export const useFrontDB = defineStore('frontDB', () => {
     isInitialized.value = true
   }
 
-  watch(selectedWorkspace, (value, oldValue, onCleanup) => {
+  watch(selectedWorkspace, (value) => {
     if (!value) {
       return
     }
@@ -48,6 +49,7 @@ export const useFrontDB = defineStore('frontDB', () => {
     isInitialized: skipHydrate(isInitialized),
     initializeDB,
     storageFrontDB: skipHydrate(storageFrontDB),
+    workspaces: skipHydrate(workspaces),
     selectedWorkspace: skipHydrate(selectedWorkspace),
   }
 })

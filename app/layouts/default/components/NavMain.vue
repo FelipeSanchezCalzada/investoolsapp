@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { LucideIcon } from 'lucide-vue-next'
 import { ChevronRight, Toolbox } from 'lucide-vue-next'
 
 import {
@@ -22,12 +21,12 @@ import {
 
 const menuItems = computed(() => {
   return [{
-    title: '*** Ayudantes',
+    title: 'Ayudantes',
     icon: Toolbox,
     isActive: true,
     items: [
       {
-        title: '*** Rebalanceo de fondos',
+        title: 'Rebalanceo de fondos',
         url: '#',
       },
     ],
@@ -67,7 +66,7 @@ const menuItems = computed(() => {
           </SidebarMenuButton>
           <template v-if="item.items?.length">
             <SidebarMenuAction
-              class="hover:!bg-transparent hover:!text-sidebar-foreground !peer-hover/menu-button:text-sidebar-foreground"
+              class="hover:bg-transparent! hover:text-sidebar-foreground! !peer-hover/menu-button:text-sidebar-foreground"
             >
               <ChevronRight :class="open ? 'rotate-90' : ''" />
               <span class="sr-only">Toggle</span>
