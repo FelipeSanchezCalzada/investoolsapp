@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronsUpDown, Pencil, Plus, Trash2 } from 'lucide-vue-next'
+import { ChevronsUpDown, Pencil, Plus, RotateCcw, Trash2 } from 'lucide-vue-next'
 import { ref } from 'vue'
 import {
   DropdownMenu,
@@ -26,6 +26,16 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { useFrontDB } from '@/db/useFrontDB'
 import type { Workspace } from '~/db/types'
 
@@ -86,6 +96,15 @@ const onDialogSubmit = () => {
     updateWorkspace()
   }
   createUpdateWorkspaceDialogMode.value = CreateUpdateWorkspaceDialogMode.NOTHING
+  dropdownOpen.value = false
+}
+
+const resetDialogOpen = ref(false)
+
+const handleResetDB = () => {
+  dbStore.resetDB()
+  dbStore.initializeDB()
+  resetDialogOpen.value = false
   dropdownOpen.value = false
 }
 
@@ -163,6 +182,17 @@ const deleteWorkspace = (ws: Workspace) => {
               Nuevo workspace
             </div>
           </DropdownMenuItem>
+          <DropdownMenuItem
+            class="gap-2 p-2 text-destructive focus:text-destructive"
+            @click="resetDialogOpen = true"
+          >
+            <div class="flex size-6 items-center justify-center rounded-md border border-destructive/50 bg-transparent">
+              <RotateCcw class="size-4" />
+            </div>
+            <div class="font-medium">
+              Resetear base de datos
+            </div>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </SidebarMenuItem>
@@ -230,4 +260,25 @@ const deleteWorkspace = (ws: Workspace) => {
       </form>
     </DialogContent>
   </Dialog>
+
+  <!-- Alert dialog resetear base de datos -->
+  <AlertDialog v-model:open="resetDialogOpen">
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Resetear base de datos</AlertDialogTitle>
+        <AlertDialogDescription>
+          Esta acción eliminará todos los datos almacenados, incluyendo todos los workspaces y su contenido. Esta acción no se puede deshacer.
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+        <AlertDialogAction
+          class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          @click="handleResetDB"
+        >
+          Resetear
+        </AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
 </template>

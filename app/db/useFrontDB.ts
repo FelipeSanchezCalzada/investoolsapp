@@ -29,6 +29,10 @@ export const useFrontDB = defineStore('frontDB', () => {
     isInitialized.value = true
   }
 
+  const resetDB = () => {
+    storageFrontDB.value = EMPTY_DB
+  }
+
   watch(selectedWorkspace, (value) => {
     if (!value) {
       return
@@ -48,6 +52,7 @@ export const useFrontDB = defineStore('frontDB', () => {
   return {
     isInitialized: skipHydrate(isInitialized),
     initializeDB,
+    resetDB,
     storageFrontDB: skipHydrate(storageFrontDB),
     workspaces: skipHydrate(workspaces),
     selectedWorkspace: skipHydrate(selectedWorkspace),
