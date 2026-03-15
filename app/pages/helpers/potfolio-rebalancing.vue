@@ -144,8 +144,7 @@ function calculateRebalancing() {
       fundMap.get(f.isin)!.target = targetAmount
       // Update name if changed in target
       if (f.name) fundMap.get(f.isin)!.name = f.name
-    }
-    else {
+    } else {
       fundMap.set(f.isin, {
         name: f.name,
         current: 0,
@@ -162,8 +161,7 @@ function calculateRebalancing() {
     const diff = data.target - data.current
     if (diff < -0.01) {
       sources.push({ isin, name: data.name, excess: -diff })
-    }
-    else if (diff > 0.01) {
+    } else if (diff > 0.01) {
       destinations.push({ isin, name: data.name, needed: diff })
     }
   }
