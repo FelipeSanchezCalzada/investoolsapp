@@ -37,7 +37,7 @@ const menuItems = computed(() => {
 
 <template>
   <SidebarGroup>
-    <SidebarGroupLabel>** Herramientas</SidebarGroupLabel>
+    <SidebarGroupLabel>Herramientas</SidebarGroupLabel>
     <SidebarMenu>
       <Collapsible
         v-for="item in menuItems"

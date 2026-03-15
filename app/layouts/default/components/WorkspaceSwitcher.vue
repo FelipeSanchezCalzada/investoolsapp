@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronsUpDown, Pencil, Plus, RotateCcw, Trash2 } from 'lucide-vue-next'
+import { ChevronsUpDown, Download, Pencil, Plus, RotateCcw, Trash2, Upload } from 'lucide-vue-next'
 import { ref } from 'vue'
 import {
   DropdownMenu,
@@ -108,6 +108,38 @@ const handleResetDB = () => {
   dropdownOpen.value = false
 }
 
+const handleExportDB = () => {
+  const json = dbStore.exportJson()
+  const blob = new Blob([json], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `investools-db-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`
+  a.click()
+  URL.revokeObjectURL(url)
+  dropdownOpen.value = false
+}
+
+const handleImportDB = () => {
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = '.json'
+  input.onchange = (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      const success = dbStore.importJsonDB(reader.result as string)
+      if (success) {
+        dbStore.initializeDB()
+      }
+      dropdownOpen.value = false
+    }
+    reader.readAsText(file)
+  }
+  input.click()
+}
+
 const canDeleteWorkspaces = computed(() => dbStore.workspaces.length > 1)
 const deleteWorkspace = (ws: Workspace) => {
   dbStore.storageFrontDB.data.workspaces = dbStore.storageFrontDB.data.workspaces.filter(w => w.name !== ws.name)
@@ -182,6 +214,29 @@ const deleteWorkspace = (ws: Workspace) => {
               Nuevo workspace
             </div>
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <div class="flex gap-1 px-2 py-1">
+            <Button
+              variant="outline"
+              size="sm"
+              class="flex-1"
+              title="Exportar base de datos como JSON"
+              @click.stop="handleExportDB"
+            >
+              <Download class="size-4" />
+              Exportar
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              class="flex-1"
+              title="Importar base de datos desde JSON"
+              @click.stop="handleImportDB"
+            >
+              <Upload class="size-4" />
+              Importar
+            </Button>
+          </div>
           <DropdownMenuItem
             class="gap-2 p-2 text-destructive focus:text-destructive"
             @click="resetDialogOpen = true"

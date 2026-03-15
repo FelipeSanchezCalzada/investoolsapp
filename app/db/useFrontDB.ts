@@ -33,6 +33,20 @@ export const useFrontDB = defineStore('frontDB', () => {
     storageFrontDB.value = EMPTY_DB
   }
 
+  const exportJson = () => {
+    return JSON.stringify(storageFrontDB.value, null, 2)
+  }
+
+  const importJsonDB = (jsonDB: string) => {
+    const objectDb = JSON.parse(jsonDB)
+    if (objectDb.version !== CURRENT_DB_VERSION) {
+      console.error(`Invalid DB version: Expected DB version ${CURRENT_DB_VERSION}, got ${objectDb.version}.`)
+      return false
+    }
+    storageFrontDB.value = objectDb
+    return true
+  }
+
   watch(selectedWorkspace, (value) => {
     if (!value) {
       return
@@ -53,6 +67,8 @@ export const useFrontDB = defineStore('frontDB', () => {
     isInitialized: skipHydrate(isInitialized),
     initializeDB,
     resetDB,
+    exportJson,
+    importJsonDB,
     storageFrontDB: skipHydrate(storageFrontDB),
     workspaces: skipHydrate(workspaces),
     selectedWorkspace: skipHydrate(selectedWorkspace),
