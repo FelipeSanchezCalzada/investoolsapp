@@ -279,14 +279,14 @@ function formatPercentage(value: number): string {
                   class="h-9"
                 />
               </TableCell>
-              <TableCell>
+              <TableCell class="w-50">
                 <Input
                   v-model="fund.isin"
                   placeholder="Ej: LU1234567890"
                   class="h-9 font-mono"
                 />
               </TableCell>
-              <TableCell class="text-right">
+              <TableCell class="text-right w-60">
                 <NumberField
                   v-model="fund.amount"
                   :min="0"
@@ -301,7 +301,7 @@ function formatPercentage(value: number): string {
                   </NumberFieldContent>
                 </NumberField>
               </TableCell>
-              <TableCell class="text-right tabular-nums">
+              <TableCell class="text-right tabular-nums w-30">
                 {{ formatPercentage(getCurrentPercentage(fund)) }}
               </TableCell>
               <TableCell>
@@ -444,14 +444,14 @@ function formatPercentage(value: number): string {
                   class="h-9"
                 />
               </TableCell>
-              <TableCell>
+              <TableCell class="w-50">
                 <Input
                   v-model="fund.isin"
                   placeholder="Ej: LU1234567890"
                   class="h-9 font-mono"
                 />
               </TableCell>
-              <TableCell class="text-right">
+              <TableCell class="text-right w-50">
                 <NumberField
                   v-model="fund.percentage"
                   :min="0"
@@ -467,7 +467,7 @@ function formatPercentage(value: number): string {
                   </NumberFieldContent>
                 </NumberField>
               </TableCell>
-              <TableCell class="text-right tabular-nums font-medium">
+              <TableCell class="text-right tabular-nums font-medium w-40">
                 {{ formatCurrency(getTargetAmount(fund)) }}
               </TableCell>
               <TableCell>
