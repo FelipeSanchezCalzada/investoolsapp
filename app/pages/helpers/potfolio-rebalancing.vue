@@ -224,7 +224,7 @@ function formatPercentage(value: number): string {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6 p-6 max-w-7xl mx-auto">
+  <div class="flex flex-col gap-6 p-3 sm:p-6 max-w-7xl mx-auto">
     <!-- Header -->
     <div>
       <h1 class="text-2xl font-bold tracking-tight">
@@ -256,7 +256,11 @@ function formatPercentage(value: number): string {
         </div>
       </CardHeader>
       <CardContent>
-        <Table v-if="portfolio.current.length > 0">
+        <!-- Desktop table -->
+        <Table
+          v-if="portfolio.current.length > 0"
+          class="hidden sm:table"
+        >
           <TableHeader>
             <TableRow>
               <TableHead>Nombre del fondo</TableHead>
@@ -320,8 +324,64 @@ function formatPercentage(value: number): string {
           </TableBody>
         </Table>
 
+        <!-- Mobile cards -->
         <div
-          v-else
+          v-if="portfolio.current.length > 0"
+          class="flex flex-col gap-3 sm:hidden"
+        >
+          <div
+            v-for="fund in portfolio.current"
+            :key="fund.id"
+            class="rounded-lg border p-3 flex flex-col gap-2"
+          >
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-medium text-muted-foreground">Fondo {{ portfolio.current.indexOf(fund) + 1 }}</span>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                @click="removeCurrentFund(fund.id)"
+              >
+                <Trash2 class="size-4 text-muted-foreground" />
+              </Button>
+            </div>
+            <Input
+              v-model="fund.name"
+              placeholder="Nombre del fondo"
+              class="h-9"
+            />
+            <Input
+              v-model="fund.isin"
+              placeholder="ISIN"
+              class="h-9 font-mono"
+            />
+            <div class="flex items-center gap-2">
+              <div class="flex-1">
+                <NumberField
+                  v-model="fund.amount"
+                  :min="0"
+                  :step="0.01"
+                  :locale="browserLocale"
+                  :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
+                >
+                  <NumberFieldContent>
+                    <NumberFieldDecrement />
+                    <NumberFieldInput />
+                    <NumberFieldIncrement />
+                  </NumberFieldContent>
+                </NumberField>
+              </div>
+              <Badge
+                variant="secondary"
+                class="shrink-0 tabular-nums"
+              >
+                {{ formatPercentage(getCurrentPercentage(fund)) }}
+              </Badge>
+            </div>
+          </div>
+        </div>
+
+        <div
+          v-if="portfolio.current.length === 0"
           class="flex flex-col items-center justify-center py-8 text-muted-foreground"
         >
           <p class="text-sm">
@@ -361,7 +421,11 @@ function formatPercentage(value: number): string {
         </div>
       </CardHeader>
       <CardContent>
-        <Table v-if="portfolio.target.length > 0">
+        <!-- Desktop table -->
+        <Table
+          v-if="portfolio.target.length > 0"
+          class="hidden sm:table"
+        >
           <TableHeader>
             <TableRow>
               <TableHead>Nombre del fondo</TableHead>
@@ -426,8 +490,62 @@ function formatPercentage(value: number): string {
           </TableBody>
         </Table>
 
+        <!-- Mobile cards -->
         <div
-          v-else
+          v-if="portfolio.target.length > 0"
+          class="flex flex-col gap-3 sm:hidden"
+        >
+          <div
+            v-for="fund in portfolio.target"
+            :key="fund.id"
+            class="rounded-lg border p-3 flex flex-col gap-2"
+          >
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-medium text-muted-foreground">Fondo {{ portfolio.target.indexOf(fund) + 1 }}</span>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                @click="removeTargetFund(fund.id)"
+              >
+                <Trash2 class="size-4 text-muted-foreground" />
+              </Button>
+            </div>
+            <Input
+              v-model="fund.name"
+              placeholder="Nombre del fondo"
+              class="h-9"
+            />
+            <Input
+              v-model="fund.isin"
+              placeholder="ISIN"
+              class="h-9 font-mono"
+            />
+            <div class="flex items-center gap-2">
+              <div class="flex-1">
+                <NumberField
+                  v-model="fund.percentage"
+                  :min="0"
+                  :max="100"
+                  :step="0.01"
+                  :locale="browserLocale"
+                  :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
+                >
+                  <NumberFieldContent>
+                    <NumberFieldDecrement />
+                    <NumberFieldInput />
+                    <NumberFieldIncrement />
+                  </NumberFieldContent>
+                </NumberField>
+              </div>
+              <span class="text-sm font-medium tabular-nums shrink-0">
+                {{ formatCurrency(getTargetAmount(fund)) }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          v-if="portfolio.target.length === 0"
           class="flex flex-col items-center justify-center py-8 text-muted-foreground"
         >
           <p class="text-sm">
@@ -459,6 +577,7 @@ function formatPercentage(value: number): string {
     <div class="flex justify-center">
       <Button
         size="lg"
+        class="w-full sm:w-auto"
         :disabled="!canCalculate"
         @click="calculateRebalancing"
       >
@@ -487,30 +606,36 @@ function formatPercentage(value: number): string {
             v-for="(transfer, index) in transfers"
             :key="index"
             :class="cn(
-              'flex items-center gap-4 p-4 rounded-lg border transition-all duration-200',
+              'flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg border transition-all duration-200',
               transfer.done
                 ? 'bg-muted/10 border-muted text-muted-foreground/50'
                 : 'bg-muted/30',
             )"
           >
-            <Checkbox
-              :checked="transfer.done"
-              class="size-5 shrink-0"
-              @update:modelValue="(val) => transfer.done = !!val"
-            />
+            <div class="flex items-center gap-3 sm:gap-4">
+              <Checkbox
+                :checked="transfer.done"
+                class="size-5 shrink-0"
+                @update:modelValue="(val) => transfer.done = !!val"
+              />
 
-            <div
-              :class="cn(
-                'flex items-center justify-center size-8 rounded-full text-sm font-semibold shrink-0',
-                transfer.done
-                  ? 'bg-muted/30 text-muted-foreground/50'
-                  : 'bg-primary/10 text-primary',
-              )"
-            >
-              {{ index + 1 }}
+              <div
+                :class="cn(
+                  'flex items-center justify-center size-8 rounded-full text-sm font-semibold shrink-0',
+                  transfer.done
+                    ? 'bg-muted/30 text-muted-foreground/50'
+                    : 'bg-primary/10 text-primary',
+                )"
+              >
+                {{ index + 1 }}
+              </div>
+
+              <span :class="cn('text-lg font-semibold tabular-nums sm:hidden', transfer.done && 'text-muted-foreground/50')">
+                {{ formatCurrency(transfer.amount) }}
+              </span>
             </div>
 
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 flex-1 min-w-0">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-8 flex-1 min-w-0 pl-11 sm:pl-0">
               <!-- Source -->
               <div class="flex items-center gap-2 min-w-0">
                 <Badge
@@ -558,7 +683,7 @@ function formatPercentage(value: number): string {
               </div>
             </div>
 
-            <div class="text-right shrink-0">
+            <div class="text-right shrink-0 hidden sm:block">
               <span :class="cn('text-lg font-semibold tabular-nums', transfer.done && 'text-muted-foreground/50')">
                 {{ formatCurrency(transfer.amount) }}
               </span>
