@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed, reactive } from 'vue'
 import { Plus, Trash2, ArrowRightLeft, TrendingUp, TrendingDown } from 'lucide-vue-next'
 import { PAGE_NAMES } from '~/pages/routeNames'
 import { cn } from '@/lib/utils'
@@ -23,6 +22,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import type { Workspace } from '~/db/types'
+import useFrontDB from '~/db/useFrontDB'
+
+type PortfolioRebalancingHelper = NonNullable<Workspace['portfolioRebalancingHelper']>
+type CurrentFund = PortfolioRebalancingHelper['current'][number]
+type TargetFund = PortfolioRebalancingHelper['target'][number]
 
 definePageMeta({
   name: PAGE_NAMES.HELPERS.PORTFOLIO_REBALANCING,
@@ -32,46 +37,30 @@ definePageMeta({
 
 const browserLocale = 'es-ES'
 
-// --- Types ---
+// --- State (persisted via useFrontDB) ---
 
-interface CurrentFund {
-  id: string
-  name: string
-  isin: string
-  amount: number
+const { selectedWorkspace } = storeToRefs(useFrontDB())
+
+const defaultHelper: PortfolioRebalancingHelper = {
+  current: [],
+  target: [],
+  transfers: [],
 }
 
-interface TargetFund {
-  id: string
-  name: string
-  isin: string
-  percentage: number
+if (selectedWorkspace.value && !selectedWorkspace.value.portfolioRebalancingHelper) {
+  selectedWorkspace.value.portfolioRebalancingHelper = { ...defaultHelper }
 }
 
-interface Transfer {
-  fromName: string
-  fromIsin: string
-  toName: string
-  toIsin: string
-  amount: number
-  done: boolean
-}
-
-// --- State (single object for future persistence) ---
-
-const portfolio = reactive({
-  current: [] as CurrentFund[],
-  target: [] as TargetFund[],
-})
+const portfolio = computed(() => selectedWorkspace.value?.portfolioRebalancingHelper ?? defaultHelper)
 
 // --- Computed ---
 
 const totalCurrentAmount = computed(() =>
-  portfolio.current.reduce((sum, f) => sum + (f.amount || 0), 0),
+  portfolio.value.current.reduce((sum, f) => sum + (f.amount || 0), 0),
 )
 
 const totalTargetPercentage = computed(() =>
-  portfolio.target.reduce((sum, f) => sum + (f.percentage || 0), 0),
+  portfolio.value.target.reduce((sum, f) => sum + (f.percentage || 0), 0),
 )
 
 const isTargetValid = computed(() =>
@@ -79,8 +68,8 @@ const isTargetValid = computed(() =>
 )
 
 const canCalculate = computed(() =>
-  portfolio.current.length > 0
-  && portfolio.target.length > 0
+  portfolio.value.current.length > 0
+  && portfolio.value.target.length > 0
   && totalCurrentAmount.value > 0
   && isTargetValid.value,
 )
@@ -97,7 +86,7 @@ function getTargetAmount(fund: TargetFund): number {
 // --- Actions ---
 
 function addCurrentFund() {
-  portfolio.current.push({
+  portfolio.value.current.push({
     id: crypto.randomUUID(),
     name: '',
     isin: '',
@@ -106,12 +95,12 @@ function addCurrentFund() {
 }
 
 function removeCurrentFund(id: string) {
-  const idx = portfolio.current.findIndex(f => f.id === id)
-  if (idx !== -1) portfolio.current.splice(idx, 1)
+  const idx = portfolio.value.current.findIndex(f => f.id === id)
+  if (idx !== -1) portfolio.value.current.splice(idx, 1)
 }
 
 function addTargetFund() {
-  portfolio.target.push({
+  portfolio.value.target.push({
     id: crypto.randomUUID(),
     name: '',
     isin: '',
@@ -120,14 +109,14 @@ function addTargetFund() {
 }
 
 function removeTargetFund(id: string) {
-  const idx = portfolio.target.findIndex(f => f.id === id)
-  if (idx !== -1) portfolio.target.splice(idx, 1)
+  const idx = portfolio.value.target.findIndex(f => f.id === id)
+  if (idx !== -1) portfolio.value.target.splice(idx, 1)
 }
 
 // --- Rebalancing algorithm ---
 
-const transfers = ref<Transfer[]>([])
-const hasCalculated = ref(false)
+const transfers = computed(() => portfolio.value.transfers)
+const hasCalculated = ref(portfolio.value.transfers.length > 0)
 
 function calculateRebalancing() {
   if (!canCalculate.value) return
@@ -137,7 +126,7 @@ function calculateRebalancing() {
   // Build a map of ISIN -> { name, current amount, target amount }
   const fundMap = new Map<string, { name: string, current: number, target: number }>()
 
-  for (const f of portfolio.current) {
+  for (const f of portfolio.value.current) {
     fundMap.set(f.isin, {
       name: f.name,
       current: f.amount,
@@ -145,7 +134,7 @@ function calculateRebalancing() {
     })
   }
 
-  for (const f of portfolio.target) {
+  for (const f of portfolio.value.target) {
     const targetAmount = total * (f.percentage / 100)
     if (fundMap.has(f.isin)) {
       fundMap.get(f.isin)!.target = targetAmount
@@ -180,7 +169,7 @@ function calculateRebalancing() {
   sources.sort((a, b) => b.excess - a.excess)
   destinations.sort((a, b) => b.needed - a.needed)
 
-  const result: Transfer[] = []
+  const result: PortfolioRebalancingHelper['transfers'] = []
   let si = 0
   let di = 0
 
@@ -207,7 +196,7 @@ function calculateRebalancing() {
     if (dest.needed < 0.01) di++
   }
 
-  transfers.value = result
+  portfolio.value.transfers = result
   hasCalculated.value = true
 }
 
@@ -614,9 +603,8 @@ function formatPercentage(value: number): string {
           >
             <div class="flex items-center gap-3 sm:gap-4">
               <Checkbox
-                :checked="transfer.done"
+                v-model="transfer.done"
                 class="size-5 shrink-0"
-                @update:modelValue="(val) => transfer.done = !!val"
               />
 
               <div
