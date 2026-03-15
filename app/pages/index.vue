@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowRightLeft, Database } from 'lucide-vue-next'
+import { ArrowRightLeft, Database, ShieldCheck, Wrench } from 'lucide-vue-next'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -31,8 +31,37 @@ const tools = computed(() => [
         Bienvenido a Investools
       </h1>
       <p class="text-muted-foreground mt-2 max-w-2xl">
-        Tu caja de herramientas para gestionar inversiones. Desde aquí puedes acceder a todas las utilidades disponibles y gestionar tus espacios de trabajo.
+        Tu caja de herramientas para gestionar inversiones.
       </p>
+
+      <div class="mt-5 grid gap-4 sm:grid-cols-2 max-w-2xl">
+        <div class="flex items-start gap-3">
+          <div class="flex items-center justify-center size-9 rounded-lg bg-green-500/10 text-green-600 dark:text-green-400 shrink-0 mt-0.5">
+            <ShieldCheck class="size-4" />
+          </div>
+          <div>
+            <p class="text-sm font-medium">
+              Tus datos son solo tuyos
+            </p>
+            <p class="text-xs text-muted-foreground mt-0.5">
+              Toda la información se almacena localmente en tu navegador. No se envía nada a ningún servidor externo.
+            </p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="flex items-center justify-center size-9 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
+            <Wrench class="size-4" />
+          </div>
+          <div>
+            <p class="text-sm font-medium">
+              En constante evolución
+            </p>
+            <p class="text-xs text-muted-foreground mt-0.5">
+              Se irán añadiendo nuevas herramientas y utilidades periódicamente para cubrir más necesidades de inversión.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <Separator />
