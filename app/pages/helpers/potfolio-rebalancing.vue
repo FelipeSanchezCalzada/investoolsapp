@@ -41,17 +41,17 @@ const browserLocale = 'es-ES'
 
 const { selectedWorkspace } = storeToRefs(useFrontDB())
 
-const defaultHelper: PortfolioRebalancingHelper = {
+const defaultData: PortfolioRebalancingHelper = {
   current: [],
   target: [],
   transfers: [],
 }
 
 if (selectedWorkspace.value && !selectedWorkspace.value.portfolioRebalancingHelper) {
-  selectedWorkspace.value.portfolioRebalancingHelper = { ...defaultHelper }
+  selectedWorkspace.value.portfolioRebalancingHelper = { ...defaultData }
 }
 
-const portfolio = computed(() => selectedWorkspace.value?.portfolioRebalancingHelper ?? defaultHelper)
+const portfolio = computed(() => selectedWorkspace.value?.portfolioRebalancingHelper ?? defaultData)
 
 // --- Computed ---
 
