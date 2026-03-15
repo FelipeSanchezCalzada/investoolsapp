@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { SidebarIcon } from 'lucide-vue-next'
 
-import SearchForm from './SearchForm.vue'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,8 +12,12 @@ import {
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useSidebar } from '@/components/ui/sidebar'
+import type { BreadcrumbItem as BreadcrumbItemType } from '~/types/page-meta'
 
 const { toggleSidebar } = useSidebar()
+const route = useRoute()
+
+const breadcrumbs = computed(() => (route.meta.breadcrumb ?? []) as BreadcrumbItemType[])
 </script>
 
 <template>
@@ -32,17 +35,30 @@ const { toggleSidebar } = useSidebar()
         orientation="vertical"
         class="mr-2 h-4"
       />
-      <Breadcrumb class="hidden sm:block">
+      <Breadcrumb
+        v-if="breadcrumbs.length > 0"
+        class="hidden sm:block"
+      >
         <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="#">
-              Building Your Application
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-          </BreadcrumbItem>
+          <template
+            v-for="(crumb, index) in breadcrumbs"
+            :key="index"
+          >
+            <BreadcrumbSeparator v-if="index > 0" />
+            <BreadcrumbItem>
+              <BreadcrumbLink
+                v-if="crumb.to"
+                asChild
+              >
+                <NuxtLink :to="crumb.to">
+                  {{ crumb.label }}
+                </NuxtLink>
+              </BreadcrumbLink>
+              <BreadcrumbPage v-else>
+                {{ crumb.label }}
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+          </template>
         </BreadcrumbList>
       </Breadcrumb>
     </div>

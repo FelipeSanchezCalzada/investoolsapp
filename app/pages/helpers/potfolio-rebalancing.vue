@@ -31,6 +31,10 @@ type TargetFund = PortfolioRebalancingHelper['target'][number]
 
 definePageMeta({
   name: PAGE_NAMES.HELPERS.PORTFOLIO_REBALANCING,
+  breadcrumb: [
+    { label: 'Home', to: { name: PAGE_NAMES.INDEX } },
+    { label: 'Rebalanceo de fondos' },
+  ],
 })
 
 // --- Locale ---
