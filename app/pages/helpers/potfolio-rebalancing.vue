@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Plus, Trash2, ArrowRightLeft, TrendingUp, TrendingDown } from 'lucide-vue-next'
+import { Plus, Trash2, ArrowRightLeft, TrendingUp, TrendingDown, Copy, Check } from 'lucide-vue-next'
 import { PAGE_NAMES } from '~/pages/routeNames'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -202,6 +202,16 @@ function calculateRebalancing() {
 
   portfolio.value.transfers = result
   hasCalculated.value = true
+}
+
+const copiedKey = ref<string | null>(null)
+
+function copyIsin(isin: string, key: string) {
+  navigator.clipboard.writeText(isin)
+  copiedKey.value = key
+  setTimeout(() => {
+    if (copiedKey.value === key) copiedKey.value = null
+  }, 1500)
 }
 
 function formatCurrency(value: number): string {
@@ -627,9 +637,9 @@ function formatPercentage(value: number): string {
               </span>
             </div>
 
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-8 flex-1 min-w-0 pl-11 sm:pl-0">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0 pl-11 sm:pl-0">
               <!-- Source -->
-              <div class="flex items-center gap-2 min-w-0">
+              <div class="flex items-center gap-2 min-w-0 sm:flex-1">
                 <Badge
                   :variant="transfer.done ? undefined : 'destructive'"
                   :class="cn(
@@ -642,14 +652,29 @@ function formatPercentage(value: number): string {
                 </Badge>
                 <div class="flex flex-col min-w-0">
                   <span :class="cn('text-sm font-medium truncate', transfer.done && 'text-muted-foreground/50')">{{ transfer.fromName }}</span>
-                  <span :class="cn('text-xs font-mono', transfer.done ? 'text-muted-foreground/40' : 'text-muted-foreground')">{{ transfer.fromIsin }}</span>
+                  <span class="inline-flex items-center gap-1">
+                    <span :class="cn('text-xs font-mono', transfer.done ? 'text-muted-foreground/40' : 'text-muted-foreground')">{{ transfer.fromIsin }}</span>
+                    <button
+                      class="inline-flex items-center justify-center size-4 rounded hover:bg-muted-foreground/10 transition-colors"
+                      @click="copyIsin(transfer.fromIsin, `${index}-from`)"
+                    >
+                      <Check
+                        v-if="copiedKey === `${index}-from`"
+                        class="size-3 text-green-500"
+                      />
+                      <Copy
+                        v-else
+                        :class="cn('size-3', transfer.done ? 'text-muted-foreground/40' : 'text-muted-foreground')"
+                      />
+                    </button>
+                  </span>
                 </div>
               </div>
 
               <ArrowRightLeft :class="cn('size-4 shrink-0 hidden sm:block', transfer.done ? 'text-muted-foreground/30' : 'text-muted-foreground')" />
 
               <!-- Destination -->
-              <div class="flex items-center gap-2 min-w-0">
+              <div class="flex items-center gap-2 min-w-0 sm:flex-1">
                 <Badge
                   :class="cn(
                     'shrink-0',
@@ -670,7 +695,22 @@ function formatPercentage(value: number): string {
                         : 'text-green-800 dark:text-green-400',
                     )"
                   >{{ transfer.toName }}</span>
-                  <span :class="cn('text-xs font-mono', transfer.done ? 'text-muted-foreground/40' : 'text-green-700/70 dark:text-green-500/70')">{{ transfer.toIsin }}</span>
+                  <span class="inline-flex items-center gap-1">
+                    <span :class="cn('text-xs font-mono', transfer.done ? 'text-muted-foreground/40' : 'text-green-700/70 dark:text-green-500/70')">{{ transfer.toIsin }}</span>
+                    <button
+                      class="inline-flex items-center justify-center size-4 rounded hover:bg-muted-foreground/10 transition-colors"
+                      @click="copyIsin(transfer.toIsin, `${index}-to`)"
+                    >
+                      <Check
+                        v-if="copiedKey === `${index}-to`"
+                        class="size-3 text-green-500"
+                      />
+                      <Copy
+                        v-else
+                        :class="cn('size-3', transfer.done ? 'text-muted-foreground/40' : 'text-muted-foreground')"
+                      />
+                    </button>
+                  </span>
                 </div>
               </div>
             </div>
