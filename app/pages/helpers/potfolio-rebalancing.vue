@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Plus, Trash2, ArrowRightLeft, TrendingUp, TrendingDown, Copy, Check } from 'lucide-vue-next'
+import { Plus, Trash2, ArrowRightLeft, TrendingUp, TrendingDown, Copy, Check, GripVertical } from 'lucide-vue-next'
+import draggable from 'vuedraggable'
 import { PAGE_NAMES } from '~/pages/routeNames'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,7 +17,6 @@ import {
 } from '@/components/ui/number-field'
 import {
   Table,
-  TableBody,
   TableCell,
   TableHead,
   TableHeader,
@@ -264,6 +264,7 @@ function formatPercentage(value: number): string {
         >
           <TableHeader>
             <TableRow>
+              <TableHead class="w-10" />
               <TableHead>Nombre del fondo</TableHead>
               <TableHead>ISIN</TableHead>
               <TableHead class="text-right">
@@ -275,44 +276,80 @@ function formatPercentage(value: number): string {
               <TableHead class="w-10" />
             </TableRow>
           </TableHeader>
-          <TableBody>
-            <TableRow
-              v-for="fund in portfolio.current"
-              :key="fund.id"
-            >
-              <TableCell>
-                <Input
-                  v-model="fund.name"
-                  placeholder="Ej: Amundi MSCI World"
-                  class="h-9"
-                />
-              </TableCell>
-              <TableCell class="w-50">
-                <Input
-                  v-model="fund.isin"
-                  placeholder="Ej: LU1234567890"
-                  class="h-9 font-mono"
-                />
-              </TableCell>
-              <TableCell class="text-right w-60">
-                <NumberField
-                  v-model="fund.amount"
-                  :min="0"
-                  :step="0.01"
-                  :locale="browserLocale"
-                  :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
-                >
-                  <NumberFieldContent>
-                    <NumberFieldDecrement />
-                    <NumberFieldInput />
-                    <NumberFieldIncrement />
-                  </NumberFieldContent>
-                </NumberField>
-              </TableCell>
-              <TableCell class="text-right tabular-nums w-30">
-                {{ formatPercentage(getCurrentPercentage(fund)) }}
-              </TableCell>
-              <TableCell>
+          <draggable
+            v-model="portfolio.current"
+            tag="tbody"
+            handle=".drag-handle"
+            itemKey="id"
+            :animation="200"
+          >
+            <template #item="{ element: fund }">
+              <TableRow>
+                <TableCell class="w-10">
+                  <GripVertical class="drag-handle size-4 text-muted-foreground cursor-grab active:cursor-grabbing" />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    v-model="fund.name"
+                    placeholder="Ej: Amundi MSCI World"
+                    class="h-9"
+                  />
+                </TableCell>
+                <TableCell class="w-50">
+                  <Input
+                    v-model="fund.isin"
+                    placeholder="Ej: LU1234567890"
+                    class="h-9 font-mono"
+                  />
+                </TableCell>
+                <TableCell class="text-right w-60">
+                  <NumberField
+                    v-model="fund.amount"
+                    :min="0"
+                    :step="0.01"
+                    :locale="browserLocale"
+                    :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
+                  >
+                    <NumberFieldContent>
+                      <NumberFieldDecrement />
+                      <NumberFieldInput />
+                      <NumberFieldIncrement />
+                    </NumberFieldContent>
+                  </NumberField>
+                </TableCell>
+                <TableCell class="text-right tabular-nums w-30">
+                  {{ formatPercentage(getCurrentPercentage(fund)) }}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    @click="removeCurrentFund(fund.id)"
+                  >
+                    <Trash2 class="size-4 text-muted-foreground" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            </template>
+          </draggable>
+        </Table>
+
+        <!-- Mobile cards -->
+        <draggable
+          v-if="portfolio.current.length > 0"
+          v-model="portfolio.current"
+          handle=".drag-handle"
+          itemKey="id"
+          :animation="200"
+          class="flex flex-col gap-3 sm:hidden"
+        >
+          <template #item="{ element: fund, index }">
+            <div class="rounded-lg border p-3 flex flex-col gap-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <GripVertical class="drag-handle size-4 text-muted-foreground cursor-grab active:cursor-grabbing" />
+                  <span class="text-xs font-medium text-muted-foreground">Fondo {{ index + 1 }}</span>
+                </div>
                 <Button
                   variant="ghost"
                   size="icon-sm"
@@ -320,66 +357,43 @@ function formatPercentage(value: number): string {
                 >
                   <Trash2 class="size-4 text-muted-foreground" />
                 </Button>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-
-        <!-- Mobile cards -->
-        <div
-          v-if="portfolio.current.length > 0"
-          class="flex flex-col gap-3 sm:hidden"
-        >
-          <div
-            v-for="fund in portfolio.current"
-            :key="fund.id"
-            class="rounded-lg border p-3 flex flex-col gap-2"
-          >
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-muted-foreground">Fondo {{ portfolio.current.indexOf(fund) + 1 }}</span>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                @click="removeCurrentFund(fund.id)"
-              >
-                <Trash2 class="size-4 text-muted-foreground" />
-              </Button>
-            </div>
-            <Input
-              v-model="fund.name"
-              placeholder="Nombre del fondo"
-              class="h-9"
-            />
-            <Input
-              v-model="fund.isin"
-              placeholder="ISIN"
-              class="h-9 font-mono"
-            />
-            <div class="flex items-center gap-2">
-              <div class="flex-1">
-                <NumberField
-                  v-model="fund.amount"
-                  :min="0"
-                  :step="0.01"
-                  :locale="browserLocale"
-                  :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
-                >
-                  <NumberFieldContent>
-                    <NumberFieldDecrement />
-                    <NumberFieldInput />
-                    <NumberFieldIncrement />
-                  </NumberFieldContent>
-                </NumberField>
               </div>
-              <Badge
-                variant="secondary"
-                class="shrink-0 tabular-nums"
-              >
-                {{ formatPercentage(getCurrentPercentage(fund)) }}
-              </Badge>
+              <Input
+                v-model="fund.name"
+                placeholder="Nombre del fondo"
+                class="h-9"
+              />
+              <Input
+                v-model="fund.isin"
+                placeholder="ISIN"
+                class="h-9 font-mono"
+              />
+              <div class="flex items-center gap-2">
+                <div class="flex-1">
+                  <NumberField
+                    v-model="fund.amount"
+                    :min="0"
+                    :step="0.01"
+                    :locale="browserLocale"
+                    :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
+                  >
+                    <NumberFieldContent>
+                      <NumberFieldDecrement />
+                      <NumberFieldInput />
+                      <NumberFieldIncrement />
+                    </NumberFieldContent>
+                  </NumberField>
+                </div>
+                <Badge
+                  variant="secondary"
+                  class="shrink-0 tabular-nums"
+                >
+                  {{ formatPercentage(getCurrentPercentage(fund)) }}
+                </Badge>
+              </div>
             </div>
-          </div>
-        </div>
+          </template>
+        </draggable>
 
         <div
           v-if="portfolio.current.length === 0"
@@ -429,6 +443,7 @@ function formatPercentage(value: number): string {
         >
           <TableHeader>
             <TableRow>
+              <TableHead class="w-10" />
               <TableHead>Nombre del fondo</TableHead>
               <TableHead>ISIN</TableHead>
               <TableHead class="text-right">
@@ -440,45 +455,81 @@ function formatPercentage(value: number): string {
               <TableHead class="w-10" />
             </TableRow>
           </TableHeader>
-          <TableBody>
-            <TableRow
-              v-for="fund in portfolio.target"
-              :key="fund.id"
-            >
-              <TableCell>
-                <Input
-                  v-model="fund.name"
-                  placeholder="Ej: Amundi MSCI World"
-                  class="h-9"
-                />
-              </TableCell>
-              <TableCell class="w-50">
-                <Input
-                  v-model="fund.isin"
-                  placeholder="Ej: LU1234567890"
-                  class="h-9 font-mono"
-                />
-              </TableCell>
-              <TableCell class="text-right w-50">
-                <NumberField
-                  v-model="fund.percentage"
-                  :min="0"
-                  :max="100"
-                  :step="0.01"
-                  :locale="browserLocale"
-                  :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
-                >
-                  <NumberFieldContent>
-                    <NumberFieldDecrement />
-                    <NumberFieldInput />
-                    <NumberFieldIncrement />
-                  </NumberFieldContent>
-                </NumberField>
-              </TableCell>
-              <TableCell class="text-right tabular-nums font-medium w-40">
-                {{ formatCurrency(getTargetAmount(fund)) }}
-              </TableCell>
-              <TableCell>
+          <draggable
+            v-model="portfolio.target"
+            tag="tbody"
+            handle=".drag-handle"
+            itemKey="id"
+            :animation="200"
+          >
+            <template #item="{ element: fund }">
+              <TableRow>
+                <TableCell class="w-10">
+                  <GripVertical class="drag-handle size-4 text-muted-foreground cursor-grab active:cursor-grabbing" />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    v-model="fund.name"
+                    placeholder="Ej: Amundi MSCI World"
+                    class="h-9"
+                  />
+                </TableCell>
+                <TableCell class="w-50">
+                  <Input
+                    v-model="fund.isin"
+                    placeholder="Ej: LU1234567890"
+                    class="h-9 font-mono"
+                  />
+                </TableCell>
+                <TableCell class="text-right w-50">
+                  <NumberField
+                    v-model="fund.percentage"
+                    :min="0"
+                    :max="100"
+                    :step="0.01"
+                    :locale="browserLocale"
+                    :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
+                  >
+                    <NumberFieldContent>
+                      <NumberFieldDecrement />
+                      <NumberFieldInput />
+                      <NumberFieldIncrement />
+                    </NumberFieldContent>
+                  </NumberField>
+                </TableCell>
+                <TableCell class="text-right tabular-nums font-medium w-40">
+                  {{ formatCurrency(getTargetAmount(fund)) }}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    @click="removeTargetFund(fund.id)"
+                  >
+                    <Trash2 class="size-4 text-muted-foreground" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            </template>
+          </draggable>
+        </Table>
+
+        <!-- Mobile cards -->
+        <draggable
+          v-if="portfolio.target.length > 0"
+          v-model="portfolio.target"
+          handle=".drag-handle"
+          itemKey="id"
+          :animation="200"
+          class="flex flex-col gap-3 sm:hidden"
+        >
+          <template #item="{ element: fund, index }">
+            <div class="rounded-lg border p-3 flex flex-col gap-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <GripVertical class="drag-handle size-4 text-muted-foreground cursor-grab active:cursor-grabbing" />
+                  <span class="text-xs font-medium text-muted-foreground">Fondo {{ index + 1 }}</span>
+                </div>
                 <Button
                   variant="ghost"
                   size="icon-sm"
@@ -486,64 +537,41 @@ function formatPercentage(value: number): string {
                 >
                   <Trash2 class="size-4 text-muted-foreground" />
                 </Button>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-
-        <!-- Mobile cards -->
-        <div
-          v-if="portfolio.target.length > 0"
-          class="flex flex-col gap-3 sm:hidden"
-        >
-          <div
-            v-for="fund in portfolio.target"
-            :key="fund.id"
-            class="rounded-lg border p-3 flex flex-col gap-2"
-          >
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-muted-foreground">Fondo {{ portfolio.target.indexOf(fund) + 1 }}</span>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                @click="removeTargetFund(fund.id)"
-              >
-                <Trash2 class="size-4 text-muted-foreground" />
-              </Button>
-            </div>
-            <Input
-              v-model="fund.name"
-              placeholder="Nombre del fondo"
-              class="h-9"
-            />
-            <Input
-              v-model="fund.isin"
-              placeholder="ISIN"
-              class="h-9 font-mono"
-            />
-            <div class="flex items-center gap-2">
-              <div class="flex-1">
-                <NumberField
-                  v-model="fund.percentage"
-                  :min="0"
-                  :max="100"
-                  :step="0.01"
-                  :locale="browserLocale"
-                  :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
-                >
-                  <NumberFieldContent>
-                    <NumberFieldDecrement />
-                    <NumberFieldInput />
-                    <NumberFieldIncrement />
-                  </NumberFieldContent>
-                </NumberField>
               </div>
-              <span class="text-sm font-medium tabular-nums shrink-0">
-                {{ formatCurrency(getTargetAmount(fund)) }}
-              </span>
+              <Input
+                v-model="fund.name"
+                placeholder="Nombre del fondo"
+                class="h-9"
+              />
+              <Input
+                v-model="fund.isin"
+                placeholder="ISIN"
+                class="h-9 font-mono"
+              />
+              <div class="flex items-center gap-2">
+                <div class="flex-1">
+                  <NumberField
+                    v-model="fund.percentage"
+                    :min="0"
+                    :max="100"
+                    :step="0.01"
+                    :locale="browserLocale"
+                    :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
+                  >
+                    <NumberFieldContent>
+                      <NumberFieldDecrement />
+                      <NumberFieldInput />
+                      <NumberFieldIncrement />
+                    </NumberFieldContent>
+                  </NumberField>
+                </div>
+                <span class="text-sm font-medium tabular-nums shrink-0">
+                  {{ formatCurrency(getTargetAmount(fund)) }}
+                </span>
+              </div>
             </div>
-          </div>
-        </div>
+          </template>
+        </draggable>
 
         <div
           v-if="portfolio.target.length === 0"
