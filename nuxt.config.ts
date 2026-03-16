@@ -11,6 +11,13 @@ export default defineNuxtConfig({
   ],
   ssr: false,
   devtools: { enabled: true },
+  app: {
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+      ],
+    },
+  },
   css: [
     './app/assets/css/tailwind.css',
   ],
