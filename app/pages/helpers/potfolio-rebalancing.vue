@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Plus, Trash2, ArrowRightLeft, TrendingUp, TrendingDown, Copy, Check, GripVertical, ChevronDown, ChevronRight } from 'lucide-vue-next'
+import { Plus, Trash2, ArrowRightLeft, TrendingUp, TrendingDown, Copy, Check, GripVertical, ChevronDown, ChevronRight, ClipboardPaste } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import draggable from 'vuedraggable'
 import { PAGE_NAMES } from '~/pages/routeNames'
@@ -48,17 +48,36 @@ const browserLocale = 'es-ES'
 
 const { selectedWorkspace } = storeToRefs(useFrontDB())
 
-const defaultData: PortfolioRebalancingHelper = {
-  current: [],
-  target: [],
-  dcaTransfers: [],
+function getInitialData(): PortfolioRebalancingHelper {
+  return {
+    current: [],
+    target: [],
+    dcaTransfers: [],
+  }
 }
 
-if (selectedWorkspace.value && !selectedWorkspace.value.portfolioRebalancingHelper) {
-  selectedWorkspace.value.portfolioRebalancingHelper = { ...defaultData }
+const collapsedParts = ref<Set<number>>(new Set())
+
+function ensurePortfolioData(ws: Workspace) {
+  if (!ws.portfolioRebalancingHelper) {
+    ws.portfolioRebalancingHelper = getInitialData()
+  }
 }
 
-const portfolio = computed(() => selectedWorkspace.value?.portfolioRebalancingHelper ?? defaultData)
+watchImmediate(selectedWorkspace, (ws) => {
+  if (ws) {
+    ensurePortfolioData(ws)
+  }
+  collapsedParts.value = new Set()
+})
+
+const portfolio = computed<PortfolioRebalancingHelper>(() => {
+  const ws = selectedWorkspace.value
+  if (!ws) {
+    return getInitialData()
+  }
+  return ws.portfolioRebalancingHelper!
+})
 
 // --- Computed ---
 
@@ -123,7 +142,6 @@ function removeTargetFund(id: string) {
 // --- DCA ---
 
 const dcaParts = ref(1)
-const collapsedParts = ref<Set<number>>(new Set())
 
 function togglePartCollapsed(partIndex: number) {
   if (collapsedParts.value.has(partIndex)) {
@@ -151,7 +169,7 @@ const globalProgress = computed(() => {
 // --- Rebalancing algorithm ---
 
 const dcaTransfers = computed(() => portfolio.value.dcaTransfers)
-const hasCalculated = ref(portfolio.value.dcaTransfers.length > 0)
+const hasCalculated = computed(() => portfolio.value.dcaTransfers.length > 0)
 
 function calculateRebalancing() {
   if (!canCalculate.value) return
@@ -241,7 +259,6 @@ function calculateRebalancing() {
 
   portfolio.value.dcaTransfers = result
   collapsedParts.value = new Set()
-  hasCalculated.value = true
 
   const totalTransfers = fullTransfers.length
   if (totalTransfers === 0) {
@@ -270,6 +287,46 @@ function formatCurrency(value: number): string {
 
 function formatPercentage(value: number): string {
   return `${value.toFixed(2)} %`
+}
+
+// --- Copy / Paste target portfolio ---
+
+const copiedTarget = ref(false)
+
+function copyTargetPortfolio() {
+  if (portfolio.value.target.length === 0) return
+  const sanitize = (s: string) => s.replace(/\t/g, ' ').trim()
+  const lines = portfolio.value.target.map(f => `${sanitize(f.name)}\t${sanitize(f.isin)}\t${f.percentage}`)
+  navigator.clipboard.writeText(lines.join('\n'))
+  copiedTarget.value = true
+  setTimeout(() => {
+    copiedTarget.value = false
+  }, 1500)
+  toast.success('Cartera objetivo copiada al portapapeles')
+}
+
+async function pasteTargetPortfolio() {
+  try {
+    const text = await navigator.clipboard.readText()
+    if (!text.trim()) {
+      toast.error('El portapapeles está vacío')
+      return
+    }
+    const lines = text.trim().split('\n').filter(l => l.trim())
+    const funds: TargetFund[] = lines.map((line) => {
+      const parts = line.split('\t')
+      return {
+        id: crypto.randomUUID(),
+        name: parts[0]?.trim() ?? '',
+        isin: parts[1]?.trim() ?? '',
+        percentage: Number.parseFloat(parts[2]?.trim() ?? '0') || 0,
+      }
+    })
+    portfolio.value.target.splice(0, portfolio.value.target.length, ...funds)
+    toast.success(`${funds.length} fondo${funds.length > 1 ? 's' : ''} pegado${funds.length > 1 ? 's' : ''}`)
+  } catch {
+    toast.error('No se pudo leer el portapapeles')
+  }
 }
 </script>
 
@@ -635,7 +692,7 @@ function formatPercentage(value: number): string {
           </p>
         </div>
 
-        <div class="flex items-center gap-3 mt-4">
+        <div class="flex flex-wrap items-center gap-3 mt-4">
           <Button
             variant="outline"
             size="sm"
@@ -651,6 +708,30 @@ function formatPercentage(value: number): string {
           >
             Los porcentajes deben sumar exactamente 100%.
           </p>
+
+          <div class="flex items-center gap-2 ml-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              :disabled="portfolio.target.length === 0"
+              @click="copyTargetPortfolio"
+            >
+              <component
+                :is="copiedTarget ? Check : Copy"
+                :class="cn('size-4 mr-2', copiedTarget && 'text-green-500')"
+              />
+              {{ copiedTarget ? 'Copiada' : 'Copiar cartera' }}
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              @click="pasteTargetPortfolio"
+            >
+              <ClipboardPaste class="size-4 mr-2" />
+              Pegar cartera
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

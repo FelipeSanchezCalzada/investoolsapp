@@ -27,7 +27,6 @@ export const useFrontDB = defineStore('frontDB', () => {
       const migrationKey = `v${storageFrontDB.value.version}-v${storageFrontDB.value.version + 1}` as keyof typeof migrationsMap
       const migrationFn = migrationsMap[migrationKey]
       if (!migrationFn) {
-        console.error(`Migration ${migrationKey} not found`)
         break
       }
       storageFrontDB.value.data = migrationFn(storageFrontDB.value.data as never)
