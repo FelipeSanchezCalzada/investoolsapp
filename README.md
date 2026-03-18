@@ -4,6 +4,9 @@
 
 Free, open-source investment tools that run entirely in your browser. No backend, no sign-up, no data collection — your financial data never leaves your device.
 
+> [!WARNING]
+> **This project is in early beta.** It is under active development and may contain bugs, breaking changes, or data loss at any time. Do not rely on it for critical data without keeping an external backup. Use at your own risk.
+
 **[Try it live at investools.app](https://investools.app/)**
 
 <!-- TODO: Add screenshot -->

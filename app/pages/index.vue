@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ArrowRightLeft, Database, ShieldCheck, Wrench } from 'lucide-vue-next'
+import { ArrowRightLeft, Database, ShieldCheck, TriangleAlert, Wrench } from 'lucide-vue-next'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { useFrontDB } from '@/db/useFrontDB'
 import { PAGE_NAMES } from '~/pages/routeNames'
@@ -25,6 +26,15 @@ const tools = computed(() => [
 
 <template>
   <div class="flex flex-col gap-10 p-3 sm:p-6 max-w-5xl mx-auto">
+    <!-- Beta warning -->
+    <Alert class="border-orange-500/50 text-orange-700 dark:text-orange-400 [&>svg]:text-current *:data-[slot=alert-description]:text-orange-700/90 dark:*:data-[slot=alert-description]:text-orange-400/90">
+      <TriangleAlert class="size-4" />
+      <AlertTitle>Proyecto en fase beta temprana</AlertTitle>
+      <AlertDescription>
+        Esta aplicación se encuentra en una fase muy temprana de desarrollo. Pueden producirse errores, cambios importantes o pérdidas de datos en cualquier momento. No almacenes información crítica sin tener una copia de seguridad externa.
+      </AlertDescription>
+    </Alert>
+
     <!-- Welcome -->
     <div>
       <h1 class="text-2xl font-bold tracking-tight">

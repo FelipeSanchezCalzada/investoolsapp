@@ -1,5 +1,6 @@
 import { skipHydrate } from 'pinia'
 import { CURRENT_DB_VERSION, type StorageFrontDB, type Workspace } from '~/db/types'
+import { migrationsMap } from '~/db/migrations'
 
 const DEFAULT_WORKSPACE_NAME = 'Default'
 
@@ -22,6 +23,17 @@ export const useFrontDB = defineStore('frontDB', () => {
   const selectedWorkspace = ref<Workspace>()
 
   const initializeDB = () => {
+    while (storageFrontDB.value.version < CURRENT_DB_VERSION) {
+      const migrationKey = `v${storageFrontDB.value.version}-v${storageFrontDB.value.version + 1}` as keyof typeof migrationsMap
+      const migrationFn = migrationsMap[migrationKey]
+      if (!migrationFn) {
+        console.error(`Migration ${migrationKey} not found`)
+        break
+      }
+      storageFrontDB.value.data = migrationFn(storageFrontDB.value.data as never)
+      storageFrontDB.value.version = storageFrontDB.value.version + 1
+    }
+
     const initialSelectedWorkspace = storageFrontDB.value.data.workspaces.find(ws => ws.name === storageFrontDB.value.data.selectedWorkspaceName)
     if (initialSelectedWorkspace) {
       selectedWorkspace.value = initialSelectedWorkspace
@@ -38,12 +50,9 @@ export const useFrontDB = defineStore('frontDB', () => {
   }
 
   const importJsonDB = (jsonDB: string) => {
-    const objectDb = JSON.parse(jsonDB)
-    if (objectDb.version !== CURRENT_DB_VERSION) {
-      console.error(`Invalid DB version: Expected DB version ${CURRENT_DB_VERSION}, got ${objectDb.version}.`)
-      return false
-    }
-    storageFrontDB.value = objectDb
+    storageFrontDB.value = JSON.parse(jsonDB)
+    isInitialized.value = false
+    initializeDB()
     return true
   }
 

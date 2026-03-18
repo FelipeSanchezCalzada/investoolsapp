@@ -1,0 +1,266 @@
+{
+  "version": 1,
+  "data": {
+    "selectedWorkspaceName": "Alt 1",
+    "workspaces": [
+      {
+        "name": "Default",
+        "description": "Default workspace",
+        "portfolioRebalancingHelper": {
+          "current": [
+            {
+              "id": "b6cdcfad-8a75-42a7-8fd6-c1270e6fc932",
+              "name": "BlackRock Institutional Cash Series Euro Ultra Short Bond Core Shares",
+              "isin": "IE00B1B82251",
+              "amount": 39864.64
+            },
+            {
+              "id": "b0cec590-3419-455d-917d-025b4e935f42",
+              "name": "Fidelity S&P 500 Index Fund P-ACC-EUR",
+              "isin": "IE00BYX5MX67",
+              "amount": 16248.71
+            }
+          ],
+          "target": [
+            {
+              "id": "5fc8304e-9312-4e0a-bdaf-d85263b51f3e",
+              "name": "Fidelity S&P 500 Index Fund P-ACC-EUR",
+              "isin": "IE00BYX5MX67",
+              "percentage": 39
+            },
+            {
+              "id": "04f1af02-5139-4219-9aad-ad9cd3034373",
+              "name": "Fidelity MSCI World Index Fund P-ACC-EUR",
+              "isin": "IE00BYX5NX33",
+              "percentage": 20
+            },
+            {
+              "id": "dbc542b7-4f27-4305-8c75-43fd0eaaf5dc",
+              "name": "iShares Emerging Markets Index Fund (IE) Acc EUR clase S",
+              "isin": "IE000QAZP7L2",
+              "percentage": 14
+            },
+            {
+              "id": "825c7870-fd8c-422d-86d5-6a2c465259be",
+              "name": "Fidelity MSCI Europe Index Fund P-ACC-EUR",
+              "isin": "IE00BYX5MD61",
+              "percentage": 8
+            },
+            {
+              "id": "44a8a7d4-54c8-441c-8d29-008be840815c",
+              "name": "Fidelity MSCI Japan Index Fund P-ACC-EUR",
+              "isin": "IE00BYX5N771",
+              "percentage": 12
+            },
+            {
+              "id": "3937723d-17d9-4077-9f4c-4bb6e12b6673",
+              "name": "Vanguard US Equity Index Fund EUR Hedged",
+              "isin": "IE00B1G3DH73",
+              "percentage": 4
+            },
+            {
+              "id": "0c15e822-2a4e-4598-aae4-5fe5cee7c36b",
+              "name": "Fidelity MSCI Pacific ex-Japan Index Fund P-ACC-USD",
+              "isin": "IE00BDZVHT63",
+              "percentage": 3
+            }
+          ],
+          "transfers": [
+            {
+              "fromName": "BlackRock Institutional Cash Series Euro Ultra Short Bond Core Shares",
+              "fromIsin": "IE00B1B82251",
+              "toName": "Fidelity MSCI World Index Fund P-ACC-EUR",
+              "toIsin": "IE00BYX5NX33",
+              "amount": 11222.67,
+              "done": false
+            },
+            {
+              "fromName": "BlackRock Institutional Cash Series Euro Ultra Short Bond Core Shares",
+              "fromIsin": "IE00B1B82251",
+              "toName": "iShares Emerging Markets Index Fund (IE) Acc EUR clase S",
+              "toIsin": "IE000QAZP7L2",
+              "amount": 7855.87,
+              "done": false
+            },
+            {
+              "fromName": "BlackRock Institutional Cash Series Euro Ultra Short Bond Core Shares",
+              "fromIsin": "IE00B1B82251",
+              "toName": "Fidelity MSCI Japan Index Fund P-ACC-EUR",
+              "toIsin": "IE00BYX5N771",
+              "amount": 6733.6,
+              "done": false
+            },
+            {
+              "fromName": "BlackRock Institutional Cash Series Euro Ultra Short Bond Core Shares",
+              "fromIsin": "IE00B1B82251",
+              "toName": "Fidelity S&P 500 Index Fund P-ACC-EUR",
+              "toIsin": "IE00BYX5MX67",
+              "amount": 5635.5,
+              "done": false
+            },
+            {
+              "fromName": "BlackRock Institutional Cash Series Euro Ultra Short Bond Core Shares",
+              "fromIsin": "IE00B1B82251",
+              "toName": "Fidelity MSCI Europe Index Fund P-ACC-EUR",
+              "toIsin": "IE00BYX5MD61",
+              "amount": 4489.07,
+              "done": false
+            },
+            {
+              "fromName": "BlackRock Institutional Cash Series Euro Ultra Short Bond Core Shares",
+              "fromIsin": "IE00B1B82251",
+              "toName": "Vanguard US Equity Index Fund EUR Hedged",
+              "toIsin": "IE00B1G3DH73",
+              "amount": 2244.53,
+              "done": false
+            },
+            {
+              "fromName": "BlackRock Institutional Cash Series Euro Ultra Short Bond Core Shares",
+              "fromIsin": "IE00B1B82251",
+              "toName": "Fidelity MSCI Pacific ex-Japan Index Fund P-ACC-USD",
+              "toIsin": "IE00BDZVHT63",
+              "amount": 1683.4,
+              "done": false
+            }
+          ]
+        }
+      },
+      {
+        "name": "Alt 1",
+        "description": "Cartera Alternativa 1",
+        "portfolioRebalancingHelper": {
+          "current": [
+            {
+              "id": "b6cdcfad-8a75-42a7-8fd6-c1270e6fc932",
+              "name": "BlackRock Institutional Cash Series Euro Ultra Short Bond Core Shares",
+              "isin": "IE00B1B82251",
+              "amount": 39864.64
+            },
+            {
+              "id": "b0cec590-3419-455d-917d-025b4e935f42",
+              "name": "Fidelity S&P 500 Index Fund P-ACC-EUR",
+              "isin": "IE00BYX5MX67",
+              "amount": 16248.71
+            }
+          ],
+          "target": [
+            {
+              "id": "5fc8304e-9312-4e0a-bdaf-d85263b51f3e",
+              "name": "Fidelity S&P 500 Index Fund P-ACC-EUR",
+              "isin": "IE00BYX5MX67",
+              "percentage": 20
+            },
+            {
+              "id": "40801717-2b99-4160-8f0e-c264c030aa30",
+              "name": "MyInvestor S&P500 Equiponderado",
+              "isin": "ES0165242001",
+              "percentage": 19
+            },
+            {
+              "id": "04f1af02-5139-4219-9aad-ad9cd3034373",
+              "name": "Fidelity MSCI World Index Fund P-ACC-EUR",
+              "isin": "IE00BYX5NX33",
+              "percentage": 20
+            },
+            {
+              "id": "44a8a7d4-54c8-441c-8d29-008be840815c",
+              "name": "Fidelity MSCI Japan Index Fund P-ACC-EUR",
+              "isin": "IE00BYX5N771",
+              "percentage": 12
+            },
+            {
+              "id": "dbc542b7-4f27-4305-8c75-43fd0eaaf5dc",
+              "name": "iShares Emerging Markets Index Fund (IE) Acc EUR clase S",
+              "isin": "IE000QAZP7L2",
+              "percentage": 14
+            },
+            {
+              "id": "825c7870-fd8c-422d-86d5-6a2c465259be",
+              "name": "Fidelity MSCI Europe Index Fund P-ACC-EUR",
+              "isin": "IE00BYX5MD61",
+              "percentage": 8
+            },
+            {
+              "id": "3937723d-17d9-4077-9f4c-4bb6e12b6673",
+              "name": "Vanguard US Equity Index Fund EUR Hedged",
+              "isin": "IE00B1G3DH73",
+              "percentage": 4
+            },
+            {
+              "id": "0c15e822-2a4e-4598-aae4-5fe5cee7c36b",
+              "name": "Fidelity MSCI Pacific ex-Japan Index Fund P-ACC-USD",
+              "isin": "IE00BDZVHT63",
+              "percentage": 3
+            }
+          ],
+          "transfers": [
+            {
+              "fromName": "BlackRock Institutional Cash Series Euro Ultra Short Bond Core Shares",
+              "fromIsin": "IE00B1B82251",
+              "toName": "Fidelity MSCI World Index Fund P-ACC-EUR",
+              "toIsin": "IE00BYX5NX33",
+              "amount": 11222.67,
+              "done": false
+            },
+            {
+              "fromName": "BlackRock Institutional Cash Series Euro Ultra Short Bond Core Shares",
+              "fromIsin": "IE00B1B82251",
+              "toName": "MyInvestor S&P500 Equiponderado",
+              "toIsin": "ES0165242001",
+              "amount": 10661.54,
+              "done": false
+            },
+            {
+              "fromName": "BlackRock Institutional Cash Series Euro Ultra Short Bond Core Shares",
+              "fromIsin": "IE00B1B82251",
+              "toName": "iShares Emerging Markets Index Fund (IE) Acc EUR clase S",
+              "toIsin": "IE000QAZP7L2",
+              "amount": 7855.87,
+              "done": false
+            },
+            {
+              "fromName": "BlackRock Institutional Cash Series Euro Ultra Short Bond Core Shares",
+              "fromIsin": "IE00B1B82251",
+              "toName": "Fidelity MSCI Japan Index Fund P-ACC-EUR",
+              "toIsin": "IE00BYX5N771",
+              "amount": 6733.6,
+              "done": false
+            },
+            {
+              "fromName": "BlackRock Institutional Cash Series Euro Ultra Short Bond Core Shares",
+              "fromIsin": "IE00B1B82251",
+              "toName": "Fidelity MSCI Europe Index Fund P-ACC-EUR",
+              "toIsin": "IE00BYX5MD61",
+              "amount": 3390.96,
+              "done": false
+            },
+            {
+              "fromName": "Fidelity S&P 500 Index Fund P-ACC-EUR",
+              "fromIsin": "IE00BYX5MX67",
+              "toName": "Fidelity MSCI Europe Index Fund P-ACC-EUR",
+              "toIsin": "IE00BYX5MD61",
+              "amount": 1098.11,
+              "done": false
+            },
+            {
+              "fromName": "Fidelity S&P 500 Index Fund P-ACC-EUR",
+              "fromIsin": "IE00BYX5MX67",
+              "toName": "Vanguard US Equity Index Fund EUR Hedged",
+              "toIsin": "IE00B1G3DH73",
+              "amount": 2244.53,
+              "done": false
+            },
+            {
+              "fromName": "Fidelity S&P 500 Index Fund P-ACC-EUR",
+              "fromIsin": "IE00BYX5MX67",
+              "toName": "Fidelity MSCI Pacific ex-Japan Index Fund P-ACC-USD",
+              "toIsin": "IE00BDZVHT63",
+              "amount": 1683.4,
+              "done": false
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

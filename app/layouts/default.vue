@@ -16,8 +16,8 @@ import {
       <SiteHeader />
       <div class="flex flex-1">
         <AppSidebar />
-        <SidebarInset>
-          <div class="m-5">
+        <SidebarInset class="min-w-0">
+          <div class="m-5 overflow-x-hidden">
             <slot />
           </div>
         </SidebarInset>

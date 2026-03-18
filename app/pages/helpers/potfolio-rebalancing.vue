@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Plus, Trash2, ArrowRightLeft, TrendingUp, TrendingDown, Copy, Check, GripVertical } from 'lucide-vue-next'
+import { Plus, Trash2, ArrowRightLeft, TrendingUp, TrendingDown, Copy, Check, GripVertical, ChevronDown, ChevronRight } from 'lucide-vue-next'
+import { toast } from 'vue-sonner'
 import draggable from 'vuedraggable'
 import { PAGE_NAMES } from '~/pages/routeNames'
 import { cn } from '@/lib/utils'
@@ -8,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Progress } from '@/components/ui/progress'
 import {
   NumberField,
   NumberFieldContent,
@@ -28,6 +30,7 @@ import useFrontDB from '~/db/useFrontDB'
 type PortfolioRebalancingHelper = NonNullable<Workspace['portfolioRebalancingHelper']>
 type CurrentFund = PortfolioRebalancingHelper['current'][number]
 type TargetFund = PortfolioRebalancingHelper['target'][number]
+type Transfer = PortfolioRebalancingHelper['dcaTransfers'][number][number]
 
 definePageMeta({
   name: PAGE_NAMES.HELPERS.PORTFOLIO_REBALANCING,
@@ -48,7 +51,7 @@ const { selectedWorkspace } = storeToRefs(useFrontDB())
 const defaultData: PortfolioRebalancingHelper = {
   current: [],
   target: [],
-  transfers: [],
+  dcaTransfers: [],
 }
 
 if (selectedWorkspace.value && !selectedWorkspace.value.portfolioRebalancingHelper) {
@@ -117,10 +120,38 @@ function removeTargetFund(id: string) {
   if (idx !== -1) portfolio.value.target.splice(idx, 1)
 }
 
+// --- DCA ---
+
+const dcaParts = ref(1)
+const collapsedParts = ref<Set<number>>(new Set())
+
+function togglePartCollapsed(partIndex: number) {
+  if (collapsedParts.value.has(partIndex)) {
+    collapsedParts.value.delete(partIndex)
+  } else {
+    collapsedParts.value.add(partIndex)
+  }
+}
+
+function isPartComplete(part: Transfer[]): boolean {
+  return part.length > 0 && part.every(t => t.done)
+}
+
+function partProgress(part: Transfer[]): { done: number, total: number } {
+  return { done: part.filter(t => t.done).length, total: part.length }
+}
+
+const globalProgress = computed(() => {
+  const all = portfolio.value.dcaTransfers.flat()
+  if (all.length === 0) return { done: 0, total: 0, percent: 0 }
+  const done = all.filter(t => t.done).length
+  return { done, total: all.length, percent: Math.round((done / all.length) * 100) }
+})
+
 // --- Rebalancing algorithm ---
 
-const transfers = computed(() => portfolio.value.transfers)
-const hasCalculated = ref(portfolio.value.transfers.length > 0)
+const dcaTransfers = computed(() => portfolio.value.dcaTransfers)
+const hasCalculated = ref(portfolio.value.dcaTransfers.length > 0)
 
 function calculateRebalancing() {
   if (!canCalculate.value) return
@@ -142,7 +173,6 @@ function calculateRebalancing() {
     const targetAmount = total * (f.percentage / 100)
     if (fundMap.has(f.isin)) {
       fundMap.get(f.isin)!.target = targetAmount
-      // Update name if changed in target
       if (f.name) fundMap.get(f.isin)!.name = f.name
     } else {
       fundMap.set(f.isin, {
@@ -167,11 +197,10 @@ function calculateRebalancing() {
   }
 
   // Greedy matching: minimize number of transfers
-  // Sort sources and destinations by amount descending for better matching
   sources.sort((a, b) => b.excess - a.excess)
   destinations.sort((a, b) => b.needed - a.needed)
 
-  const result: PortfolioRebalancingHelper['transfers'] = []
+  const fullTransfers: Transfer[] = []
   let si = 0
   let di = 0
 
@@ -181,7 +210,7 @@ function calculateRebalancing() {
     const transferAmount = Math.min(source.excess, dest.needed)
 
     if (transferAmount > 0.01) {
-      result.push({
+      fullTransfers.push({
         fromName: source.name,
         fromIsin: source.isin,
         toName: dest.name,
@@ -198,8 +227,28 @@ function calculateRebalancing() {
     if (dest.needed < 0.01) di++
   }
 
-  portfolio.value.transfers = result
+  // Split into DCA parts
+  const parts = Math.max(1, dcaParts.value)
+  const result: Transfer[][] = []
+
+  for (let p = 0; p < parts; p++) {
+    result.push(fullTransfers.map(t => ({
+      ...t,
+      amount: Math.round((t.amount / parts) * 100) / 100,
+      done: false,
+    })))
+  }
+
+  portfolio.value.dcaTransfers = result
+  collapsedParts.value = new Set()
   hasCalculated.value = true
+
+  const totalTransfers = fullTransfers.length
+  if (totalTransfers === 0) {
+    toast.success('Tu cartera ya está balanceada')
+  } else {
+    toast.success('Traspasos calculados')
+  }
 }
 
 const copiedKey = ref<string | null>(null)
@@ -258,81 +307,83 @@ function formatPercentage(value: number): string {
       </CardHeader>
       <CardContent>
         <!-- Desktop table -->
-        <Table
+        <div
           v-if="portfolio.current.length > 0"
-          class="hidden sm:table"
+          class="hidden md:block overflow-x-auto"
         >
-          <TableHeader>
-            <TableRow>
-              <TableHead class="w-10" />
-              <TableHead>Nombre del fondo</TableHead>
-              <TableHead>ISIN</TableHead>
-              <TableHead class="text-right">
-                Monto (€)
-              </TableHead>
-              <TableHead class="text-right">
-                % Cartera
-              </TableHead>
-              <TableHead class="w-10" />
-            </TableRow>
-          </TableHeader>
-          <draggable
-            v-model="portfolio.current"
-            tag="tbody"
-            handle=".drag-handle"
-            itemKey="id"
-            :animation="200"
-          >
-            <template #item="{ element: fund }">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell class="w-10">
-                  <GripVertical class="drag-handle size-4 text-muted-foreground cursor-grab active:cursor-grabbing" />
-                </TableCell>
-                <TableCell>
-                  <Input
-                    v-model="fund.name"
-                    placeholder="Ej: Amundi MSCI World"
-                    class="h-9"
-                  />
-                </TableCell>
-                <TableCell class="w-50">
-                  <Input
-                    v-model="fund.isin"
-                    placeholder="Ej: LU1234567890"
-                    class="h-9 font-mono"
-                  />
-                </TableCell>
-                <TableCell class="text-right w-60">
-                  <NumberField
-                    v-model="fund.amount"
-                    :min="0"
-                    :step="0.01"
-                    :locale="browserLocale"
-                    :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
-                  >
-                    <NumberFieldContent>
-                      <NumberFieldDecrement />
-                      <NumberFieldInput />
-                      <NumberFieldIncrement />
-                    </NumberFieldContent>
-                  </NumberField>
-                </TableCell>
-                <TableCell class="text-right tabular-nums w-30">
-                  {{ formatPercentage(getCurrentPercentage(fund)) }}
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    @click="removeCurrentFund(fund.id)"
-                  >
-                    <Trash2 class="size-4 text-muted-foreground" />
-                  </Button>
-                </TableCell>
+                <TableHead class="w-10" />
+                <TableHead>Nombre del fondo</TableHead>
+                <TableHead>ISIN</TableHead>
+                <TableHead class="text-right">
+                  Monto (€)
+                </TableHead>
+                <TableHead class="text-right">
+                  % Cartera
+                </TableHead>
+                <TableHead class="w-10" />
               </TableRow>
-            </template>
-          </draggable>
-        </Table>
+            </TableHeader>
+            <draggable
+              v-model="portfolio.current"
+              tag="tbody"
+              handle=".drag-handle"
+              itemKey="id"
+              :animation="200"
+            >
+              <template #item="{ element: fund }">
+                <TableRow>
+                  <TableCell class="w-10">
+                    <GripVertical class="drag-handle size-4 text-muted-foreground cursor-grab active:cursor-grabbing" />
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      v-model="fund.name"
+                      placeholder="Ej: Amundi MSCI World"
+                      class="h-9"
+                    />
+                  </TableCell>
+                  <TableCell class="w-50">
+                    <Input
+                      v-model="fund.isin"
+                      placeholder="Ej: LU1234567890"
+                      class="h-9 font-mono"
+                    />
+                  </TableCell>
+                  <TableCell class="text-right w-60">
+                    <NumberField
+                      v-model="fund.amount"
+                      :min="0"
+                      :step="0.01"
+                      :locale="browserLocale"
+                      :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
+                    >
+                      <NumberFieldContent>
+                        <NumberFieldDecrement />
+                        <NumberFieldInput />
+                        <NumberFieldIncrement />
+                      </NumberFieldContent>
+                    </NumberField>
+                  </TableCell>
+                  <TableCell class="text-right tabular-nums w-30">
+                    {{ formatPercentage(getCurrentPercentage(fund)) }}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      @click="removeCurrentFund(fund.id)"
+                    >
+                      <Trash2 class="size-4 text-muted-foreground" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              </template>
+            </draggable>
+          </Table>
+        </div>
 
         <!-- Mobile cards -->
         <draggable
@@ -341,7 +392,7 @@ function formatPercentage(value: number): string {
           handle=".drag-handle"
           itemKey="id"
           :animation="200"
-          class="flex flex-col gap-3 sm:hidden"
+          class="flex flex-col gap-3 md:hidden"
         >
           <template #item="{ element: fund, index }">
             <div class="rounded-lg border p-3 flex flex-col gap-2">
@@ -437,82 +488,84 @@ function formatPercentage(value: number): string {
       </CardHeader>
       <CardContent>
         <!-- Desktop table -->
-        <Table
+        <div
           v-if="portfolio.target.length > 0"
-          class="hidden sm:table"
+          class="hidden md:block overflow-x-auto"
         >
-          <TableHeader>
-            <TableRow>
-              <TableHead class="w-10" />
-              <TableHead>Nombre del fondo</TableHead>
-              <TableHead>ISIN</TableHead>
-              <TableHead class="text-right">
-                % Objetivo
-              </TableHead>
-              <TableHead class="text-right">
-                Monto resultante
-              </TableHead>
-              <TableHead class="w-10" />
-            </TableRow>
-          </TableHeader>
-          <draggable
-            v-model="portfolio.target"
-            tag="tbody"
-            handle=".drag-handle"
-            itemKey="id"
-            :animation="200"
-          >
-            <template #item="{ element: fund }">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell class="w-10">
-                  <GripVertical class="drag-handle size-4 text-muted-foreground cursor-grab active:cursor-grabbing" />
-                </TableCell>
-                <TableCell>
-                  <Input
-                    v-model="fund.name"
-                    placeholder="Ej: Amundi MSCI World"
-                    class="h-9"
-                  />
-                </TableCell>
-                <TableCell class="w-50">
-                  <Input
-                    v-model="fund.isin"
-                    placeholder="Ej: LU1234567890"
-                    class="h-9 font-mono"
-                  />
-                </TableCell>
-                <TableCell class="text-right w-50">
-                  <NumberField
-                    v-model="fund.percentage"
-                    :min="0"
-                    :max="100"
-                    :step="0.01"
-                    :locale="browserLocale"
-                    :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
-                  >
-                    <NumberFieldContent>
-                      <NumberFieldDecrement />
-                      <NumberFieldInput />
-                      <NumberFieldIncrement />
-                    </NumberFieldContent>
-                  </NumberField>
-                </TableCell>
-                <TableCell class="text-right tabular-nums font-medium w-40">
-                  {{ formatCurrency(getTargetAmount(fund)) }}
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    @click="removeTargetFund(fund.id)"
-                  >
-                    <Trash2 class="size-4 text-muted-foreground" />
-                  </Button>
-                </TableCell>
+                <TableHead class="w-10" />
+                <TableHead>Nombre del fondo</TableHead>
+                <TableHead>ISIN</TableHead>
+                <TableHead class="text-right">
+                  % Objetivo
+                </TableHead>
+                <TableHead class="text-right">
+                  Monto resultante
+                </TableHead>
+                <TableHead class="w-10" />
               </TableRow>
-            </template>
-          </draggable>
-        </Table>
+            </TableHeader>
+            <draggable
+              v-model="portfolio.target"
+              tag="tbody"
+              handle=".drag-handle"
+              itemKey="id"
+              :animation="200"
+            >
+              <template #item="{ element: fund }">
+                <TableRow>
+                  <TableCell class="w-10">
+                    <GripVertical class="drag-handle size-4 text-muted-foreground cursor-grab active:cursor-grabbing" />
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      v-model="fund.name"
+                      placeholder="Ej: Amundi MSCI World"
+                      class="h-9"
+                    />
+                  </TableCell>
+                  <TableCell class="w-50">
+                    <Input
+                      v-model="fund.isin"
+                      placeholder="Ej: LU1234567890"
+                      class="h-9 font-mono"
+                    />
+                  </TableCell>
+                  <TableCell class="text-right w-50">
+                    <NumberField
+                      v-model="fund.percentage"
+                      :min="0"
+                      :max="100"
+                      :step="0.01"
+                      :locale="browserLocale"
+                      :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
+                    >
+                      <NumberFieldContent>
+                        <NumberFieldDecrement />
+                        <NumberFieldInput />
+                        <NumberFieldIncrement />
+                      </NumberFieldContent>
+                    </NumberField>
+                  </TableCell>
+                  <TableCell class="text-right tabular-nums font-medium w-40">
+                    {{ formatCurrency(getTargetAmount(fund)) }}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      @click="removeTargetFund(fund.id)"
+                    >
+                      <Trash2 class="size-4 text-muted-foreground" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              </template>
+            </draggable>
+          </Table>
+        </div>
 
         <!-- Mobile cards -->
         <draggable
@@ -521,7 +574,7 @@ function formatPercentage(value: number): string {
           handle=".drag-handle"
           itemKey="id"
           :animation="200"
-          class="flex flex-col gap-3 sm:hidden"
+          class="flex flex-col gap-3 md:hidden"
         >
           <template #item="{ element: fund, index }">
             <div class="rounded-lg border p-3 flex flex-col gap-2">
@@ -602,151 +655,340 @@ function formatPercentage(value: number): string {
       </CardContent>
     </Card>
 
-    <!-- Calculate Button -->
-    <div class="flex justify-center">
-      <Button
-        size="lg"
-        class="w-full sm:w-auto"
-        :disabled="!canCalculate"
-        @click="calculateRebalancing"
-      >
-        <ArrowRightLeft class="size-4 mr-2" />
-        Calcular traspasos óptimos
-      </Button>
-    </div>
+    <!-- Calculate Button + DCA config -->
+    <Card>
+      <CardContent class="pt-6">
+        <div class="flex flex-col sm:flex-row items-center gap-4 justify-center">
+          <div class="flex items-center gap-3">
+            <label
+              for="dca-parts"
+              class="text-sm font-medium whitespace-nowrap"
+            >
+              Dividir en partes (DCA)
+            </label>
+            <NumberField
+              id="dca-parts"
+              v-model="dcaParts"
+              :min="1"
+              :max="24"
+              :step="1"
+              class="w-36"
+            >
+              <NumberFieldContent>
+                <NumberFieldDecrement />
+                <NumberFieldInput />
+                <NumberFieldIncrement />
+              </NumberFieldContent>
+            </NumberField>
+          </div>
+          <Button
+            size="lg"
+            :disabled="!canCalculate"
+            @click="calculateRebalancing"
+          >
+            <ArrowRightLeft class="size-4 mr-2" />
+            Calcular traspasos
+          </Button>
+        </div>
+        <p class="text-xs text-muted-foreground text-center mt-3">
+          {{ dcaParts > 1
+            ? `Los traspasos se dividirán en ${dcaParts} partes iguales para hacer DCA.`
+            : 'Se calculará un único traspaso por movimiento.'
+          }}
+        </p>
+      </CardContent>
+    </Card>
 
     <!-- Results -->
     <Card v-if="hasCalculated">
       <CardHeader>
         <CardTitle>Traspasos necesarios</CardTitle>
         <CardDescription>
-          {{ transfers.length === 0
+          {{ dcaTransfers.length === 0
             ? 'Tu cartera ya está balanceada. No se necesitan traspasos.'
-            : `Se necesitan ${transfers.length} traspaso${transfers.length > 1 ? 's' : ''} para rebalancear tu cartera.`
+            : dcaTransfers.length === 1
+              ? `Se necesitan ${dcaTransfers[0]!.length} traspaso${dcaTransfers[0]!.length > 1 ? 's' : ''} para rebalancear tu cartera.`
+              : `Se necesitan ${dcaTransfers[0]!.length} traspaso${dcaTransfers[0]!.length > 1 ? 's' : ''} divididos en ${dcaTransfers.length} partes (DCA).`
           }}
         </CardDescription>
       </CardHeader>
       <CardContent>
+        <!-- Progress bar -->
         <div
-          v-if="transfers.length > 0"
-          class="flex flex-col gap-3"
+          v-if="globalProgress.total > 0"
+          class="mb-5"
         >
-          <div
-            v-for="(transfer, index) in transfers"
-            :key="index"
-            :class="cn(
-              'flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg border transition-all duration-200',
-              transfer.done
-                ? 'bg-muted/10 border-muted text-muted-foreground/50'
-                : 'bg-muted/30',
-            )"
-          >
-            <div class="flex items-center gap-3 sm:gap-4">
-              <Checkbox
-                v-model="transfer.done"
-                class="size-5 shrink-0"
-              />
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium">
+              Progreso
+            </span>
+            <span class="text-sm tabular-nums text-muted-foreground">
+              {{ globalProgress.done }} de {{ globalProgress.total }} completados
+            </span>
+          </div>
+          <Progress
+            :modelValue="globalProgress.percent"
+            class="h-2"
+          />
+        </div>
 
+        <div
+          v-if="dcaTransfers.length > 0"
+          class="flex flex-col gap-4"
+        >
+          <!-- Single part: no grouping header -->
+          <template v-if="dcaTransfers.length === 1">
+            <div class="flex flex-col gap-3">
               <div
+                v-for="(transfer, tIndex) in dcaTransfers[0]"
+                :key="tIndex"
                 :class="cn(
-                  'flex items-center justify-center size-8 rounded-full text-sm font-semibold shrink-0',
+                  'flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg border transition-all duration-200',
                   transfer.done
-                    ? 'bg-muted/30 text-muted-foreground/50'
-                    : 'bg-primary/10 text-primary',
+                    ? 'bg-muted/10 border-muted text-muted-foreground/50'
+                    : 'bg-muted/30',
                 )"
               >
-                {{ index + 1 }}
-              </div>
-
-              <span :class="cn('text-lg font-semibold tabular-nums sm:hidden', transfer.done && 'text-muted-foreground/50')">
-                {{ formatCurrency(transfer.amount) }}
-              </span>
-            </div>
-
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0 pl-11 sm:pl-0">
-              <!-- Source -->
-              <div class="flex items-center gap-2 min-w-0 sm:flex-1">
-                <Badge
-                  :variant="transfer.done ? undefined : 'destructive'"
-                  :class="cn(
-                    'shrink-0',
-                    transfer.done && 'bg-muted text-muted-foreground/60 hover:bg-muted',
-                  )"
-                >
-                  <TrendingDown class="size-3 mr-1" />
-                  Origen
-                </Badge>
-                <div class="flex flex-col min-w-0">
-                  <span :class="cn('text-sm font-medium truncate', transfer.done && 'text-muted-foreground/50')">{{ transfer.fromName }}</span>
-                  <span class="inline-flex items-center gap-1">
-                    <span :class="cn('text-xs font-mono', transfer.done ? 'text-muted-foreground/40' : 'text-muted-foreground')">{{ transfer.fromIsin }}</span>
-                    <button
-                      class="inline-flex items-center justify-center size-4 rounded hover:bg-muted-foreground/10 transition-colors"
-                      @click="copyIsin(transfer.fromIsin, `${index}-from`)"
-                    >
-                      <Check
-                        v-if="copiedKey === `${index}-from`"
-                        class="size-3 text-green-500"
-                      />
-                      <Copy
-                        v-else
-                        :class="cn('size-3', transfer.done ? 'text-muted-foreground/40' : 'text-muted-foreground')"
-                      />
-                    </button>
-                  </span>
-                </div>
-              </div>
-
-              <ArrowRightLeft :class="cn('size-4 shrink-0 hidden sm:block', transfer.done ? 'text-muted-foreground/30' : 'text-muted-foreground')" />
-
-              <!-- Destination -->
-              <div class="flex items-center gap-2 min-w-0 sm:flex-1">
-                <Badge
-                  :class="cn(
-                    'shrink-0',
-                    transfer.done
-                      ? 'bg-muted text-muted-foreground/60 hover:bg-muted'
-                      : 'bg-green-800 text-white hover:bg-green-800/80',
-                  )"
-                >
-                  <TrendingUp class="size-3 mr-1" />
-                  Destino
-                </Badge>
-                <div class="flex flex-col min-w-0">
-                  <span
+                <div class="flex items-center gap-3 sm:gap-4">
+                  <Checkbox
+                    v-model="transfer.done"
+                    class="size-5 shrink-0"
+                  />
+                  <div
                     :class="cn(
-                      'text-sm font-medium truncate',
+                      'flex items-center justify-center size-8 rounded-full text-sm font-semibold shrink-0',
                       transfer.done
-                        ? 'text-muted-foreground/50'
-                        : 'text-green-800 dark:text-green-400',
+                        ? 'bg-muted/30 text-muted-foreground/50'
+                        : 'bg-primary/10 text-primary',
                     )"
-                  >{{ transfer.toName }}</span>
-                  <span class="inline-flex items-center gap-1">
-                    <span :class="cn('text-xs font-mono', transfer.done ? 'text-muted-foreground/40' : 'text-green-700/70 dark:text-green-500/70')">{{ transfer.toIsin }}</span>
-                    <button
-                      class="inline-flex items-center justify-center size-4 rounded hover:bg-muted-foreground/10 transition-colors"
-                      @click="copyIsin(transfer.toIsin, `${index}-to`)"
+                  >
+                    {{ tIndex + 1 }}
+                  </div>
+                  <span :class="cn('text-lg font-semibold tabular-nums sm:hidden', transfer.done && 'text-muted-foreground/50')">
+                    {{ formatCurrency(transfer.amount) }}
+                  </span>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0 pl-11 sm:pl-0">
+                  <div class="flex items-center gap-2 min-w-0 sm:flex-1">
+                    <Badge
+                      :variant="transfer.done ? undefined : 'destructive'"
+                      :class="cn('shrink-0', transfer.done && 'bg-muted text-muted-foreground/60 hover:bg-muted')"
                     >
-                      <Check
-                        v-if="copiedKey === `${index}-to`"
-                        class="size-3 text-green-500"
-                      />
-                      <Copy
-                        v-else
-                        :class="cn('size-3', transfer.done ? 'text-muted-foreground/40' : 'text-muted-foreground')"
-                      />
-                    </button>
+                      <TrendingDown class="size-3 mr-1" />
+                      Origen
+                    </Badge>
+                    <div class="flex flex-col min-w-0">
+                      <span :class="cn('text-sm font-medium truncate', transfer.done && 'text-muted-foreground/50')">{{ transfer.fromName }}</span>
+                      <span class="inline-flex items-center gap-1">
+                        <span :class="cn('text-xs font-mono', transfer.done ? 'text-muted-foreground/40' : 'text-muted-foreground')">{{ transfer.fromIsin }}</span>
+                        <button
+                          class="inline-flex items-center justify-center size-4 rounded hover:bg-muted-foreground/10 transition-colors"
+                          @click="copyIsin(transfer.fromIsin, `0-${tIndex}-from`)"
+                        >
+                          <Check
+                            v-if="copiedKey === `0-${tIndex}-from`"
+                            class="size-3 text-green-500"
+                          />
+                          <Copy
+                            v-else
+                            :class="cn('size-3', transfer.done ? 'text-muted-foreground/40' : 'text-muted-foreground')"
+                          />
+                        </button>
+                      </span>
+                    </div>
+                  </div>
+
+                  <ArrowRightLeft :class="cn('size-4 shrink-0 hidden sm:block', transfer.done ? 'text-muted-foreground/30' : 'text-muted-foreground')" />
+
+                  <div class="flex items-center gap-2 min-w-0 sm:flex-1">
+                    <Badge
+                      :class="cn('shrink-0', transfer.done ? 'bg-muted text-muted-foreground/60 hover:bg-muted' : 'bg-green-800 text-white hover:bg-green-800/80')"
+                    >
+                      <TrendingUp class="size-3 mr-1" />
+                      Destino
+                    </Badge>
+                    <div class="flex flex-col min-w-0">
+                      <span :class="cn('text-sm font-medium truncate', transfer.done ? 'text-muted-foreground/50' : 'text-green-800 dark:text-green-400')">{{ transfer.toName }}</span>
+                      <span class="inline-flex items-center gap-1">
+                        <span :class="cn('text-xs font-mono', transfer.done ? 'text-muted-foreground/40' : 'text-green-700/70 dark:text-green-500/70')">{{ transfer.toIsin }}</span>
+                        <button
+                          class="inline-flex items-center justify-center size-4 rounded hover:bg-muted-foreground/10 transition-colors"
+                          @click="copyIsin(transfer.toIsin, `0-${tIndex}-to`)"
+                        >
+                          <Check
+                            v-if="copiedKey === `0-${tIndex}-to`"
+                            class="size-3 text-green-500"
+                          />
+                          <Copy
+                            v-else
+                            :class="cn('size-3', transfer.done ? 'text-muted-foreground/40' : 'text-muted-foreground')"
+                          />
+                        </button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-right shrink-0 hidden sm:block">
+                  <span :class="cn('text-lg font-semibold tabular-nums', transfer.done && 'text-muted-foreground/50')">
+                    {{ formatCurrency(transfer.amount) }}
                   </span>
                 </div>
               </div>
             </div>
+          </template>
 
-            <div class="text-right shrink-0 hidden sm:block">
-              <span :class="cn('text-lg font-semibold tabular-nums', transfer.done && 'text-muted-foreground/50')">
-                {{ formatCurrency(transfer.amount) }}
-              </span>
+          <!-- Multiple DCA parts: collapsible groups -->
+          <template v-else>
+            <div
+              v-for="(part, partIndex) in dcaTransfers"
+              :key="partIndex"
+              class="flex flex-col gap-0 rounded-lg border overflow-hidden"
+            >
+              <!-- Part header (clickable to collapse) -->
+              <button
+                class="flex flex-col gap-2 p-4 pb-3 w-full text-left hover:bg-muted/50 transition-colors"
+                @click="togglePartCollapsed(partIndex)"
+              >
+                <div class="flex items-center gap-3 w-full">
+                  <component
+                    :is="collapsedParts.has(partIndex) ? ChevronRight : ChevronDown"
+                    class="size-4 shrink-0 text-muted-foreground"
+                  />
+                  <div class="flex items-center gap-2 flex-1 min-w-0">
+                    <span class="font-semibold">
+                      Parte {{ partIndex + 1 }} de {{ dcaTransfers.length }}
+                    </span>
+                    <Badge
+                      v-if="isPartComplete(part)"
+                      class="bg-green-800 text-white hover:bg-green-800/80"
+                    >
+                      <Check class="size-3 mr-1" />
+                      Completada
+                    </Badge>
+                    <Badge
+                      v-else
+                      variant="secondary"
+                    >
+                      {{ partProgress(part).done }}/{{ partProgress(part).total }}
+                    </Badge>
+                  </div>
+                  <span class="text-sm font-medium tabular-nums text-muted-foreground">
+                    {{ formatCurrency(part.reduce((sum, t) => sum + t.amount, 0)) }}
+                  </span>
+                </div>
+                <Progress
+                  :modelValue="partProgress(part).total > 0 ? Math.round((partProgress(part).done / partProgress(part).total) * 100) : 0"
+                  class="h-1.5"
+                />
+              </button>
+
+              <!-- Part transfers -->
+              <div
+                v-if="!collapsedParts.has(partIndex)"
+                class="flex flex-col gap-3 mt-2 p-3 sm:p-4 pt-0 sm:pt-0"
+              >
+                <div
+                  v-for="(transfer, tIndex) in part"
+                  :key="tIndex"
+                  :class="cn(
+                    'flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg border transition-all duration-200',
+                    transfer.done
+                      ? 'bg-muted/10 border-muted text-muted-foreground/50'
+                      : 'bg-muted/30',
+                  )"
+                >
+                  <div class="flex items-center gap-3 sm:gap-4">
+                    <Checkbox
+                      v-model="transfer.done"
+                      class="size-5 shrink-0"
+                    />
+                    <div
+                      :class="cn(
+                        'flex items-center justify-center size-8 rounded-full text-sm font-semibold shrink-0',
+                        transfer.done
+                          ? 'bg-muted/30 text-muted-foreground/50'
+                          : 'bg-primary/10 text-primary',
+                      )"
+                    >
+                      {{ tIndex + 1 }}
+                    </div>
+                    <span :class="cn('text-lg font-semibold tabular-nums sm:hidden', transfer.done && 'text-muted-foreground/50')">
+                      {{ formatCurrency(transfer.amount) }}
+                    </span>
+                  </div>
+
+                  <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0 pl-11 sm:pl-0">
+                    <div class="flex items-center gap-2 min-w-0 sm:flex-1">
+                      <Badge
+                        :variant="transfer.done ? undefined : 'destructive'"
+                        :class="cn('shrink-0', transfer.done && 'bg-muted text-muted-foreground/60 hover:bg-muted')"
+                      >
+                        <TrendingDown class="size-3 mr-1" />
+                        Origen
+                      </Badge>
+                      <div class="flex flex-col min-w-0">
+                        <span :class="cn('text-sm font-medium truncate', transfer.done && 'text-muted-foreground/50')">{{ transfer.fromName }}</span>
+                        <span class="inline-flex items-center gap-1">
+                          <span :class="cn('text-xs font-mono', transfer.done ? 'text-muted-foreground/40' : 'text-muted-foreground')">{{ transfer.fromIsin }}</span>
+                          <button
+                            class="inline-flex items-center justify-center size-4 rounded hover:bg-muted-foreground/10 transition-colors"
+                            @click.stop="copyIsin(transfer.fromIsin, `${partIndex}-${tIndex}-from`)"
+                          >
+                            <Check
+                              v-if="copiedKey === `${partIndex}-${tIndex}-from`"
+                              class="size-3 text-green-500"
+                            />
+                            <Copy
+                              v-else
+                              :class="cn('size-3', transfer.done ? 'text-muted-foreground/40' : 'text-muted-foreground')"
+                            />
+                          </button>
+                        </span>
+                      </div>
+                    </div>
+
+                    <ArrowRightLeft :class="cn('size-4 shrink-0 hidden sm:block', transfer.done ? 'text-muted-foreground/30' : 'text-muted-foreground')" />
+
+                    <div class="flex items-center gap-2 min-w-0 sm:flex-1">
+                      <Badge
+                        :class="cn('shrink-0', transfer.done ? 'bg-muted text-muted-foreground/60 hover:bg-muted' : 'bg-green-800 text-white hover:bg-green-800/80')"
+                      >
+                        <TrendingUp class="size-3 mr-1" />
+                        Destino
+                      </Badge>
+                      <div class="flex flex-col min-w-0">
+                        <span :class="cn('text-sm font-medium truncate', transfer.done ? 'text-muted-foreground/50' : 'text-green-800 dark:text-green-400')">{{ transfer.toName }}</span>
+                        <span class="inline-flex items-center gap-1">
+                          <span :class="cn('text-xs font-mono', transfer.done ? 'text-muted-foreground/40' : 'text-green-700/70 dark:text-green-500/70')">{{ transfer.toIsin }}</span>
+                          <button
+                            class="inline-flex items-center justify-center size-4 rounded hover:bg-muted-foreground/10 transition-colors"
+                            @click.stop="copyIsin(transfer.toIsin, `${partIndex}-${tIndex}-to`)"
+                          >
+                            <Check
+                              v-if="copiedKey === `${partIndex}-${tIndex}-to`"
+                              class="size-3 text-green-500"
+                            />
+                            <Copy
+                              v-else
+                              :class="cn('size-3', transfer.done ? 'text-muted-foreground/40' : 'text-muted-foreground')"
+                            />
+                          </button>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="text-right shrink-0 hidden sm:block">
+                    <span :class="cn('text-lg font-semibold tabular-nums', transfer.done && 'text-muted-foreground/50')">
+                      {{ formatCurrency(transfer.amount) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          </template>
         </div>
 
         <div
