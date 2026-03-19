@@ -4,6 +4,7 @@
 <script setup lang="ts">
 import AppSidebar from './default/components/AppSidebar.vue'
 import SiteHeader from './default/components/SiteHeader.vue'
+import { Heart } from 'lucide-vue-next'
 import {
   SidebarInset,
   SidebarProvider,
@@ -23,5 +24,27 @@ import {
         </SidebarInset>
       </div>
     </SidebarProvider>
+    <footer class="border-t border-border/40 py-4 px-6 text-center text-xs text-muted-foreground/60">
+      <div class="flex flex-col items-center gap-1 sm:flex-row sm:justify-center sm:gap-4">
+        <span>
+          Made with <Heart class="inline-block size-3.5 text-red-500 fill-red-500" /> by
+          <a
+            href="https://github.com/FelipeSanchezCalzada"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="underline underline-offset-4 hover:text-foreground transition-colors"
+          >Felipe Sanchez</a>
+        </span>
+        <span class="hidden sm:inline">&middot;</span>
+        <a
+          href="https://github.com/FelipeSanchezCalzada/investoolsapp"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="underline underline-offset-4 hover:text-foreground transition-colors"
+        >GitHub</a>
+        <span class="hidden sm:inline">&middot;</span>
+        <span>AGPL-3.0 License</span>
+      </div>
+    </footer>
   </div>
 </template>
