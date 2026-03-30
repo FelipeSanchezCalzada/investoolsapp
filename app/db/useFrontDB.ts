@@ -1,4 +1,6 @@
 import { skipHydrate } from 'pinia'
+import { useIDBKeyval } from '@vueuse/integrations/useIDBKeyval'
+import { until } from '@vueuse/core'
 import { CURRENT_DB_VERSION, type StorageFrontDB, type Workspace } from '~/db/types'
 import { migrationsMap } from '~/db/migrations'
 
@@ -18,11 +20,11 @@ const EMPTY_DB: StorageFrontDB = {
 export const useFrontDB = defineStore('frontDB', () => {
   const isInitialized = ref(false)
 
-  const storageFrontDB = useLocalStorage<StorageFrontDB>('frontDB', EMPTY_DB)
+  const { data: storageFrontDB, isFinished: isIDBLoaded } = useIDBKeyval<StorageFrontDB>('frontDB', structuredClone(EMPTY_DB), { shallow: false })
   const workspaces = computed(() => storageFrontDB.value.data.workspaces)
   const selectedWorkspace = ref<Workspace>()
 
-  const initializeDB = () => {
+  const runMigrations = () => {
     while (storageFrontDB.value.version < CURRENT_DB_VERSION) {
       const migrationKey = `v${storageFrontDB.value.version}-v${storageFrontDB.value.version + 1}` as keyof typeof migrationsMap
       const migrationFn = migrationsMap[migrationKey]
@@ -32,7 +34,11 @@ export const useFrontDB = defineStore('frontDB', () => {
       storageFrontDB.value.data = migrationFn(storageFrontDB.value.data as never)
       storageFrontDB.value.version = storageFrontDB.value.version + 1
     }
+  }
 
+  const initializeDB = async () => {
+    await until(isIDBLoaded).toBe(true)
+    runMigrations()
     const initialSelectedWorkspace = storageFrontDB.value.data.workspaces.find(ws => ws.name === storageFrontDB.value.data.selectedWorkspaceName)
     if (initialSelectedWorkspace) {
       selectedWorkspace.value = initialSelectedWorkspace
@@ -40,8 +46,11 @@ export const useFrontDB = defineStore('frontDB', () => {
     isInitialized.value = true
   }
 
+  initializeDB().then()
+
   const resetDB = () => {
-    storageFrontDB.value = EMPTY_DB
+    storageFrontDB.value = structuredClone(EMPTY_DB)
+    initializeDB().then()
   }
 
   const exportJson = () => {
@@ -51,7 +60,12 @@ export const useFrontDB = defineStore('frontDB', () => {
   const importJsonDB = (jsonDB: string) => {
     storageFrontDB.value = JSON.parse(jsonDB)
     isInitialized.value = false
-    initializeDB()
+    runMigrations()
+    const initialSelectedWorkspace = storageFrontDB.value.data.workspaces.find(ws => ws.name === storageFrontDB.value.data.selectedWorkspaceName)
+    if (initialSelectedWorkspace) {
+      selectedWorkspace.value = initialSelectedWorkspace
+    }
+    isInitialized.value = true
     return true
   }
 
@@ -67,13 +81,8 @@ export const useFrontDB = defineStore('frontDB', () => {
     storageFrontDB.value.data.selectedWorkspaceName = value.name
   }, { deep: true })
 
-  watch(() => storageFrontDB.value.data.selectedWorkspaceName, (newSelectedWorkspaceName) => {
-    console.log(newSelectedWorkspaceName)
-  })
-
   return {
     isInitialized: skipHydrate(isInitialized),
-    initializeDB,
     resetDB,
     exportJson,
     importJsonDB,

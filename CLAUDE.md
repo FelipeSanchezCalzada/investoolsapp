@@ -35,9 +35,9 @@ Aplicación de herramientas de inversión (investment tools) construida con Nuxt
 
 ### Estado y datos
 - **Pinia** (`@pinia/nuxt 0.11.3`) — state management
-- **useFrontDB** — store Pinia con persistencia en **localStorage** (no hay backend aún)
-  - Esquema en [app/db/types/FrontDBv1.ts](app/db/types/FrontDBv1.ts)
-  - Versión actual del schema: `CURRENT_DB_VERSION = 1`
+- **useFrontDB** — store Pinia con persistencia en **IndexedDB** via `idb-keyval` + `useIDBKeyval` (no hay backend aún)
+  - Esquema en [app/db/types/FrontDBv2.ts](app/db/types/FrontDBv2.ts)
+  - Versión actual del schema: `CURRENT_DB_VERSION = 2`
   - Migraciones en [app/db/migrations.ts](app/db/migrations.ts)
 
 ### Utilidades
@@ -59,7 +59,7 @@ investoolsapp/
 │   ├── app.vue                  # Entry point de la app
 │   ├── assets/css/tailwind.css  # Variables de tema y estilos base
 │   ├── components/ui/           # Componentes shadcn (NO editar manualmente)
-│   ├── db/                      # Base de datos frontend (localStorage)
+│   ├── db/                      # Base de datos frontend (IndexedDB)
 │   │   ├── migrations.ts        # Migraciones de schema
 │   │   ├── types.ts             # Tipos y versión actual
 │   │   ├── types/FrontDBv1.ts   # Schema v1
@@ -126,7 +126,7 @@ bunx shadcn-vue@latest add <component-name>
 Los componentes se instalan en `app/components/ui/`.
 
 ### Estado global
-Usar Pinia stores. Si se necesita persistencia, modelar como `useFrontDB.ts` con localStorage.
+Usar Pinia stores. Si se necesita persistencia, modelar como `useFrontDB.ts` con IndexedDB.
 
 ---
 
@@ -146,5 +146,5 @@ Usar Pinia stores. Si se necesita persistencia, modelar como `useFrontDB.ts` con
 
 - Los ítems de menú con prefijo `***` en [NavMain.vue](app/layouts/default/components/NavMain.vue) son placeholders pendientes de implementar.
 - El directorio `app/pages/tools/` está vacío, listo para las herramientas de inversión.
-- No hay backend — toda la persistencia es localStorage vía `useFrontDB`.
+- No hay backend — toda la persistencia es IndexedDB vía `useFrontDB`.
 - `WorkspaceSwitcher` usa datos mock por ahora; conectar con `useFrontDB` cuando se implemente la gestión de workspaces.
