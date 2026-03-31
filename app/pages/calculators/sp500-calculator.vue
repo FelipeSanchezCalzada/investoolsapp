@@ -2,11 +2,11 @@
 import { PAGE_NAMES } from '~/pages/routeNames'
 import type { Workspace } from '~/db/types'
 import useFrontDB from '~/db/useFrontDB'
-import InputCard from '~/components/helpers/sp500-calculator/InputCard.vue'
-import ResultsChartCard from '~/components/helpers/sp500-calculator/ResultsChartCard.vue'
+import InputCard from '~/components/calculators/sp500-calculator/InputCard.vue'
+import ResultsChartCard from '~/components/calculators/sp500-calculator/ResultsChartCard.vue'
 
 definePageMeta({
-  name: PAGE_NAMES.HELPERS.SP500_CALCULATOR,
+  name: PAGE_NAMES.CALCULATORS.SP500,
   breadcrumb: [
     { label: 'Home', to: { name: PAGE_NAMES.INDEX } },
     { label: 'Calculadora S&P 500' },
@@ -33,8 +33,12 @@ watchImmediate(selectedWorkspace, (ws) => {
 
 const { loadData, calculate, isLoading, results } = useSP500Calculator()
 
-onMounted(() => {
-  loadData()
+onMounted(async () => {
+  await loadData()
+  const calc = selectedWorkspace.value?.sp500Calculator
+  if (calc && (calc.initialAmount > 0 || calc.monthlyDCA > 0) && calc.years > 0) {
+    onCalculate()
+  }
 })
 
 function onCalculate() {
@@ -52,6 +56,8 @@ function onCalculate() {
       </h1>
       <p class="text-muted-foreground mt-1">
         Simula tu inversión con DCA usando datos históricos del S&P 500 para ver el mejor, peor y caso actual.
+        Esta herramienta funciona con datos históricos desde el año 1927 del S&P 500. Los valores son en dólares (USD).
+        No importa que tu trabajes en otras divisa, esta herramienta es solo una estimation.
       </p>
     </div>
 

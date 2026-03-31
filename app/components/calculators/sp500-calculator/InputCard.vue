@@ -75,7 +75,8 @@ const canCalculate = computed(() =>
             v-model="initialAmount"
             :min="0"
             :step="100"
-            :formatOptions="{ style: 'currency', currency: 'EUR' }"
+            locale="es-ES"
+            :formatOptions="{ style: 'currency', currency: 'USD' }"
           >
             <NumberFieldContent>
               <NumberFieldDecrement />
@@ -97,7 +98,8 @@ const canCalculate = computed(() =>
             v-model="monthlyDCA"
             :min="0"
             :step="50"
-            :formatOptions="{ style: 'currency', currency: 'EUR' }"
+            locale="es-ES"
+            :formatOptions="{ style: 'currency', currency: 'USD' }"
           >
             <NumberFieldContent>
               <NumberFieldDecrement />
@@ -120,6 +122,7 @@ const canCalculate = computed(() =>
             :min="1"
             :max="50"
             :step="1"
+            locale="es-ES"
           >
             <NumberFieldContent>
               <NumberFieldDecrement />

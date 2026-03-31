@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@pinia/nuxt',
     '@vueuse/nuxt',
+    'nuxt-echarts',
   ],
   ssr: false,
   devtools: { enabled: true },
@@ -19,7 +20,7 @@ export default defineNuxtConfig({
     },
   },
   css: [
-    './app/assets/css/tailwind.css',
+    '~/assets/css/tailwind.css',
   ],
   colorMode: {
     classSuffix: '',
@@ -30,6 +31,10 @@ export default defineNuxtConfig({
       // @ts-expect-error: Remove when tailwindcss fix this
       tailwindcss(),
     ],
+  },
+  echarts: {
+    charts: ['LineChart'],
+    components: ['TooltipComponent', 'LegendComponent', 'GridComponent'],
   },
   eslint: {
     config: {

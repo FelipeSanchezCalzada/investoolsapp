@@ -13,20 +13,92 @@ const props = defineProps<{
   } | null
 }>()
 
-const euroFormatter = new Intl.NumberFormat('es-ES', {
+const usdFormatter = new Intl.NumberFormat('es-ES', {
   style: 'currency',
-  currency: 'EUR',
+  currency: 'USD',
   maximumFractionDigits: 0,
+})
+
+const chartOption = computed(() => {
+  if (!props.results) return {}
+
+  return {
+    tooltip: {
+      trigger: 'axis',
+      valueFormatter: (value: number) => usdFormatter.format(value),
+    },
+    legend: {
+      top: 0,
+    },
+    grid: {
+      left: 80,
+      right: 20,
+      bottom: 30,
+      top: 40,
+    },
+    xAxis: {
+      type: 'category',
+      data: props.results.labels,
+      axisLabel: {
+        interval: (index: number) => props.results!.labels[index] !== '',
+        rotate: 45,
+      },
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: (value: number) => usdFormatter.format(value),
+      },
+    },
+    series: [
+      {
+        name: 'Dinero invertido',
+        type: 'line',
+        data: props.results.invested,
+        smooth: 0.4,
+        symbol: 'none',
+        lineStyle: { type: 'dashed', color: '#6b7280' },
+        itemStyle: { color: '#6b7280' },
+      },
+      {
+        name: 'Peor caso histórico',
+        type: 'line',
+        data: props.results.worstCase,
+        smooth: 0.4,
+        symbol: 'none',
+        lineStyle: { color: '#ef4444' },
+        itemStyle: { color: '#ef4444' },
+      },
+      {
+        name: 'Caso actual',
+        type: 'line',
+        data: props.results.currentCase,
+        smooth: 0.4,
+        symbol: 'none',
+        lineStyle: { color: '#3b82f6' },
+        itemStyle: { color: '#3b82f6' },
+      },
+      {
+        name: 'Mejor caso histórico',
+        type: 'line',
+        data: props.results.bestCase,
+        smooth: 0.4,
+        symbol: 'none',
+        lineStyle: { color: '#22c55e' },
+        itemStyle: { color: '#22c55e' },
+      },
+    ],
+  }
 })
 
 const finalSummary = computed(() => {
   if (!props.results) return null
   const last = (arr: number[]) => arr[arr.length - 1]!
   return {
-    invested: euroFormatter.format(last(props.results.invested)),
-    worstCase: euroFormatter.format(last(props.results.worstCase)),
-    bestCase: euroFormatter.format(last(props.results.bestCase)),
-    currentCase: euroFormatter.format(last(props.results.currentCase)),
+    invested: usdFormatter.format(last(props.results.invested)),
+    worstCase: usdFormatter.format(last(props.results.worstCase)),
+    bestCase: usdFormatter.format(last(props.results.bestCase)),
+    currentCase: usdFormatter.format(last(props.results.currentCase)),
   }
 })
 </script>
@@ -55,7 +127,12 @@ const finalSummary = computed(() => {
       </div>
 
       <template v-else>
-        <!-- TODO: Gráfico echarts aquí -->
+        <div style="width: 100%; height: 500px;">
+          <VChart
+            :option="chartOption"
+            autoresize
+          />
+        </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
           <div class="rounded-lg border p-3 text-center">

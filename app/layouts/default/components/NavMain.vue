@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronRight, Toolbox } from 'lucide-vue-next'
+import { Calculator, ChevronRight, Toolbox } from 'lucide-vue-next'
 
 import {
   Collapsible,
@@ -30,9 +30,15 @@ const menuItems = computed(() => {
         title: 'Rebalanceo de fondos',
         routeName: PAGE_NAMES.HELPERS.PORTFOLIO_REBALANCING,
       },
+    ],
+  }, {
+    title: 'Calculadoras',
+    icon: Calculator,
+    isActive: true,
+    items: [
       {
         title: 'Calculadora S&P 500',
-        routeName: PAGE_NAMES.HELPERS.SP500_CALCULATOR,
+        routeName: PAGE_NAMES.CALCULATORS.SP500,
       },
     ],
   }]
