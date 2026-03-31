@@ -30,6 +30,10 @@ const menuItems = computed(() => {
         title: 'Rebalanceo de fondos',
         routeName: PAGE_NAMES.HELPERS.PORTFOLIO_REBALANCING,
       },
+      {
+        title: 'Calculadora S&P 500',
+        routeName: PAGE_NAMES.HELPERS.SP500_CALCULATOR,
+      },
     ],
   }]
 })

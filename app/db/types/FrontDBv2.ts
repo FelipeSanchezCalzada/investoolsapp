@@ -27,11 +27,18 @@ type PortfolioRebalancingHelper = {
   dcaTransfers: PortfolioRebalancingTransfer[][]
 }
 
+type SP500CalculatorInputs = {
+  initialAmount: number
+  monthlyDCA: number
+  years: number
+}
+
 export type FrontDBv2 = {
   selectedWorkspaceName?: string
   workspaces: {
     name: string
     description: string
     portfolioRebalancingHelper?: PortfolioRebalancingHelper
+    sp500Calculator?: SP500CalculatorInputs
   }[]
 }
