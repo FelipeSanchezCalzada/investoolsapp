@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { Calculator } from 'lucide-vue-next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import {
   NumberField,
   NumberFieldContent,
@@ -11,14 +9,6 @@ import {
 } from '@/components/ui/number-field'
 import type { Workspace } from '~/db/types'
 import useFrontDB from '~/db/useFrontDB'
-
-const emit = defineEmits<{
-  calculate: []
-}>()
-
-defineProps<{
-  isCalculating: boolean
-}>()
 
 const { selectedWorkspace } = storeToRefs(useFrontDB())
 
@@ -48,10 +38,6 @@ const years = computed({
     if (calculator.value) calculator.value.years = v
   },
 })
-
-const canCalculate = computed(() =>
-  (initialAmount.value > 0 || monthlyDCA.value > 0) && years.value > 0,
-)
 </script>
 
 <template>
@@ -131,17 +117,6 @@ const canCalculate = computed(() =>
             </NumberFieldContent>
           </NumberField>
         </div>
-      </div>
-
-      <div class="flex justify-center mt-6">
-        <Button
-          size="lg"
-          :disabled="!canCalculate || isCalculating"
-          @click="emit('calculate')"
-        >
-          <Calculator class="size-4 mr-2" />
-          {{ isCalculating ? 'Calculando...' : 'Calcular' }}
-        </Button>
       </div>
     </CardContent>
   </Card>

@@ -1,6 +1,13 @@
+import useFrontDB from '~/db/useFrontDB'
+
 interface SP500DataPoint {
   date: Date
   value: number
+}
+
+interface YearRange {
+  startYear: number
+  endYear: number
 }
 
 interface SimulationResult {
@@ -9,6 +16,9 @@ interface SimulationResult {
   worstCase: number[]
   bestCase: number[]
   currentCase: number[]
+  worstCaseRange: YearRange
+  bestCaseRange: YearRange
+  currentCaseRange: YearRange
 }
 
 function parseCSV(raw: string): SP500DataPoint[] {
@@ -16,8 +26,7 @@ function parseCSV(raw: string): SP500DataPoint[] {
   const data: SP500DataPoint[] = []
 
   for (let i = 1; i < lines.length; i++) {
-    const line = lines[i]!.replace(/"/g, '')
-    const [dateStr, valueStr] = line.split(';')
+    const [dateStr, valueStr] = lines[i]!.split(';')
     if (!dateStr || !valueStr) continue
 
     const [month, day, year] = dateStr.split('/')
@@ -50,10 +59,25 @@ function simulateWindow(
   return values
 }
 
+const sp500Data = ref<SP500DataPoint[]>([])
+const isLoading = ref(false)
+const results = ref<SimulationResult | null>(null)
+
+const DEFAULT_CALCULATOR_DATA = {
+  initialAmount: 10000,
+  monthlyDCA: 500,
+  years: 10,
+}
+
 export function useSP500Calculator() {
-  const sp500Data = ref<SP500DataPoint[]>([])
-  const isLoading = ref(false)
-  const results = ref<SimulationResult | null>(null)
+  const { selectedWorkspace } = storeToRefs(useFrontDB())
+
+  // Ensure calculator data exists on workspace
+  watchImmediate(selectedWorkspace, (ws) => {
+    if (ws && !ws.sp500Calculator) {
+      ws.sp500Calculator = { ...DEFAULT_CALCULATOR_DATA }
+    }
+  })
 
   async function loadData() {
     if (sp500Data.value.length > 0) return
@@ -66,23 +90,23 @@ export function useSP500Calculator() {
     isLoading.value = true
     results.value = null
 
-    // Use requestAnimationFrame to let the UI update (show spinner)
     requestAnimationFrame(() => {
       try {
         const data = sp500Data.value
         const months = years * 12
-        const windowSize = months + 1 // need N+1 points for N months of DCA
+        const windowSize = months + 1
 
         if (data.length < windowSize) {
           isLoading.value = false
           return
         }
 
-        // Simulate all possible windows
         let worstFinal = Infinity
         let bestFinal = -Infinity
         let worstWindow: number[] = []
         let bestWindow: number[] = []
+        let worstStart = 0
+        let bestStart = 0
 
         const totalWindows = data.length - windowSize + 1
 
@@ -94,24 +118,24 @@ export function useSP500Calculator() {
           if (finalValue < worstFinal) {
             worstFinal = finalValue
             worstWindow = sim
+            worstStart = start
           }
           if (finalValue > bestFinal) {
             bestFinal = finalValue
             bestWindow = sim
+            bestStart = start
           }
         }
 
-        // Current case: last N years
+        const currentStart = data.length - windowSize
         const currentPrices = data.slice(-windowSize).map(d => d.value)
         const currentWindow = simulateWindow(currentPrices, initialAmount, monthlyDCA)
 
-        // Invested money (linear)
         const invested: number[] = []
         for (let m = 0; m <= months; m++) {
           invested.push(initialAmount + monthlyDCA * m)
         }
 
-        // Labels (Month 0, 1, 2... in years)
         const labels: string[] = []
         for (let m = 0; m <= months; m++) {
           if (m % 12 === 0) {
@@ -121,12 +145,20 @@ export function useSP500Calculator() {
           }
         }
 
+        const rangeOf = (start: number): YearRange => ({
+          startYear: data[start]!.date.getFullYear(),
+          endYear: data[start + windowSize - 1]!.date.getFullYear(),
+        })
+
         results.value = {
           labels,
           invested,
           worstCase: worstWindow,
           bestCase: bestWindow,
           currentCase: currentWindow,
+          worstCaseRange: rangeOf(worstStart),
+          bestCaseRange: rangeOf(bestStart),
+          currentCaseRange: rangeOf(currentStart),
         }
       } finally {
         isLoading.value = false
@@ -134,9 +166,27 @@ export function useSP500Calculator() {
     })
   }
 
+  // Auto-load data on first use
+  onMounted(() => loadData())
+
+  // Auto-recalculate when data is loaded and inputs change
+  watch(
+    () => {
+      if (sp500Data.value.length === 0) return null
+      const calc = selectedWorkspace.value?.sp500Calculator
+      if (!calc) return null
+      return { initialAmount: calc.initialAmount, monthlyDCA: calc.monthlyDCA, years: calc.years }
+    },
+    (calc) => {
+      if (!calc) return
+      if ((calc.initialAmount > 0 || calc.monthlyDCA > 0) && calc.years > 0) {
+        calculate(calc.initialAmount, calc.monthlyDCA, calc.years)
+      }
+    },
+    { immediate: true },
+  )
+
   return {
-    loadData,
-    calculate,
     isLoading,
     results,
   }

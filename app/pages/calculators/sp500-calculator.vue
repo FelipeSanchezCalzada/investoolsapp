@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { PAGE_NAMES } from '~/pages/routeNames'
-import type { Workspace } from '~/db/types'
-import useFrontDB from '~/db/useFrontDB'
 import InputCard from '~/components/calculators/sp500-calculator/InputCard.vue'
 import ResultsChartCard from '~/components/calculators/sp500-calculator/ResultsChartCard.vue'
 
@@ -13,39 +11,7 @@ definePageMeta({
   ],
 })
 
-const { selectedWorkspace } = storeToRefs(useFrontDB())
-
-function ensureCalculatorData(ws: Workspace) {
-  if (!ws.sp500Calculator) {
-    ws.sp500Calculator = {
-      initialAmount: 10000,
-      monthlyDCA: 500,
-      years: 10,
-    }
-  }
-}
-
-watchImmediate(selectedWorkspace, (ws) => {
-  if (ws) {
-    ensureCalculatorData(ws)
-  }
-})
-
-const { loadData, calculate, isLoading, results } = useSP500Calculator()
-
-onMounted(async () => {
-  await loadData()
-  const calc = selectedWorkspace.value?.sp500Calculator
-  if (calc && (calc.initialAmount > 0 || calc.monthlyDCA > 0) && calc.years > 0) {
-    onCalculate()
-  }
-})
-
-function onCalculate() {
-  const calc = selectedWorkspace.value?.sp500Calculator
-  if (!calc) return
-  calculate(calc.initialAmount, calc.monthlyDCA, calc.years)
-}
+useSP500Calculator()
 </script>
 
 <template>
@@ -61,13 +27,7 @@ function onCalculate() {
       </p>
     </div>
 
-    <InputCard
-      :isCalculating="isLoading"
-      @calculate="onCalculate"
-    />
-    <ResultsChartCard
-      :isCalculating="isLoading"
-      :results="results"
-    />
+    <InputCard />
+    <ResultsChartCard />
   </div>
 </template>

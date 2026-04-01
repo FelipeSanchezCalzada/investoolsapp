@@ -1,17 +1,9 @@
 <script setup lang="ts">
-import { Loader2 } from 'lucide-vue-next'
+import { Loader2, TrendingDown, TrendingUp, Wallet, Activity } from 'lucide-vue-next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
-const props = defineProps<{
-  isCalculating: boolean
-  results: {
-    labels: string[]
-    invested: number[]
-    worstCase: number[]
-    bestCase: number[]
-    currentCase: number[]
-  } | null
-}>()
+const { isLoading, results } = useSP500Calculator()
 
 const usdFormatter = new Intl.NumberFormat('es-ES', {
   style: 'currency',
@@ -20,7 +12,7 @@ const usdFormatter = new Intl.NumberFormat('es-ES', {
 })
 
 const chartOption = computed(() => {
-  if (!props.results) return {}
+  if (!results.value) return {}
 
   return {
     tooltip: {
@@ -38,9 +30,9 @@ const chartOption = computed(() => {
     },
     xAxis: {
       type: 'category',
-      data: props.results.labels,
+      data: results.value.labels,
       axisLabel: {
-        interval: (index: number) => props.results!.labels[index] !== '',
+        interval: (index: number) => results.value!.labels[index] !== '',
         rotate: 45,
       },
     },
@@ -54,7 +46,7 @@ const chartOption = computed(() => {
       {
         name: 'Dinero invertido',
         type: 'line',
-        data: props.results.invested,
+        data: results.value.invested,
         smooth: 0.4,
         symbol: 'none',
         lineStyle: { type: 'dashed', color: '#6b7280' },
@@ -63,7 +55,7 @@ const chartOption = computed(() => {
       {
         name: 'Peor caso histórico',
         type: 'line',
-        data: props.results.worstCase,
+        data: results.value.worstCase,
         smooth: 0.4,
         symbol: 'none',
         lineStyle: { color: '#ef4444' },
@@ -72,7 +64,7 @@ const chartOption = computed(() => {
       {
         name: 'Caso actual',
         type: 'line',
-        data: props.results.currentCase,
+        data: results.value.currentCase,
         smooth: 0.4,
         symbol: 'none',
         lineStyle: { color: '#3b82f6' },
@@ -81,7 +73,7 @@ const chartOption = computed(() => {
       {
         name: 'Mejor caso histórico',
         type: 'line',
-        data: props.results.bestCase,
+        data: results.value.bestCase,
         smooth: 0.4,
         symbol: 'none',
         lineStyle: { color: '#22c55e' },
@@ -92,13 +84,13 @@ const chartOption = computed(() => {
 })
 
 const finalSummary = computed(() => {
-  if (!props.results) return null
+  if (!results.value) return null
   const last = (arr: number[]) => arr[arr.length - 1]!
   return {
-    invested: usdFormatter.format(last(props.results.invested)),
-    worstCase: usdFormatter.format(last(props.results.worstCase)),
-    bestCase: usdFormatter.format(last(props.results.bestCase)),
-    currentCase: usdFormatter.format(last(props.results.currentCase)),
+    invested: usdFormatter.format(last(results.value.invested)),
+    worstCase: usdFormatter.format(last(results.value.worstCase)),
+    bestCase: usdFormatter.format(last(results.value.bestCase)),
+    currentCase: usdFormatter.format(last(results.value.currentCase)),
   }
 })
 </script>
@@ -112,7 +104,7 @@ const finalSummary = computed(() => {
     </CardHeader>
     <CardContent>
       <div
-        v-if="isCalculating"
+        v-if="isLoading"
         class="flex items-center justify-center py-20"
       >
         <Loader2 class="size-8 animate-spin text-muted-foreground" />
@@ -123,7 +115,7 @@ const finalSummary = computed(() => {
         v-else-if="!results"
         class="text-center py-20 text-muted-foreground"
       >
-        Introduce los datos y pulsa "Calcular" para ver los resultados.
+        Cargando datos históricos...
       </div>
 
       <template v-else>
@@ -134,36 +126,67 @@ const finalSummary = computed(() => {
           />
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
-          <div class="rounded-lg border p-3 text-center">
-            <p class="text-xs text-muted-foreground">
-              Invertido
-            </p>
-            <p class="text-sm font-semibold text-gray-500">
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-3 mt-6">
+          <div class="rounded-lg border bg-muted/40 p-3 sm:p-4">
+            <div class="flex items-center gap-2 text-muted-foreground mb-1 sm:mb-2">
+              <Wallet class="size-4" />
+              <span class="text-xs font-medium">Invertido</span>
+            </div>
+            <p class="text-lg font-bold tracking-tight">
               {{ finalSummary!.invested }}
             </p>
           </div>
-          <div class="rounded-lg border p-3 text-center border-red-200 dark:border-red-900">
-            <p class="text-xs text-muted-foreground">
-              Peor caso
-            </p>
-            <p class="text-sm font-semibold text-red-500">
+
+          <div class="rounded-lg border border-red-500/20 bg-red-500/5 dark:bg-red-500/10 p-3 sm:p-4">
+            <div class="flex items-center justify-between mb-1 sm:mb-2">
+              <div class="flex items-center gap-2 text-red-500">
+                <TrendingDown class="size-4" />
+                <span class="text-xs font-medium">Peor caso</span>
+              </div>
+              <Badge
+                variant="outline"
+                class="text-xs px-1.5 py-0 border-red-500/30 text-red-500"
+              >
+                {{ results!.worstCaseRange.startYear }} – {{ results!.worstCaseRange.endYear }}
+              </Badge>
+            </div>
+            <p class="text-lg font-bold tracking-tight text-red-500">
               {{ finalSummary!.worstCase }}
             </p>
           </div>
-          <div class="rounded-lg border p-3 text-center border-blue-200 dark:border-blue-900">
-            <p class="text-xs text-muted-foreground">
-              Caso actual
-            </p>
-            <p class="text-sm font-semibold text-blue-500">
+
+          <div class="rounded-lg border border-blue-500/20 bg-blue-500/5 dark:bg-blue-500/10 p-3 sm:p-4">
+            <div class="flex items-center justify-between mb-1 sm:mb-2">
+              <div class="flex items-center gap-2 text-blue-500">
+                <Activity class="size-4" />
+                <span class="text-xs font-medium">Caso actual</span>
+              </div>
+              <Badge
+                variant="outline"
+                class="text-xs px-1.5 py-0 border-blue-500/30 text-blue-500"
+              >
+                {{ results!.currentCaseRange.startYear }} – {{ results!.currentCaseRange.endYear }}
+              </Badge>
+            </div>
+            <p class="text-lg font-bold tracking-tight text-blue-500">
               {{ finalSummary!.currentCase }}
             </p>
           </div>
-          <div class="rounded-lg border p-3 text-center border-green-200 dark:border-green-900">
-            <p class="text-xs text-muted-foreground">
-              Mejor caso
-            </p>
-            <p class="text-sm font-semibold text-green-500">
+
+          <div class="rounded-lg border border-green-500/20 bg-green-500/5 dark:bg-green-500/10 p-3 sm:p-4">
+            <div class="flex items-center justify-between mb-1 sm:mb-2">
+              <div class="flex items-center gap-2 text-green-500">
+                <TrendingUp class="size-4" />
+                <span class="text-xs font-medium">Mejor caso</span>
+              </div>
+              <Badge
+                variant="outline"
+                class="text-xs px-1.5 py-0 border-green-500/30 text-green-500"
+              >
+                {{ results!.bestCaseRange.startYear }} – {{ results!.bestCaseRange.endYear }}
+              </Badge>
+            </div>
+            <p class="text-lg font-bold tracking-tight text-green-500">
               {{ finalSummary!.bestCase }}
             </p>
           </div>
