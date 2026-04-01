@@ -127,17 +127,25 @@ const finalSummary = computed(() => {
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-3 mt-6">
-          <div class="rounded-lg border bg-muted/40 p-3 sm:p-4">
-            <div class="flex items-center gap-2 text-muted-foreground mb-1 sm:mb-2">
-              <Wallet class="size-4" />
-              <span class="text-xs font-medium">Invertido</span>
+          <div class="rounded-lg border bg-muted/40 p-2 sm:p-3">
+            <div class="flex items-center justify-between mb-1 sm:mb-2">
+              <div class="flex items-center gap-2 text-muted-foreground">
+                <Wallet class="size-4" />
+                <span class="text-xs font-medium">Invertido</span>
+              </div>
+              <Badge
+                variant="outline"
+                class="text-xs px-1.5 py-0 invisible"
+              >
+                &nbsp;
+              </Badge>
             </div>
             <p class="text-lg font-bold tracking-tight">
               {{ finalSummary!.invested }}
             </p>
           </div>
 
-          <div class="rounded-lg border border-red-500/20 bg-red-500/5 dark:bg-red-500/10 p-3 sm:p-4">
+          <div class="rounded-lg border border-red-500/20 bg-red-500/5 dark:bg-red-500/10 p-2 sm:p-3">
             <div class="flex items-center justify-between mb-1 sm:mb-2">
               <div class="flex items-center gap-2 text-red-500">
                 <TrendingDown class="size-4" />
@@ -155,7 +163,7 @@ const finalSummary = computed(() => {
             </p>
           </div>
 
-          <div class="rounded-lg border border-blue-500/20 bg-blue-500/5 dark:bg-blue-500/10 p-3 sm:p-4">
+          <div class="rounded-lg border border-blue-500/20 bg-blue-500/5 dark:bg-blue-500/10 p-2 sm:p-3">
             <div class="flex items-center justify-between mb-1 sm:mb-2">
               <div class="flex items-center gap-2 text-blue-500">
                 <Activity class="size-4" />
@@ -173,7 +181,7 @@ const finalSummary = computed(() => {
             </p>
           </div>
 
-          <div class="rounded-lg border border-green-500/20 bg-green-500/5 dark:bg-green-500/10 p-3 sm:p-4">
+          <div class="rounded-lg border border-green-500/20 bg-green-500/5 dark:bg-green-500/10 p-2 sm:p-3">
             <div class="flex items-center justify-between mb-1 sm:mb-2">
               <div class="flex items-center gap-2 text-green-500">
                 <TrendingUp class="size-4" />
