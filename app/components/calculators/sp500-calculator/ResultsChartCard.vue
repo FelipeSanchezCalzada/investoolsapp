@@ -83,14 +83,26 @@ const chartOption = computed(() => {
   }
 })
 
+function caseStats(finalValue: number, invested: number) {
+  const profit = finalValue - invested
+  const multiplier = invested > 0 ? finalValue / invested : 0
+  return {
+    total: usdFormatter.format(finalValue),
+    profit: usdFormatter.format(profit),
+    multiplier: `x${multiplier.toFixed(1)}`,
+    isNegative: profit < 0,
+  }
+}
+
 const finalSummary = computed(() => {
   if (!results.value) return null
   const last = (arr: number[]) => arr[arr.length - 1]!
+  const invested = last(results.value.invested)
   return {
-    invested: usdFormatter.format(last(results.value.invested)),
-    worstCase: usdFormatter.format(last(results.value.worstCase)),
-    bestCase: usdFormatter.format(last(results.value.bestCase)),
-    currentCase: usdFormatter.format(last(results.value.currentCase)),
+    invested: usdFormatter.format(invested),
+    worstCase: caseStats(last(results.value.worstCase), invested),
+    bestCase: caseStats(last(results.value.bestCase), invested),
+    currentCase: caseStats(last(results.value.currentCase), invested),
   }
 })
 </script>
@@ -159,8 +171,12 @@ const finalSummary = computed(() => {
               </Badge>
             </div>
             <p class="text-lg font-bold tracking-tight text-red-500">
-              {{ finalSummary!.worstCase }}
+              {{ finalSummary!.worstCase.total }}
             </p>
+            <div class="flex items-center gap-2 mt-1 text-xs text-red-500/80">
+              <span class="font-semibold">{{ finalSummary!.worstCase.multiplier }}</span>
+              <span>{{ finalSummary!.worstCase.profit }} ganancia</span>
+            </div>
           </div>
 
           <div class="rounded-lg border border-blue-500/20 bg-blue-500/5 dark:bg-blue-500/10 p-2 sm:p-3">
@@ -177,8 +193,12 @@ const finalSummary = computed(() => {
               </Badge>
             </div>
             <p class="text-lg font-bold tracking-tight text-blue-500">
-              {{ finalSummary!.currentCase }}
+              {{ finalSummary!.currentCase.total }}
             </p>
+            <div class="flex items-center gap-2 mt-1 text-xs text-blue-500/80">
+              <span class="font-semibold">{{ finalSummary!.currentCase.multiplier }}</span>
+              <span>{{ finalSummary!.currentCase.profit }} ganancia</span>
+            </div>
           </div>
 
           <div class="rounded-lg border border-green-500/20 bg-green-500/5 dark:bg-green-500/10 p-2 sm:p-3">
@@ -195,8 +215,12 @@ const finalSummary = computed(() => {
               </Badge>
             </div>
             <p class="text-lg font-bold tracking-tight text-green-500">
-              {{ finalSummary!.bestCase }}
+              {{ finalSummary!.bestCase.total }}
             </p>
+            <div class="flex items-center gap-2 mt-1 text-xs text-green-500/80">
+              <span class="font-semibold">{{ finalSummary!.bestCase.multiplier }}</span>
+              <span>{{ finalSummary!.bestCase.profit }} ganancia</span>
+            </div>
           </div>
         </div>
       </template>
