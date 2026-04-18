@@ -37,8 +37,8 @@ export type FinancialFreedomExpense = {
   id: string
   name: string
   monthlyAmount: number
-  fromYear: number | null // null = desde libertad financiera
-  toYear: number | null // null = sin límite
+  fromYear: number | null // null means From financial freedom
+  toYear: number | null // null means no limit
   fromFinancialFreedom: boolean
 }
 
