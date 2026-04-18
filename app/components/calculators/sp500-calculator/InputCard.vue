@@ -3,8 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   NumberField,
   NumberFieldContent,
-  NumberFieldDecrement,
-  NumberFieldIncrement,
   NumberFieldInput,
 } from '@/components/ui/number-field'
 import type { Workspace } from '~/db/types'
@@ -65,9 +63,7 @@ const years = computed({
             :formatOptions="{ style: 'currency', currency: 'USD' }"
           >
             <NumberFieldContent>
-              <NumberFieldDecrement />
               <NumberFieldInput />
-              <NumberFieldIncrement />
             </NumberFieldContent>
           </NumberField>
         </div>
@@ -88,9 +84,7 @@ const years = computed({
             :formatOptions="{ style: 'currency', currency: 'USD' }"
           >
             <NumberFieldContent>
-              <NumberFieldDecrement />
               <NumberFieldInput />
-              <NumberFieldIncrement />
             </NumberFieldContent>
           </NumberField>
         </div>
@@ -111,9 +105,7 @@ const years = computed({
             locale="es-ES"
           >
             <NumberFieldContent>
-              <NumberFieldDecrement />
               <NumberFieldInput />
-              <NumberFieldIncrement />
             </NumberFieldContent>
           </NumberField>
         </div>

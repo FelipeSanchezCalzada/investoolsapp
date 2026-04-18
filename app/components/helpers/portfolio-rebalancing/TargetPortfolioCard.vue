@@ -10,8 +10,6 @@ import { Badge } from '@/components/ui/badge'
 import {
   NumberField,
   NumberFieldContent,
-  NumberFieldDecrement,
-  NumberFieldIncrement,
   NumberFieldInput,
 } from '@/components/ui/number-field'
 import {
@@ -199,9 +197,7 @@ async function pasteTargetPortfolio() {
                     :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
                   >
                     <NumberFieldContent>
-                      <NumberFieldDecrement />
                       <NumberFieldInput />
-                      <NumberFieldIncrement />
                     </NumberFieldContent>
                   </NumberField>
                 </TableCell>
@@ -268,9 +264,7 @@ async function pasteTargetPortfolio() {
                   :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
                 >
                   <NumberFieldContent>
-                    <NumberFieldDecrement />
                     <NumberFieldInput />
-                    <NumberFieldIncrement />
                   </NumberFieldContent>
                 </NumberField>
               </div>

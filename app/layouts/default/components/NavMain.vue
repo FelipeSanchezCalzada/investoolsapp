@@ -40,6 +40,10 @@ const menuItems = computed(() => {
         title: 'Calculadora S&P 500',
         routeName: PAGE_NAMES.CALCULATORS.SP500,
       },
+      {
+        title: 'Libertad Financiera',
+        routeName: PAGE_NAMES.CALCULATORS.FINANCIAL_FREEDOM,
+      },
     ],
   }]
 })

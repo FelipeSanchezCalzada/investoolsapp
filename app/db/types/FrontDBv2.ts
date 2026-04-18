@@ -33,6 +33,23 @@ type SP500CalculatorInputs = {
   years: number
 }
 
+export type FinancialFreedomExpense = {
+  id: string
+  name: string
+  monthlyAmount: number
+  fromYear: number | null // null = desde libertad financiera
+  toYear: number | null // null = sin límite
+  fromFinancialFreedom: boolean
+}
+
+type FinancialFreedomCalculatorInputs = {
+  initialAmount: number
+  monthlyDCA: number
+  currentAge: number
+  maxAge: number
+  expenses: FinancialFreedomExpense[]
+}
+
 export type FrontDBv2 = {
   selectedWorkspaceName?: string
   workspaces: {
@@ -40,5 +57,6 @@ export type FrontDBv2 = {
     description: string
     portfolioRebalancingHelper?: PortfolioRebalancingHelper
     sp500Calculator?: SP500CalculatorInputs
+    financialFreedomCalculator?: FinancialFreedomCalculatorInputs
   }[]
 }

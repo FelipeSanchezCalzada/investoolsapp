@@ -125,6 +125,9 @@ bunx shadcn-vue@latest add <component-name>
 ```
 Los componentes se instalan en `app/components/ui/`.
 
+### NumberField
+No usar `NumberFieldDecrement` ni `NumberFieldIncrement` en los `NumberField`. Solo usar `NumberFieldInput` dentro de `NumberFieldContent`. Solo añadirlos si el usuario lo pide explícitamente.
+
 ### Estado global
 Usar Pinia stores. Si se necesita persistencia, modelar como `useFrontDB.ts` con IndexedDB.
 

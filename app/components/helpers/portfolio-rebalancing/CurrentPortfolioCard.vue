@@ -8,8 +8,6 @@ import { Badge } from '@/components/ui/badge'
 import {
   NumberField,
   NumberFieldContent,
-  NumberFieldDecrement,
-  NumberFieldIncrement,
   NumberFieldInput,
 } from '@/components/ui/number-field'
 import {
@@ -149,9 +147,7 @@ function formatPercentage(value: number): string {
                     :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
                   >
                     <NumberFieldContent>
-                      <NumberFieldDecrement />
                       <NumberFieldInput />
-                      <NumberFieldIncrement />
                     </NumberFieldContent>
                   </NumberField>
                 </TableCell>
@@ -217,9 +213,7 @@ function formatPercentage(value: number): string {
                   :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
                 >
                   <NumberFieldContent>
-                    <NumberFieldDecrement />
                     <NumberFieldInput />
-                    <NumberFieldIncrement />
                   </NumberFieldContent>
                 </NumberField>
               </div>
