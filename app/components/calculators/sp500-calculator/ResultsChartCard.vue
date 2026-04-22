@@ -131,14 +131,7 @@ const finalSummary = computed(() => {
       </div>
 
       <template v-else>
-        <div style="width: 100%; height: 500px;">
-          <VChart
-            :option="chartOption"
-            autoresize
-          />
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-3 mt-6">
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 sm:gap-3 mb-6">
           <div class="rounded-lg border bg-muted/40 p-2 sm:p-3">
             <div class="flex items-center justify-between mb-1 sm:mb-2">
               <div class="flex items-center gap-2 text-muted-foreground">
@@ -222,6 +215,13 @@ const finalSummary = computed(() => {
               <span>{{ finalSummary!.bestCase.profit }} ganancia</span>
             </div>
           </div>
+        </div>
+
+        <div style="width: 100%; height: 500px;">
+          <VChart
+            :option="chartOption"
+            autoresize
+          />
         </div>
       </template>
     </CardContent>
