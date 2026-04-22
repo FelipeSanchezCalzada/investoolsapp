@@ -79,7 +79,6 @@ export const useFrontDB = defineStore('frontDB', () => {
     }
     storageFrontDB.value.data.workspaces[wsIndex] = value
     storageFrontDB.value.data.selectedWorkspaceName = value.name
-    triggerRef(storageFrontDB)
   }, { deep: true })
 
   return {
