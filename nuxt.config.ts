@@ -18,9 +18,14 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
       ],
     },
+    pageTransition: {
+      name: 'page',
+      mode: 'out-in',
+    },
   },
   css: [
     '~/assets/css/tailwind.css',
+    '~/assets/css/main.css',
   ],
   colorMode: {
     classSuffix: '',
