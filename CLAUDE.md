@@ -14,22 +14,22 @@ Aplicación de herramientas de inversión (investment tools) construida con Nuxt
   - `bun run lint` / `bun run lint:fix` — linting
 
 ### Framework
-- **Nuxt 4** (`nuxt ^4.3.1`) con **Vue 3** (`^3.5.29`)
-- **TypeScript** (`^5.9.3`)
-- **Vue Router** (`^4.6.4`) — enrutamiento automático vía Nuxt
+- **Nuxt 4** (`nuxt 4.4.2`) con **Vue 3** (`3.5.33`)
+- **TypeScript** (`6.0.3`)
+- **Vue Router** (`5.0.6`) — enrutamiento automático vía Nuxt
 
 ### Estilos
-- **Tailwind CSS v4** (`^4.2.1`) integrado via `@tailwindcss/vite`
+- **Tailwind CSS v4** (`4.2.4`) integrado via `@tailwindcss/vite`
   - Configuración en [tailwind.config.ts](tailwind.config.ts) (mínima, extender en `theme.extend`)
   - CSS principal en [app/assets/css/tailwind.css](app/assets/css/tailwind.css) — aquí están las variables de tema (OKLch)
-- **tw-animate-css** (`^1.4.0`) — animaciones CSS adicionales
-- **tailwind-merge** (`^3.5.0`) + **clsx** (`^2.1.1`) — fusión de clases vía `cn()` utility en [app/lib/utils.ts](app/lib/utils.ts)
+- **tw-animate-css** (`1.4.0`) — animaciones CSS adicionales
+- **tailwind-merge** (`3.5.0`) + **clsx** (`2.1.1`) — fusión de clases vía `cn()` utility en [app/lib/utils.ts](app/lib/utils.ts)
 
 ### Sistema de diseño — shadcn-vue (New York style)
-- **shadcn-nuxt** (`2.4.3`) — módulo Nuxt para shadcn
-- **reka-ui** (`^2.8.2`) — primitivos de UI (base de shadcn-vue)
+- **shadcn-nuxt** (`2.6.2`) — módulo Nuxt para shadcn
+- **reka-ui** (`2.9.6`) — primitivos de UI (base de shadcn-vue)
 - Estilo: **New York**, color base: **neutral**, CSS variables activadas
-- Iconos: **lucide-vue-next** (`^0.576.0`) — siempre usar esta librería para iconos
+- Iconos: **@lucide/vue** (`1.8.0`) — siempre usar esta librería para iconos (antes `lucide-vue-next`, renombrada en v1)
 - Componentes UI en [app/components/ui/](app/components/ui/) — no modificar directamente, usar `npx shadcn-vue@latest add <component>`
 - Configuración en [components.json](components.json)
 
@@ -41,8 +41,8 @@ Aplicación de herramientas de inversión (investment tools) construida con Nuxt
   - Migraciones en [app/db/migrations.ts](app/db/migrations.ts)
 
 ### Utilidades
-- **@vueuse/core** + **@vueuse/nuxt** (`^14.2.1`) — composables de Vue
-- **@nuxtjs/color-mode** (`^4.0.0`) — modo oscuro/claro sin sufijo de clase (`classSuffix: ''`)
+- **@vueuse/core** + **@vueuse/nuxt** (`14.2.1`) — composables de Vue
+- **@nuxtjs/color-mode** (`4.0.0`) — modo oscuro/claro sin sufijo de clase (`classSuffix: ''`)
 
 ### Linting
 - **ESLint** con `@nuxt/eslint` usando flat config (`eslint.config.mjs`)
@@ -105,9 +105,9 @@ import { cn } from '@/lib/utils'
 ```
 
 ### Iconos
-Importar siempre de `lucide-vue-next`:
+Importar siempre de `@lucide/vue`:
 ```vue
-import { Settings, User, ChevronDown } from 'lucide-vue-next'
+import { Settings, User, ChevronDown } from '@lucide/vue'
 ```
 
 ### Modo oscuro

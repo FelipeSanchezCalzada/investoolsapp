@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowRightLeft, Database, ShieldCheck, TriangleAlert, Wrench } from 'lucide-vue-next'
+import { ArrowRightLeft, Database, ShieldCheck, TriangleAlert, Wrench } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'

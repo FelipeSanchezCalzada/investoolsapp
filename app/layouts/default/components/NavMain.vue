@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Calculator, ChevronRight, Toolbox } from 'lucide-vue-next'
+import { Calculator, ChevronRight, Toolbox } from '@lucide/vue'
 
 import {
   Collapsible,

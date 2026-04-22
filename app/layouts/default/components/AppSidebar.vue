@@ -1,26 +1,8 @@
 <script setup lang="ts">
 import type { SidebarProps } from '@/components/ui/sidebar'
-import {
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  LifeBuoy,
-  Map,
-  PieChart,
-  Send,
-  Settings2,
-  Toolbox,
-} from 'lucide-vue-next'
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '@/components/ui/sidebar'
 import NavMain from './NavMain.vue'
-import NavSecondary from './NavSecondary.vue'
 import WorkspaceSwitcher from './WorkspaceSwitcher.vue'
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-} from '@/components/ui/sidebar'
 
 const props = defineProps<SidebarProps>()
 </script>

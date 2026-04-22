@@ -4,7 +4,7 @@
 <script setup lang="ts">
 import AppSidebar from './default/components/AppSidebar.vue'
 import SiteHeader from './default/components/SiteHeader.vue'
-import { Heart } from 'lucide-vue-next'
+import { Heart } from '@lucide/vue'
 import {
   SidebarInset,
   SidebarProvider,

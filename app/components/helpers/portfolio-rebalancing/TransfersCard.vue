@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowRightLeft, TrendingUp, TrendingDown, Copy, Check, ChevronDown, ChevronRight } from 'lucide-vue-next'
+import { ArrowRightLeft, TrendingUp, TrendingDown, Copy, Check, ChevronDown, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'

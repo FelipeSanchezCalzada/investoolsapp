@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Plus, Trash2, GripVertical } from 'lucide-vue-next'
+import { Plus, Trash2, GripVertical } from '@lucide/vue'
 import draggable from 'vuedraggable'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'

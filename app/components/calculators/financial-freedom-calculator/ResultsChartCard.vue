@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Loader2, TrendingDown, TrendingUp, Activity, Wallet, Clock } from 'lucide-vue-next'
+import { Loader2, TrendingDown, TrendingUp, Activity, Wallet, Clock } from '@lucide/vue'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 

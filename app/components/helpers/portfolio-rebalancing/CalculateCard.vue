@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowRightLeft } from 'lucide-vue-next'
+import { ArrowRightLeft } from '@lucide/vue'
 import { toast } from 'vue-sonner'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'

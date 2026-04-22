@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Plus, Trash2, GripVertical, Copy, Check, ClipboardPaste } from 'lucide-vue-next'
+import { Plus, Trash2, GripVertical, Copy, Check, ClipboardPaste } from '@lucide/vue'
 import { toast } from 'vue-sonner'
 import draggable from 'vuedraggable'
 import { cn } from '@/lib/utils'

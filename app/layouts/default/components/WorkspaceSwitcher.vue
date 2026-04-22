@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronsUpDown, Download, Pencil, Plus, RotateCcw, Trash2, Upload } from 'lucide-vue-next'
+import { ChevronsUpDown, Download, Pencil, Plus, RotateCcw, Trash2, Upload } from '@lucide/vue'
 import { ref } from 'vue'
 import {
   DropdownMenu,
