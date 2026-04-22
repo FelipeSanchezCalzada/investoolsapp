@@ -82,10 +82,10 @@ function removeExpense(id: string) {
 function toggleFromFinancialFreedom(id: string, checked: boolean) {
   const calc = selectedWorkspace.value?.financialFreedomCalculator
   if (!calc) return
-  const expense = calc.expenses.find(e => e.id === id)
-  if (expense) {
-    expense.fromFinancialFreedom = checked
-    expense.fromYear = 0
+  const expenseIndex = calc.expenses.findIndex(e => e.id === id)
+  if (expenseIndex !== -1) {
+    calc.expenses[expenseIndex]!.fromFinancialFreedom = checked
+    calc.expenses[expenseIndex]!.fromYear = 0
   }
 }
 </script>
@@ -256,7 +256,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
             <TableCell class="text-center">
               <Checkbox
                 :id="`ff-checkbox-${expense.id}`"
-                :checked="expense.fromFinancialFreedom"
+                :modelValue="expense.fromFinancialFreedom"
                 @update:modelValue="(v) => toggleFromFinancialFreedom(expense.id, !!v)"
               />
             </TableCell>
