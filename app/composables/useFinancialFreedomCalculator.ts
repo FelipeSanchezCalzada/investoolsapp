@@ -31,7 +31,9 @@ interface FinancialFreedomResult {
   bestCase: ScenarioResult
   currentCase: ScenarioResult
   labels: string[]
-  invested: number[]
+  worstCaseInvested: number[]
+  bestCaseInvested: number[]
+  currentCaseInvested: number[]
   worstCasePortfolio: number[]
   bestCasePortfolio: number[]
   currentCasePortfolio: number[]
@@ -272,14 +274,18 @@ export function useFinancialFreedomCalculator() {
 
         // Build chart data - use yearly points
         const labels: string[] = []
-        const invested: number[] = []
+        const worstCaseInvested: number[] = []
+        const bestCaseInvested: number[] = []
+        const currentCaseInvested: number[] = []
         const worstCasePortfolio: number[] = []
         const bestCasePortfolio: number[] = []
         const currentCasePortfolio: number[] = []
 
         for (let y = 0; y <= totalYears; y++) {
           labels.push(`Año ${y} (${currentAge + y})`)
-          invested.push(worstResult.timeline[y]?.invested ?? 0)
+          worstCaseInvested.push(worstResult.timeline[y]?.invested ?? 0)
+          bestCaseInvested.push(bestResult.timeline[y]?.invested ?? 0)
+          currentCaseInvested.push(currentResult.timeline[y]?.invested ?? 0)
           worstCasePortfolio.push(worstResult.timeline[y]?.portfolio ?? 0)
           bestCasePortfolio.push(bestResult.timeline[y]?.portfolio ?? 0)
           currentCasePortfolio.push(currentResult.timeline[y]?.portfolio ?? 0)
@@ -314,7 +320,9 @@ export function useFinancialFreedomCalculator() {
             range: yearToDataYear(currentResult.startIdx),
           },
           labels,
-          invested,
+          worstCaseInvested,
+          bestCaseInvested,
+          currentCaseInvested,
           worstCasePortfolio,
           bestCasePortfolio,
           currentCasePortfolio,
