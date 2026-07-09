@@ -17,8 +17,16 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from '@/components/ui/sidebar'
 import { PAGE_NAMES } from '~/pages/routeNames'
+
+const { isMobile, setOpenMobile } = useSidebar()
+
+function handleNavigate() {
+  if (isMobile.value)
+    setOpenMobile(false)
+}
 
 const menuItems = computed(() => {
   return [{
@@ -96,7 +104,10 @@ const menuItems = computed(() => {
                     asChild
                     :class="{ 'font-semibold text-sidebar-foreground': $route.name === subItem.routeName }"
                   >
-                    <NuxtLink :to="{ name: subItem.routeName }">
+                    <NuxtLink
+                      :to="{ name: subItem.routeName }"
+                      @click="handleNavigate"
+                    >
                       <span>{{ subItem.title }}</span>
                     </NuxtLink>
                   </SidebarMenuSubButton>
