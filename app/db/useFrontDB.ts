@@ -37,6 +37,7 @@ export const useFrontDB = defineStore('frontDB', () => {
   }
 
   const initializeDB = async () => {
+    isInitialized.value = false
     await until(isIDBLoaded).toBe(true)
     runMigrations()
     const initialSelectedWorkspace = storageFrontDB.value.data.workspaces.find(ws => ws.name === storageFrontDB.value.data.selectedWorkspaceName)
@@ -59,13 +60,7 @@ export const useFrontDB = defineStore('frontDB', () => {
 
   const importJsonDB = (jsonDB: string) => {
     storageFrontDB.value = JSON.parse(jsonDB)
-    isInitialized.value = false
-    runMigrations()
-    const initialSelectedWorkspace = storageFrontDB.value.data.workspaces.find(ws => ws.name === storageFrontDB.value.data.selectedWorkspaceName)
-    if (initialSelectedWorkspace) {
-      selectedWorkspace.value = initialSelectedWorkspace
-    }
-    isInitialized.value = true
+    initializeDB().then()
     return true
   }
 

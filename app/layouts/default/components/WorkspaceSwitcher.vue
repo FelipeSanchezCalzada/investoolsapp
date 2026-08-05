@@ -103,7 +103,6 @@ const resetDialogOpen = ref(false)
 
 const handleResetDB = () => {
   dbStore.resetDB()
-  dbStore.initializeDB()
   resetDialogOpen.value = false
   dropdownOpen.value = false
 }
@@ -129,10 +128,7 @@ const handleImportDB = () => {
     if (!file) return
     const reader = new FileReader()
     reader.onload = () => {
-      const success = dbStore.importJsonDB(reader.result as string)
-      if (success) {
-        dbStore.initializeDB()
-      }
+      dbStore.importJsonDB(reader.result as string)
       dropdownOpen.value = false
     }
     reader.readAsText(file)
