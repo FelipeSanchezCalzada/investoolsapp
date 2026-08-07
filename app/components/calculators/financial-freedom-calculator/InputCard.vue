@@ -104,7 +104,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
             for="ff-initial-amount"
             class="text-sm font-medium"
           >
-            Monto inicial
+            Monto inicial ($)
           </label>
           <NumberField
             id="ff-initial-amount"
@@ -112,7 +112,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
             :min="0"
             :step="1000"
             locale="es-ES"
-            :formatOptions="{ style: 'currency', currency: 'USD' }"
+            :formatOptions="{ maximumFractionDigits: 2 }"
           >
             <NumberFieldContent>
               <NumberFieldInput />
@@ -125,7 +125,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
             for="ff-monthly-dca"
             class="text-sm font-medium"
           >
-            Aportación mensual
+            Aportación mensual ($)
           </label>
           <NumberField
             id="ff-monthly-dca"
@@ -133,7 +133,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
             :min="0"
             :step="50"
             locale="es-ES"
-            :formatOptions="{ style: 'currency', currency: 'USD' }"
+            :formatOptions="{ maximumFractionDigits: 2 }"
           >
             <NumberFieldContent>
               <NumberFieldInput />
@@ -213,7 +213,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
           <TableRow>
             <TableHead>Nombre</TableHead>
             <TableHead class="w-50">
-              Gasto mensual
+              Gasto mensual ($)
             </TableHead>
             <TableHead class="w-30">
               Desde Libertad
@@ -246,7 +246,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
                 :min="0"
                 :step="50"
                 locale="es-ES"
-                :formatOptions="{ style: 'currency', currency: 'USD' }"
+                :formatOptions="{ maximumFractionDigits: 2 }"
               >
                 <NumberFieldContent>
                   <NumberFieldInput />

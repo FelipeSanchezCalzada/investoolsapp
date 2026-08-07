@@ -23,7 +23,7 @@ const { findMortgage } = useMortgageComparator()
 /** The editors write straight into the store object, so only its id travels as a prop. */
 const mortgage = computed(() => findMortgage(props.mortgageId))
 
-const euroFormat = { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 } as const
+const amountFormat = { maximumFractionDigits: 0 } as const
 
 const feeGroups = computed(() => [
   { key: 'partial' as const, label: 'Amortización parcial', tiers: mortgage.value?.earlyRepaymentFees.partial ?? [] },
@@ -70,7 +70,7 @@ function setHasToYear(tier: MortgageFeeTier, value: boolean) {
             :for="`mc-cost-${mortgage.id}-${key}`"
             class="text-sm leading-5 font-medium sm:min-h-10"
           >
-            {{ UPFRONT_COST_LABELS[key] }}
+            {{ UPFRONT_COST_LABELS[key] }} (€)
           </label>
           <NumberField
             :id="`mc-cost-${mortgage.id}-${key}`"
@@ -78,7 +78,7 @@ function setHasToYear(tier: MortgageFeeTier, value: boolean) {
             :min="0"
             :step="50"
             locale="es-ES"
-            :formatOptions="euroFormat"
+            :formatOptions="amountFormat"
           >
             <NumberFieldContent>
               <NumberFieldInput />

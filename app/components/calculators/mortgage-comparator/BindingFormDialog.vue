@@ -43,7 +43,7 @@ function edit(mutate: (binding: MortgageBinding) => void) {
   if (current) mutate(current)
 }
 
-const euroFormat = { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 } as const
+const amountFormat = { maximumFractionDigits: 0 } as const
 
 const investmentDialogOpen = ref(false)
 
@@ -244,14 +244,14 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             <label
               for="mc-binding-bank-cost"
               class="text-sm font-medium"
-            >Coste anual en el banco</label>
+            >Coste anual en el banco (€)</label>
             <NumberField
               id="mc-binding-bank-cost"
               v-model="binding.cost.bankCost"
               :min="0"
               :step="10"
               locale="es-ES"
-              :formatOptions="euroFormat"
+              :formatOptions="amountFormat"
             >
               <NumberFieldContent>
                 <NumberFieldInput />
@@ -262,14 +262,14 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             <label
               for="mc-binding-market-cost"
               class="text-sm font-medium"
-            >Coste anual fuera</label>
+            >Coste anual fuera (€)</label>
             <NumberField
               id="mc-binding-market-cost"
               v-model="binding.cost.marketCost"
               :min="0"
               :step="10"
               locale="es-ES"
-              :formatOptions="euroFormat"
+              :formatOptions="amountFormat"
             >
               <NumberFieldContent>
                 <NumberFieldInput />
@@ -361,14 +361,14 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             <label
               for="mc-binding-premium"
               class="text-sm font-medium"
-            >Prima única en el banco</label>
+            >Prima única en el banco (€)</label>
             <NumberField
               id="mc-binding-premium"
               v-model="binding.cost.amount"
               :min="0"
               :step="100"
               locale="es-ES"
-              :formatOptions="euroFormat"
+              :formatOptions="amountFormat"
             >
               <NumberFieldContent>
                 <NumberFieldInput />
@@ -379,14 +379,14 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             <label
               for="mc-binding-premium-market"
               class="text-sm font-medium"
-            >Equivalente fuera</label>
+            >Equivalente fuera (€)</label>
             <NumberField
               id="mc-binding-premium-market"
               v-model="binding.cost.marketAmount"
               :min="0"
               :step="100"
               locale="es-ES"
-              :formatOptions="euroFormat"
+              :formatOptions="amountFormat"
             >
               <NumberFieldContent>
                 <NumberFieldInput />

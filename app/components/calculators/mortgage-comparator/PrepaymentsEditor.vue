@@ -33,7 +33,7 @@ const { findMortgage } = useMortgageComparator()
 /** The editors write straight into the store object, so only its id travels as a prop. */
 const mortgage = computed(() => findMortgage(props.mortgageId))
 
-const euroFormat = { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 } as const
+const amountFormat = { maximumFractionDigits: 0 } as const
 
 function addPrepayment() {
   mortgage.value?.prepayments.push({
@@ -113,7 +113,7 @@ function monthsSavedBy(prepaymentId: string): number | null {
               Mes
             </TableHead>
             <TableHead class="w-44">
-              Importe
+              Importe (€)
             </TableHead>
             <TableHead class="w-48">
               Modo
@@ -154,7 +154,7 @@ function monthsSavedBy(prepaymentId: string): number | null {
                 :min="0"
                 :step="1000"
                 locale="es-ES"
-                :formatOptions="euroFormat"
+                :formatOptions="amountFormat"
               >
                 <NumberFieldContent>
                   <NumberFieldInput />

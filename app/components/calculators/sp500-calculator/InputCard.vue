@@ -52,7 +52,7 @@ const years = computed({
             for="initial-amount"
             class="text-sm font-medium"
           >
-            Monto inicial
+            Monto inicial ($)
           </label>
           <NumberField
             id="initial-amount"
@@ -60,7 +60,7 @@ const years = computed({
             :min="0"
             :step="100"
             locale="es-ES"
-            :formatOptions="{ style: 'currency', currency: 'USD' }"
+            :formatOptions="{ maximumFractionDigits: 2 }"
           >
             <NumberFieldContent>
               <NumberFieldInput />
@@ -73,7 +73,7 @@ const years = computed({
             for="monthly-dca"
             class="text-sm font-medium"
           >
-            DCA mensual
+            DCA mensual ($)
           </label>
           <NumberField
             id="monthly-dca"
@@ -81,7 +81,7 @@ const years = computed({
             :min="0"
             :step="50"
             locale="es-ES"
-            :formatOptions="{ style: 'currency', currency: 'USD' }"
+            :formatOptions="{ maximumFractionDigits: 2 }"
           >
             <NumberFieldContent>
               <NumberFieldInput />

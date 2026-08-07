@@ -24,7 +24,7 @@ const emit = defineEmits<{ close: [] }>()
 
 const { common, findMortgage, resultFor } = useMortgageComparator()
 
-const euroFormat = { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 } as const
+const amountFormat = { maximumFractionDigits: 0 } as const
 
 /** The assistant writes straight into the store object, so only ids travel as props. */
 const binding = computed<MortgageBinding | null>(() =>
@@ -208,14 +208,14 @@ const overridesReturn = computed({
           <label
             for="mc-inv-initial"
             class="text-sm font-medium"
-          >Aportación inicial exigida</label>
+          >Aportación inicial exigida (€)</label>
           <NumberField
             id="mc-inv-initial"
             v-model="cost.initialContribution"
             :min="0"
             :step="500"
             locale="es-ES"
-            :formatOptions="euroFormat"
+            :formatOptions="amountFormat"
           >
             <NumberFieldContent>
               <NumberFieldInput />
@@ -227,14 +227,14 @@ const overridesReturn = computed({
           <label
             for="mc-inv-annual"
             class="text-sm font-medium"
-          >Aportación anual exigida</label>
+          >Aportación anual exigida (€)</label>
           <NumberField
             id="mc-inv-annual"
             v-model="cost.annualContribution"
             :min="0"
             :step="500"
             locale="es-ES"
-            :formatOptions="euroFormat"
+            :formatOptions="amountFormat"
           >
             <NumberFieldContent>
               <NumberFieldInput />

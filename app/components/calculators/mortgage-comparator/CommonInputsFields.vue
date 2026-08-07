@@ -11,7 +11,7 @@ import { formatPercent } from '~/composables/useMortgageComparator'
 
 const { common } = useMortgageComparator()
 
-const euroFormat = { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 } as const
+const amountFormat = { maximumFractionDigits: 0 } as const
 
 const termYears = computed({
   get: () => Math.round((common.value?.termMonths ?? 0) / 12),
@@ -35,14 +35,14 @@ const ltv = computed(() => {
       <label
         for="mc-property-price"
         class="text-sm font-medium"
-      >Precio vivienda</label>
+      >Precio vivienda (€)</label>
       <NumberField
         id="mc-property-price"
         v-model="common.propertyPrice"
         :min="0"
         :step="5000"
         locale="es-ES"
-        :formatOptions="euroFormat"
+        :formatOptions="amountFormat"
       >
         <NumberFieldContent>
           <NumberFieldInput />
@@ -54,14 +54,14 @@ const ltv = computed(() => {
       <label
         for="mc-appraisal-value"
         class="text-sm font-medium"
-      >Valor de tasación</label>
+      >Valor de tasación (€)</label>
       <NumberField
         id="mc-appraisal-value"
         v-model="common.appraisalValue"
         :min="0"
         :step="5000"
         locale="es-ES"
-        :formatOptions="euroFormat"
+        :formatOptions="amountFormat"
       >
         <NumberFieldContent>
           <NumberFieldInput />
@@ -73,14 +73,14 @@ const ltv = computed(() => {
       <label
         for="mc-available-cash"
         class="text-sm font-medium"
-      >Ahorro disponible</label>
+      >Ahorro disponible (€)</label>
       <NumberField
         id="mc-available-cash"
         v-model="common.availableCash"
         :min="0"
         :step="1000"
         locale="es-ES"
-        :formatOptions="euroFormat"
+        :formatOptions="amountFormat"
       >
         <NumberFieldContent>
           <NumberFieldInput />
@@ -92,14 +92,14 @@ const ltv = computed(() => {
       <label
         for="mc-principal"
         class="text-sm font-medium"
-      >Capital solicitado</label>
+      >Capital solicitado (€)</label>
       <NumberField
         id="mc-principal"
         v-model="common.principal"
         :min="0"
         :step="5000"
         locale="es-ES"
-        :formatOptions="euroFormat"
+        :formatOptions="amountFormat"
       >
         <NumberFieldContent>
           <NumberFieldInput />

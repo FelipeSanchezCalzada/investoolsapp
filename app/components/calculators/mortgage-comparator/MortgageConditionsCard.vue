@@ -29,7 +29,7 @@ function edit(mutate: (mortgage: Mortgage) => void) {
   if (current) mutate(current)
 }
 
-const euroFormat = { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 } as const
+const amountFormat = { maximumFractionDigits: 0 } as const
 
 const RATE_TYPE_OPTIONS: { value: MortgageRateType, label: string }[] = [
   { value: 'fixed', label: 'Fija' },
@@ -316,7 +316,7 @@ const hasMaxBonus = computed({
         <label
           :for="`mc-own-principal-${mortgage.id}`"
           class="text-sm font-medium"
-        >Capital propio</label>
+        >Capital propio (€)</label>
       </div>
       <NumberField
         v-model="ownPrincipal"
@@ -324,7 +324,7 @@ const hasMaxBonus = computed({
         :step="5000"
         :disabled="!overridesPrincipal"
         locale="es-ES"
-        :formatOptions="euroFormat"
+        :formatOptions="amountFormat"
       >
         <NumberFieldContent>
           <NumberFieldInput />
