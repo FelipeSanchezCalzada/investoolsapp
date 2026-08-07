@@ -33,13 +33,12 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   vite: {
     plugins: [
-      // @ts-expect-error: Remove when tailwindcss fix this
       tailwindcss(),
     ],
   },
   echarts: {
     charts: ['LineChart'],
-    components: ['TooltipComponent', 'LegendComponent', 'GridComponent'],
+    components: ['TooltipComponent', 'LegendComponent', 'GridComponent', 'MarkLineComponent'],
   },
   eslint: {
     config: {

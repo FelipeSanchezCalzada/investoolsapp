@@ -6,6 +6,17 @@ import { migrationsMap } from '~/db/migrations'
 
 const DEFAULT_WORKSPACE_NAME = 'Default'
 
+/**
+ * IndexedDB persists values with the structured clone algorithm, which throws a
+ * `DataCloneError` on Vue reactive proxies. Any object read through a reactive
+ * proxy hands back nested proxies, so everything stored must be flattened back
+ * into plain data first; otherwise every write silently fails and the whole DB
+ * stops persisting.
+ */
+function toPlain<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T
+}
+
 const EMPTY_DB: StorageFrontDB = {
   version: CURRENT_DB_VERSION,
   data: {
@@ -20,20 +31,34 @@ const EMPTY_DB: StorageFrontDB = {
 export const useFrontDB = defineStore('frontDB', () => {
   const isInitialized = ref(false)
 
-  const { data: storageFrontDB, isFinished: isIDBLoaded } = useIDBKeyval<StorageFrontDB>('frontDB', structuredClone(EMPTY_DB), { shallow: false })
+  const { data: storageFrontDB, isFinished: isIDBLoaded } = useIDBKeyval<StorageFrontDB>('frontDB', structuredClone(EMPTY_DB), {
+    shallow: false,
+    serializer: {
+      read: value => value,
+      write: value => toPlain(value),
+    },
+    onError: error => console.error('[frontDB] could not persist to IndexedDB', error),
+  })
   const workspaces = computed(() => storageFrontDB.value.data.workspaces)
   const selectedWorkspace = ref<Workspace>()
 
   const runMigrations = () => {
-    while (storageFrontDB.value.version < CURRENT_DB_VERSION) {
-      const migrationKey = `v${storageFrontDB.value.version}-v${storageFrontDB.value.version + 1}` as keyof typeof migrationsMap
+    if (storageFrontDB.value.version >= CURRENT_DB_VERSION) {
+      return
+    }
+    // Migrations run over a plain snapshot: spreading objects read through the
+    // reactive proxy would store nested proxies and break every later write.
+    const migrated = toPlain(storageFrontDB.value)
+    while (migrated.version < CURRENT_DB_VERSION) {
+      const migrationKey = `v${migrated.version}-v${migrated.version + 1}` as keyof typeof migrationsMap
       const migrationFn = migrationsMap[migrationKey]
       if (!migrationFn) {
         break
       }
-      storageFrontDB.value.data = migrationFn(storageFrontDB.value.data as never)
-      storageFrontDB.value.version = storageFrontDB.value.version + 1
+      migrated.data = migrationFn(migrated.data as never)
+      migrated.version = migrated.version + 1
     }
+    storageFrontDB.value = migrated
   }
 
   const initializeDB = async () => {

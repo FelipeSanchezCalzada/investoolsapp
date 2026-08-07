@@ -52,6 +52,10 @@ const menuItems = computed(() => {
         title: 'Libertad Financiera',
         routeName: PAGE_NAMES.CALCULATORS.FINANCIAL_FREEDOM,
       },
+      {
+        title: 'Comparador de hipotecas',
+        routeName: PAGE_NAMES.CALCULATORS.MORTGAGE_COMPARATOR,
+      },
     ],
   }]
 })

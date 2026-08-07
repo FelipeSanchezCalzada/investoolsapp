@@ -92,6 +92,26 @@ investoolsapp/
 
 ## Convenciones
 
+### Idioma del código — SIEMPRE inglés
+**TODO el código va en inglés, sin excepciones.** Aplica a:
+- Nombres de variables, funciones, tipos, interfaces, props, eventos y constantes
+- Nombres de ficheros y de directorios
+- Claves de objetos y campos de la DB
+- Comentarios y JSDoc
+- Mensajes de commit
+
+Solo va en español el **texto visible para el usuario** (labels, títulos, descripciones, mensajes de error de la UI) y la documentación en `docs/`.
+
+```ts
+// ✅ Correcto
+const monthlyPayment = computed(() => ...)
+type MortgageBinding = { rateReductionPp: number }
+
+// ❌ Incorrecto
+const cuotaMensual = computed(() => ...)
+type VinculacionHipoteca = { bonificacionPp: number }
+```
+
 ### Aliases de importación
 - `@/components` → componentes
 - `@/components/ui` → componentes shadcn

@@ -16,15 +16,10 @@ useFinancialFreedomCalculator()
 
 <template>
   <div class="flex flex-col gap-6 p-3 sm:p-6 max-w-7xl mx-auto">
-    <div>
-      <h1 class="text-2xl font-bold tracking-tight">
-        Calculadora de Libertad Financiera
-      </h1>
-      <p class="text-muted-foreground mt-1">
-        Calcula cuantos años necesitas seguir aportando para poder vivir solo de las ganancias del S&P 500,
-        teniendo en cuenta tus gastos futuros. Basado en datos historicos desde 1927.
-      </p>
-    </div>
+    <ToolPageHeader title="Calculadora de Libertad Financiera">
+      Calcula cuantos años necesitas seguir aportando para poder vivir solo de las ganancias del S&P 500,
+      teniendo en cuenta tus gastos futuros. Basado en datos historicos desde 1927.
+    </ToolPageHeader>
 
     <InputCard />
     <ResultsChartCard />

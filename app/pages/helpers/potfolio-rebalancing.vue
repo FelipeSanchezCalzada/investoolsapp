@@ -36,14 +36,9 @@ watchImmediate(selectedWorkspace, (ws) => {
 
 <template>
   <div class="flex flex-col gap-6 p-3 sm:p-6 max-w-7xl mx-auto">
-    <div>
-      <h1 class="text-2xl font-bold tracking-tight">
-        Rebalanceo de Cartera
-      </h1>
-      <p class="text-muted-foreground mt-1">
-        Introduce tu cartera actual y la distribución objetivo para calcular los traspasos óptimos.
-      </p>
-    </div>
+    <ToolPageHeader title="Rebalanceo de Cartera">
+      Introduce tu cartera actual y la distribución objetivo para calcular los traspasos óptimos.
+    </ToolPageHeader>
 
     <CurrentPortfolioCard />
     <TargetPortfolioCard />

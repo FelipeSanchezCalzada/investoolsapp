@@ -1,5 +1,5 @@
 import useFrontDB from '~/db/useFrontDB'
-import type { FinancialFreedomExpense } from '~/db/types/FrontDBv2'
+import type { FinancialFreedomExpense } from '~/db/types/FrontDBv3'
 
 interface SP500DataPoint {
   date: Date

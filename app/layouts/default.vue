@@ -18,7 +18,7 @@ import {
       <div class="flex flex-1">
         <AppSidebar />
         <SidebarInset class="min-w-0">
-          <div class="m-5 overflow-x-hidden">
+          <div class="min-w-0 flex-1">
             <slot />
           </div>
         </SidebarInset>
