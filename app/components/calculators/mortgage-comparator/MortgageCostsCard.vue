@@ -14,11 +14,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { UPFRONT_COST_KEYS, UPFRONT_COST_LABELS } from '~/lib/mortgage/calculate'
+import { UPFRONT_COST_KEYS, upfrontCostLabelKey } from '~/lib/mortgage/calculate'
 
 const props = defineProps<{ mortgageId: string }>()
 
 const { findMortgage } = useMortgageComparator()
+const { t, locale } = useI18n()
 
 /** The editors write straight into the store object, so only its id travels as a prop. */
 const mortgage = computed(() => findMortgage(props.mortgageId))
@@ -26,8 +27,8 @@ const mortgage = computed(() => findMortgage(props.mortgageId))
 const amountFormat = { maximumFractionDigits: 0 } as const
 
 const feeGroups = computed(() => [
-  { key: 'partial' as const, label: 'Amortización parcial', tiers: mortgage.value?.earlyRepaymentFees.partial ?? [] },
-  { key: 'total' as const, label: 'Cancelación total', tiers: mortgage.value?.earlyRepaymentFees.total ?? [] },
+  { key: 'partial' as const, label: t('mortgage.costs.partial'), tiers: mortgage.value?.earlyRepaymentFees.partial ?? [] },
+  { key: 'total' as const, label: t('mortgage.costs.totalCancellation'), tiers: mortgage.value?.earlyRepaymentFees.total ?? [] },
 ])
 
 function addTier(tiers: MortgageFeeTier[]) {
@@ -55,9 +56,7 @@ function setHasToYear(tier: MortgageFeeTier, value: boolean) {
   >
     <div>
       <p class="mb-3 text-xs text-muted-foreground">
-        Desde la Ley 5/2019 (LCCI) el banco asume notaría, gestoría, registro y AJD; el cliente
-        paga tasación y copia de escritura. Se pueden marcar todos por si la oferta es antigua,
-        una subrogación o un caso especial. Solo los conceptos a cargo del cliente entran en la TAE.
+        {{ $t('mortgage.costs.lcciNote') }}
       </p>
 
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -70,14 +69,14 @@ function setHasToYear(tier: MortgageFeeTier, value: boolean) {
             :for="`mc-cost-${mortgage.id}-${key}`"
             class="text-sm leading-5 font-medium sm:min-h-10"
           >
-            {{ UPFRONT_COST_LABELS[key] }} (€)
+            {{ $t('mortgage.costs.upfrontLabel', { label: $t(upfrontCostLabelKey(key)) }) }}
           </label>
           <NumberField
             :id="`mc-cost-${mortgage.id}-${key}`"
             v-model="mortgage.upfrontCosts.amounts[key]"
             :min="0"
             :step="50"
-            locale="es-ES"
+            :locale="locale"
             :formatOptions="amountFormat"
           >
             <NumberFieldContent>
@@ -93,10 +92,10 @@ function setHasToYear(tier: MortgageFeeTier, value: boolean) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="client">
-                Lo pago yo
+                {{ $t('mortgage.costs.paidByClient') }}
               </SelectItem>
               <SelectItem value="bank">
-                Lo paga el banco
+                {{ $t('mortgage.costs.paidByBank') }}
               </SelectItem>
             </SelectContent>
           </Select>
@@ -106,21 +105,21 @@ function setHasToYear(tier: MortgageFeeTier, value: boolean) {
           <label
             :for="`mc-opening-fee-${mortgage.id}`"
             class="text-sm leading-5 font-medium sm:min-h-10"
-          >Comisión de apertura (%)</label>
+          >{{ $t('mortgage.costs.openingFee') }}</label>
           <NumberField
             :id="`mc-opening-fee-${mortgage.id}`"
             v-model="mortgage.upfrontCosts.openingFeePct"
             :min="0"
             :max="5"
             :step="0.05"
-            locale="es-ES"
+            :locale="locale"
           >
             <NumberFieldContent>
               <NumberFieldInput />
             </NumberFieldContent>
           </NumberField>
           <p class="text-xs text-muted-foreground">
-            Sobre el capital, siempre a tu cargo.
+            {{ $t('mortgage.costs.openingFeeHint') }}
           </p>
         </div>
       </div>
@@ -128,11 +127,10 @@ function setHasToYear(tier: MortgageFeeTier, value: boolean) {
 
     <div>
       <h4 class="mb-1 text-sm font-semibold">
-        Comisiones de amortización anticipada
+        {{ $t('mortgage.costs.earlyRepaymentTitle') }}
       </h4>
       <p class="mb-3 text-xs text-muted-foreground">
-        Tramos precargados con los topes de la LCCI según el tipo de préstamo. Son editables:
-        una oferta anterior a la ley o extranjera puede salirse de ellos, y en ese caso solo se avisa.
+        {{ $t('mortgage.costs.earlyRepaymentNote') }}
       </p>
 
       <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -149,7 +147,7 @@ function setHasToYear(tier: MortgageFeeTier, value: boolean) {
               @click="addTier(group.tiers)"
             >
               <Plus class="mr-1 size-4" />
-              Tramo
+              {{ $t('mortgage.costs.tier') }}
             </Button>
           </div>
 
@@ -157,9 +155,9 @@ function setHasToYear(tier: MortgageFeeTier, value: boolean) {
             v-if="group.tiers.length"
             class="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] gap-x-2 gap-y-1 text-xs text-muted-foreground"
           >
-            <span>Desde año</span>
-            <span>Hasta año</span>
-            <span>Comisión (%)</span>
+            <span>{{ $t('mortgage.costs.fromYear') }}</span>
+            <span>{{ $t('mortgage.costs.toYear') }}</span>
+            <span>{{ $t('mortgage.costs.feePct') }}</span>
             <span class="w-9" />
           </div>
 
@@ -173,7 +171,7 @@ function setHasToYear(tier: MortgageFeeTier, value: boolean) {
               :min="0"
               :max="50"
               :step="1"
-              locale="es-ES"
+              :locale="locale"
             >
               <NumberFieldContent>
                 <NumberFieldInput />
@@ -187,11 +185,11 @@ function setHasToYear(tier: MortgageFeeTier, value: boolean) {
                 :max="50"
                 :step="1"
                 :disabled="!hasToYear(tier)"
-                locale="es-ES"
+                :locale="locale"
                 @update:modelValue="(value) => tier.toYear = Number.isFinite(value) ? Number(value) : null"
               >
                 <NumberFieldContent>
-                  <NumberFieldInput placeholder="Fin" />
+                  <NumberFieldInput :placeholder="$t('mortgage.costs.endPlaceholder')" />
                 </NumberFieldContent>
               </NumberField>
               <label class="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -201,7 +199,7 @@ function setHasToYear(tier: MortgageFeeTier, value: boolean) {
                   class="size-3.5 accent-primary"
                   @change="setHasToYear(tier, ($event.target as HTMLInputElement).checked)"
                 >
-                Acotado
+                {{ $t('mortgage.costs.bounded') }}
               </label>
             </div>
 
@@ -210,7 +208,7 @@ function setHasToYear(tier: MortgageFeeTier, value: boolean) {
               :min="0"
               :max="10"
               :step="0.05"
-              locale="es-ES"
+              :locale="locale"
             >
               <NumberFieldContent>
                 <NumberFieldInput />

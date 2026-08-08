@@ -10,8 +10,8 @@ import TransfersCard from '~/components/helpers/portfolio-rebalancing/TransfersC
 definePageMeta({
   name: PAGE_NAMES.HELPERS.PORTFOLIO_REBALANCING,
   breadcrumb: [
-    { label: 'Home', to: { name: PAGE_NAMES.INDEX } },
-    { label: 'Rebalanceo de fondos' },
+    { labelKey: 'layout.breadcrumb.home', to: { name: PAGE_NAMES.INDEX } },
+    { labelKey: 'tools.portfolioRebalancing.navTitle' },
   ],
 })
 
@@ -36,8 +36,8 @@ watchImmediate(selectedWorkspace, (ws) => {
 
 <template>
   <div class="flex flex-col gap-6 p-3 sm:p-6 max-w-7xl mx-auto">
-    <ToolPageHeader title="Rebalanceo de Cartera">
-      Introduce tu cartera actual y la distribución objetivo para calcular los traspasos óptimos.
+    <ToolPageHeader :title="$t('tools.portfolioRebalancing.title')">
+      {{ $t('portfolioRebalancing.intro') }}
     </ToolPageHeader>
 
     <CurrentPortfolioCard />

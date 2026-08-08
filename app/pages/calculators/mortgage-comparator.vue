@@ -13,8 +13,8 @@ import { COMPARISON_TAB_ID } from '~/composables/useMortgageComparator'
 definePageMeta({
   name: PAGE_NAMES.CALCULATORS.MORTGAGE_COMPARATOR,
   breadcrumb: [
-    { label: 'Home', to: { name: PAGE_NAMES.INDEX } },
-    { label: 'Comparador de hipotecas' },
+    { labelKey: 'layout.breadcrumb.home', to: { name: PAGE_NAMES.INDEX } },
+    { labelKey: 'tools.mortgageComparator.navTitle' },
   ],
 })
 
@@ -23,11 +23,8 @@ const { mortgages, activeTabId, addMortgage, loadExamples } = useMortgageCompara
 
 <template>
   <div class="flex flex-col gap-6 p-3 sm:p-6">
-    <ToolPageHeader title="Comparador de hipotecas">
-      La TAE que publica el banco no cuenta lo que te cuestan de verdad las vinculaciones: solo
-      mete las obligatorias y a precio de tarifa. Aquí se calculan tres TAE —la oficial, la real
-      con lo que vas a contratar de verdad y la que tendrías sin vinculaciones opcionales— y se
-      imputa de cada producto solo el sobrecoste frente a contratarlo por tu cuenta.
+    <ToolPageHeader :title="$t('tools.mortgageComparator.title')">
+      {{ $t('mortgage.intro') }}
     </ToolPageHeader>
 
     <GlobalSettingsDialog />
@@ -35,26 +32,23 @@ const { mortgages, activeTabId, addMortgage, loadExamples } = useMortgageCompara
     <Card v-if="!mortgages.length">
       <CardHeader>
         <CardTitle class="text-lg">
-          Todavía no hay ninguna oferta
+          {{ $t('mortgage.empty.title') }}
         </CardTitle>
         <CardDescription>
-          Añade las hipotecas que estés valorando, con sus condiciones, gastos y vinculaciones.
-          También puedes cargar dos ejemplos con cifras plausibles del mercado español —una fija y
-          una variable— para ver cómo funciona la herramienta. No son ofertas reales ni una
-          recomendación.
+          {{ $t('mortgage.empty.description') }}
         </CardDescription>
       </CardHeader>
       <CardContent class="flex flex-wrap gap-2">
         <Button @click="addMortgage()">
           <Plus class="mr-1 size-4" />
-          Añadir hipoteca
+          {{ $t('mortgage.empty.addMortgage') }}
         </Button>
         <Button
           variant="outline"
           @click="loadExamples"
         >
           <FileStack class="mr-1 size-4" />
-          Cargar ejemplo
+          {{ $t('mortgage.empty.loadExample') }}
         </Button>
       </CardContent>
     </Card>

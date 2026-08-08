@@ -6,31 +6,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { compactCurrencyFormatter, currencyFormatter } from '~/composables/useMortgageComparator'
 
 const { comparison, isLoading } = useMortgageComparator()
+const { t } = useI18n()
 
 type SeriesKey = 'installment' | 'cumulativeCost' | 'outstanding' | 'netWorth'
 
-const CHARTS: { key: SeriesKey, label: string, description: string }[] = [
-  {
-    key: 'installment',
-    label: 'Cuota',
-    description: 'Cuota mensual al cierre de cada año. En las variables se ve el efecto de cada revisión.',
-  },
-  {
-    key: 'cumulativeCost',
-    label: 'Coste acumulado',
-    description: 'Gastos de entrada + intereses + coste neto de vinculaciones + comisiones, acumulado. Donde se cruzan dos líneas cambia cuál sale mejor.',
-  },
-  {
-    key: 'outstanding',
-    label: 'Capital pendiente',
-    description: 'Lo que queda por devolver al banco al cierre de cada año.',
-  },
-  {
-    key: 'netWorth',
-    label: 'Patrimonio neto',
-    description: 'Cartera del capital libre neta de impuestos menos el coste acumulado de la hipoteca.',
-  },
-]
+const CHART_KEYS: SeriesKey[] = ['installment', 'cumulativeCost', 'outstanding', 'netWorth']
+
+const CHARTS = computed(() => CHART_KEYS.map(key => ({
+  key,
+  label: t(`mortgage.charts.${key}`),
+  description: t(`mortgage.charts.${key}Description`),
+})))
 
 const activeChart = ref<SeriesKey>('cumulativeCost')
 
@@ -38,7 +24,7 @@ const enabledResults = computed<MortgageResult[]>(() =>
   (comparison.value?.results ?? []).filter(result => result.mortgage.enabled),
 )
 
-const activeChartMeta = computed(() => CHARTS.find(chart => chart.key === activeChart.value)!)
+const activeChartMeta = computed(() => CHARTS.value.find(chart => chart.key === activeChart.value)!)
 
 const chartOption = computed(() => {
   const results = enabledResults.value
@@ -51,21 +37,21 @@ const chartOption = computed(() => {
   return {
     tooltip: {
       trigger: 'axis',
-      valueFormatter: (value: number) => currencyFormatter.format(value),
+      valueFormatter: (value: number) => currencyFormatter().format(value),
     },
     legend: { top: 0, type: 'scroll' },
     grid: { left: 80, right: 20, bottom: 40, top: 40 },
     xAxis: {
       type: 'category',
       data: axis,
-      name: 'Año',
+      name: t('common.year'),
       nameLocation: 'middle',
       nameGap: 26,
     },
     yAxis: {
       type: 'value',
       axisLabel: {
-        formatter: (value: number) => compactCurrencyFormatter.format(value),
+        formatter: (value: number) => compactCurrencyFormatter().format(value),
       },
     },
     series: results.map((result, index) => ({
@@ -81,7 +67,7 @@ const chartOption = computed(() => {
         ? {
             silent: true,
             symbol: 'none',
-            label: { formatter: `Cruce: año ${crossoverYear}`, position: 'insideEndTop' },
+            label: { formatter: t('mortgage.charts.crossoverLabel', { year: crossoverYear }), position: 'insideEndTop' },
             lineStyle: { type: 'dashed' },
             data: [{ xAxis: crossoverYear }],
           }
@@ -117,14 +103,14 @@ const chartOption = computed(() => {
         class="flex items-center justify-center py-20"
       >
         <Loader2 class="size-8 animate-spin text-muted-foreground" />
-        <span class="ml-3 text-muted-foreground">Calculando…</span>
+        <span class="ml-3 text-muted-foreground">{{ $t('mortgage.charts.calculating') }}</span>
       </div>
 
       <div
         v-else-if="!enabledResults.length"
         class="py-20 text-center text-sm text-muted-foreground"
       >
-        Activa alguna hipoteca para ver los gráficos.
+        {{ $t('mortgage.charts.empty') }}
       </div>
 
       <div

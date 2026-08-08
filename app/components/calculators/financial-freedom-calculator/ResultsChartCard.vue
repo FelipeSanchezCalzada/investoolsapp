@@ -4,12 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
 const { isLoading, results } = useFinancialFreedomCalculator()
+const { t, locale } = useI18n()
 
-const usdFormatter = new Intl.NumberFormat('es-ES', {
+const usdFormatter = computed(() => new Intl.NumberFormat(locale.value, {
   style: 'currency',
   currency: 'USD',
   maximumFractionDigits: 0,
-})
+}))
 
 const chartOption = computed(() => {
   if (!results.value) return {}
@@ -17,7 +18,7 @@ const chartOption = computed(() => {
   return {
     tooltip: {
       trigger: 'axis',
-      valueFormatter: (value: number) => usdFormatter.format(value),
+      valueFormatter: (value: number) => usdFormatter.value.format(value),
     },
     legend: {
       top: 0,
@@ -39,12 +40,12 @@ const chartOption = computed(() => {
     yAxis: {
       type: 'value',
       axisLabel: {
-        formatter: (value: number) => usdFormatter.format(value),
+        formatter: (value: number) => usdFormatter.value.format(value),
       },
     },
     series: [
       {
-        name: 'Aportado (peor caso)',
+        name: t('financialFreedom.series.worstCaseInvested'),
         type: 'line',
         data: results.value.worstCaseInvested,
         smooth: 0.4,
@@ -53,7 +54,7 @@ const chartOption = computed(() => {
         itemStyle: { color: '#f87171' },
       },
       {
-        name: 'Aportado (caso actual)',
+        name: t('financialFreedom.series.currentCaseInvested'),
         type: 'line',
         data: results.value.currentCaseInvested,
         smooth: 0.4,
@@ -62,7 +63,7 @@ const chartOption = computed(() => {
         itemStyle: { color: '#60a5fa' },
       },
       {
-        name: 'Aportado (mejor caso)',
+        name: t('financialFreedom.series.bestCaseInvested'),
         type: 'line',
         data: results.value.bestCaseInvested,
         smooth: 0.4,
@@ -71,7 +72,7 @@ const chartOption = computed(() => {
         itemStyle: { color: '#4ade80' },
       },
       {
-        name: 'Peor caso historico',
+        name: t('financialFreedom.series.worstCase'),
         type: 'line',
         data: results.value.worstCasePortfolio,
         smooth: 0.4,
@@ -80,7 +81,7 @@ const chartOption = computed(() => {
         itemStyle: { color: '#ef4444' },
       },
       {
-        name: 'Caso actual',
+        name: t('financialFreedom.series.currentCase'),
         type: 'line',
         data: results.value.currentCasePortfolio,
         smooth: 0.4,
@@ -89,7 +90,7 @@ const chartOption = computed(() => {
         itemStyle: { color: '#3b82f6' },
       },
       {
-        name: 'Mejor caso historico',
+        name: t('financialFreedom.series.bestCase'),
         type: 'line',
         data: results.value.bestCasePortfolio,
         smooth: 0.4,
@@ -106,7 +107,7 @@ const chartOption = computed(() => {
   <Card>
     <CardHeader>
       <CardTitle class="text-lg">
-        Resultados
+        {{ $t('common.results') }}
       </CardTitle>
     </CardHeader>
     <CardContent>
@@ -115,14 +116,14 @@ const chartOption = computed(() => {
         class="flex items-center justify-center py-20"
       >
         <Loader2 class="size-8 animate-spin text-muted-foreground" />
-        <span class="ml-3 text-muted-foreground">Calculando escenarios...</span>
+        <span class="ml-3 text-muted-foreground">{{ $t('financialFreedom.calculating') }}</span>
       </div>
 
       <div
         v-else-if="!results"
         class="text-center py-20 text-muted-foreground"
       >
-        Cargando datos historicos...
+        {{ $t('financialFreedom.loading') }}
       </div>
 
       <template v-else>
@@ -131,7 +132,7 @@ const chartOption = computed(() => {
             <div class="flex items-center justify-between mb-1 sm:mb-2">
               <div class="flex items-center gap-2 text-muted-foreground">
                 <Wallet class="size-4" />
-                <span class="text-xs font-medium">Invertido total</span>
+                <span class="text-xs font-medium">{{ $t('financialFreedom.totalInvested') }}</span>
               </div>
             </div>
             <p class="text-lg font-bold tracking-tight">
@@ -143,7 +144,7 @@ const chartOption = computed(() => {
             <div class="flex items-center justify-between mb-1 sm:mb-2">
               <div class="flex items-center gap-2 text-red-500">
                 <TrendingDown class="size-4" />
-                <span class="text-xs font-medium">Peor caso</span>
+                <span class="text-xs font-medium">{{ $t('financialFreedom.worstCase') }}</span>
               </div>
               <Badge
                 variant="outline"
@@ -155,11 +156,11 @@ const chartOption = computed(() => {
             <div class="flex items-center gap-2">
               <Clock class="size-4 text-red-500" />
               <p class="text-lg font-bold tracking-tight text-red-500">
-                {{ results.worstCase.yearsToFreedom }} años
+                {{ $t('common.yearsCount', { count: results.worstCase.yearsToFreedom }) }}
               </p>
             </div>
             <p class="text-xs text-red-500/80 mt-1">
-              Libertad financiera a los {{ results.worstCase.ageAtFreedom }} años
+              {{ $t('financialFreedom.freedomAtAge', { age: results.worstCase.ageAtFreedom }) }}
             </p>
           </div>
 
@@ -167,7 +168,7 @@ const chartOption = computed(() => {
             <div class="flex items-center justify-between mb-1 sm:mb-2">
               <div class="flex items-center gap-2 text-blue-500">
                 <Activity class="size-4" />
-                <span class="text-xs font-medium">Caso actual</span>
+                <span class="text-xs font-medium">{{ $t('financialFreedom.currentCase') }}</span>
               </div>
               <Badge
                 variant="outline"
@@ -179,11 +180,11 @@ const chartOption = computed(() => {
             <div class="flex items-center gap-2">
               <Clock class="size-4 text-blue-500" />
               <p class="text-lg font-bold tracking-tight text-blue-500">
-                {{ results.currentCase.yearsToFreedom }} años
+                {{ $t('common.yearsCount', { count: results.currentCase.yearsToFreedom }) }}
               </p>
             </div>
             <p class="text-xs text-blue-500/80 mt-1">
-              Libertad financiera a los {{ results.currentCase.ageAtFreedom }} años
+              {{ $t('financialFreedom.freedomAtAge', { age: results.currentCase.ageAtFreedom }) }}
             </p>
           </div>
 
@@ -191,7 +192,7 @@ const chartOption = computed(() => {
             <div class="flex items-center justify-between mb-1 sm:mb-2">
               <div class="flex items-center gap-2 text-green-500">
                 <TrendingUp class="size-4" />
-                <span class="text-xs font-medium">Mejor caso</span>
+                <span class="text-xs font-medium">{{ $t('financialFreedom.bestCase') }}</span>
               </div>
               <Badge
                 variant="outline"
@@ -203,11 +204,11 @@ const chartOption = computed(() => {
             <div class="flex items-center gap-2">
               <Clock class="size-4 text-green-500" />
               <p class="text-lg font-bold tracking-tight text-green-500">
-                {{ results.bestCase.yearsToFreedom }} años
+                {{ $t('common.yearsCount', { count: results.bestCase.yearsToFreedom }) }}
               </p>
             </div>
             <p class="text-xs text-green-500/80 mt-1">
-              Libertad financiera a los {{ results.bestCase.ageAtFreedom }} años
+              {{ $t('financialFreedom.freedomAtAge', { age: results.bestCase.ageAtFreedom }) }}
             </p>
           </div>
         </div>

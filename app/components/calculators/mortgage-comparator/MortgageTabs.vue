@@ -38,6 +38,7 @@ const {
   duplicateMortgage,
   findMortgage,
 } = useMortgageComparator()
+const { t } = useI18n()
 
 const renameTargetId = ref<string | null>(null)
 const renameValue = ref('')
@@ -54,9 +55,9 @@ const deleteTargetName = computed(() =>
 function rateSummary(mortgageId: string): string {
   const mortgage = findMortgage(mortgageId)
   if (!mortgage) return ''
-  if (mortgage.rateType === 'fixed') return `${formatPercent(mortgage.fixedRatePct, ' %')} fijo`
-  if (mortgage.rateType === 'mixed') return `mixta ${formatPercent(mortgage.fixedRatePct, ' %')}`
-  return `Eur+${formatPercent(mortgage.spreadPct, ' %')}`
+  if (mortgage.rateType === 'fixed') return t('mortgage.tabs.rateFixed', { rate: formatPercent(mortgage.fixedRatePct, ' %') })
+  if (mortgage.rateType === 'mixed') return t('mortgage.tabs.rateMixed', { rate: formatPercent(mortgage.fixedRatePct, ' %') })
+  return t('mortgage.tabs.rateVariable', { rate: formatPercent(mortgage.spreadPct, ' %') })
 }
 
 function openRename(mortgageId: string) {
@@ -104,7 +105,7 @@ function confirmDelete() {
           :style="{ backgroundColor: mortgage.color }"
         />
         <span class="whitespace-nowrap">
-          {{ mortgage.name || 'Sin nombre' }}
+          {{ mortgage.name || $t('mortgage.tabs.unnamed') }}
           <span class="hidden text-muted-foreground sm:inline">· {{ rateSummary(mortgage.id) }}</span>
         </span>
         <Badge
@@ -127,31 +128,31 @@ function confirmDelete() {
             class="size-7"
           >
             <EllipsisVertical class="size-4" />
-            <span class="sr-only">Opciones de {{ mortgage.name }}</span>
+            <span class="sr-only">{{ $t('mortgage.tabs.options', { name: mortgage.name }) }}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
           <DropdownMenuItem @select="openRename(mortgage.id)">
             <Pencil class="mr-2 size-4" />
-            Renombrar
+            {{ $t('common.rename') }}
           </DropdownMenuItem>
           <DropdownMenuItem @select="duplicateMortgage(mortgage.id)">
             <Copy class="mr-2 size-4" />
-            Duplicar
+            {{ $t('common.duplicate') }}
           </DropdownMenuItem>
           <DropdownMenuItem @select="toggleEnabled(mortgage.id)">
             <component
               :is="mortgage.enabled ? EyeOff : Eye"
               class="mr-2 size-4"
             />
-            {{ mortgage.enabled ? 'Excluir de la comparativa' : 'Incluir en la comparativa' }}
+            {{ mortgage.enabled ? $t('mortgage.tabs.exclude') : $t('mortgage.tabs.include') }}
           </DropdownMenuItem>
           <DropdownMenuItem
             class="text-destructive"
             @select="openDelete(mortgage.id)"
           >
             <Trash2 class="mr-2 size-4" />
-            Borrar
+            {{ $t('common.delete') }}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -164,7 +165,7 @@ function confirmDelete() {
       @click="addMortgage()"
     >
       <Plus class="mr-1 size-4" />
-      Añadir
+      {{ $t('common.add') }}
     </Button>
 
     <Separator
@@ -177,7 +178,7 @@ function confirmDelete() {
       class="shrink-0 gap-2 border border-primary bg-primary/10 font-semibold data-[state=active]:bg-primary/20"
     >
       <Scale class="size-4" />
-      Comparativa
+      {{ $t('mortgage.tabs.comparison') }}
     </TabsTrigger>
   </TabsList>
 
@@ -187,11 +188,11 @@ function confirmDelete() {
   >
     <DialogContent class="sm:max-w-sm">
       <DialogHeader>
-        <DialogTitle>Renombrar hipoteca</DialogTitle>
+        <DialogTitle>{{ $t('mortgage.tabs.renameTitle') }}</DialogTitle>
       </DialogHeader>
       <Input
         v-model="renameValue"
-        placeholder="Ej: BBVA fija 2,45 %"
+        :placeholder="$t('mortgage.tabs.namePlaceholder')"
         @keydown.enter="confirmRename"
       />
       <DialogFooter>
@@ -199,10 +200,10 @@ function confirmDelete() {
           variant="outline"
           @click="renameTargetId = null"
         >
-          Cancelar
+          {{ $t('common.cancel') }}
         </Button>
         <Button @click="confirmRename">
-          Guardar
+          {{ $t('common.save') }}
         </Button>
       </DialogFooter>
     </DialogContent>
@@ -211,18 +212,18 @@ function confirmDelete() {
   <AlertDialog v-model:open="isDeleteDialogOpen">
     <AlertDialogContent>
       <AlertDialogHeader>
-        <AlertDialogTitle>¿Borrar «{{ deleteTargetName }}»?</AlertDialogTitle>
+        <AlertDialogTitle>{{ $t('mortgage.tabs.deleteTitle', { name: deleteTargetName }) }}</AlertDialogTitle>
         <AlertDialogDescription>
-          Se eliminan sus condiciones, vinculaciones y amortizaciones anticipadas. No se puede deshacer.
+          {{ $t('mortgage.tabs.deleteDescription') }}
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
-        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+        <AlertDialogCancel>{{ $t('common.cancel') }}</AlertDialogCancel>
         <AlertDialogAction
           class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           @click="confirmDelete"
         >
-          Borrar
+          {{ $t('common.delete') }}
         </AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>

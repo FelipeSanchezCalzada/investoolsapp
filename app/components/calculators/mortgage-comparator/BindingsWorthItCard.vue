@@ -30,12 +30,10 @@ const rows = computed(() =>
   <Card>
     <CardHeader>
       <CardTitle class="text-lg">
-        ¿Compensan las vinculaciones?
+        {{ $t('mortgage.worthIt.title') }}
       </CardTitle>
       <CardDescription>
-        Para cada producto se recalcula la hipoteca con y sin él. Compensa si lo que ahorras en
-        intereses gracias a la bonificación supera su coste neto acumulado. El umbral de ruptura es
-        el coste neto máximo al que dejaría de compensar.
+        {{ $t('mortgage.worthIt.description') }}
       </CardDescription>
     </CardHeader>
     <CardContent>
@@ -43,7 +41,7 @@ const rows = computed(() =>
         v-if="!rows.length"
         class="rounded-lg border border-dashed py-10 text-center text-sm text-muted-foreground"
       >
-        Ninguna hipoteca activa tiene vinculaciones.
+        {{ $t('mortgage.worthIt.empty') }}
       </div>
 
       <div v-else>
@@ -51,28 +49,28 @@ const rows = computed(() =>
           <TableHeader>
             <TableRow>
               <TableHead class="min-w-40">
-                Hipoteca
+                {{ $t('mortgage.worthIt.mortgage') }}
               </TableHead>
               <TableHead class="min-w-48">
-                Vinculación
+                {{ $t('mortgage.worthIt.binding') }}
               </TableHead>
               <TableHead class="text-right">
-                Bonificación
+                {{ $t('mortgage.worthIt.bonus') }}
               </TableHead>
               <TableHead class="text-right">
-                Ahorro en intereses
+                {{ $t('mortgage.worthIt.interestSavings') }}
               </TableHead>
               <TableHead class="text-right">
-                Coste neto
+                {{ $t('mortgage.worthIt.netCost') }}
               </TableHead>
               <TableHead class="text-right">
-                Balance
+                {{ $t('mortgage.worthIt.balance') }}
               </TableHead>
               <TableHead class="text-right">
-                Umbral de ruptura
+                {{ $t('mortgage.worthIt.breakEven') }}
               </TableHead>
               <TableHead class="w-28 text-center">
-                Veredicto
+                {{ $t('mortgage.worthIt.verdict') }}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -99,7 +97,7 @@ const rows = computed(() =>
                     variant="outline"
                     class="text-[10px]"
                   >
-                    Obligatoria
+                    {{ $t('mortgage.worthIt.requiredBadge') }}
                   </Badge>
                   <TriangleAlert
                     v-if="row.required && !row.active"
@@ -110,7 +108,7 @@ const rows = computed(() =>
                   v-if="!row.active"
                   class="text-xs text-muted-foreground"
                 >
-                  Desactivada: cifras de qué pasaría si la contrataras.
+                  {{ $t('mortgage.worthIt.inactiveNote') }}
                 </p>
               </TableCell>
               <TableCell class="text-right">
@@ -143,7 +141,7 @@ const rows = computed(() =>
                     :is="row.worthIt ? CircleCheck : CircleX"
                     class="size-4"
                   />
-                  {{ row.worthIt ? 'Sí' : 'No' }}
+                  {{ row.worthIt ? $t('common.yes') : $t('common.no') }}
                 </span>
               </TableCell>
             </TableRow>

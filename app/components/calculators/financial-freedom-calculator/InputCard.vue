@@ -18,6 +18,8 @@ import {
 } from '@/components/ui/number-field'
 import useFrontDB from '~/db/useFrontDB'
 
+const { locale } = useI18n()
+
 const store = useFrontDB()
 const { selectedWorkspace } = storeToRefs(store)
 
@@ -94,7 +96,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
   <Card>
     <CardHeader>
       <CardTitle class="text-lg">
-        Datos de inversión
+        {{ $t('financialFreedom.inputTitle') }}
       </CardTitle>
     </CardHeader>
     <CardContent>
@@ -104,14 +106,14 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
             for="ff-initial-amount"
             class="text-sm font-medium"
           >
-            Monto inicial ($)
+            {{ $t('financialFreedom.initialAmount') }}
           </label>
           <NumberField
             id="ff-initial-amount"
             v-model="initialAmount"
             :min="0"
             :step="1000"
-            locale="es-ES"
+            :locale="locale"
             :formatOptions="{ maximumFractionDigits: 2 }"
           >
             <NumberFieldContent>
@@ -125,14 +127,14 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
             for="ff-monthly-dca"
             class="text-sm font-medium"
           >
-            Aportación mensual ($)
+            {{ $t('financialFreedom.monthlyContribution') }}
           </label>
           <NumberField
             id="ff-monthly-dca"
             v-model="monthlyDCA"
             :min="0"
             :step="50"
-            locale="es-ES"
+            :locale="locale"
             :formatOptions="{ maximumFractionDigits: 2 }"
           >
             <NumberFieldContent>
@@ -146,7 +148,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
             for="ff-current-age"
             class="text-sm font-medium"
           >
-            Edad actual
+            {{ $t('financialFreedom.currentAge') }}
           </label>
           <NumberField
             id="ff-current-age"
@@ -154,7 +156,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
             :min="1"
             :max="100"
             :step="1"
-            locale="es-ES"
+            :locale="locale"
           >
             <NumberFieldContent>
               <NumberFieldInput />
@@ -167,7 +169,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
             for="ff-max-age"
             class="text-sm font-medium"
           >
-            Edad máxima
+            {{ $t('financialFreedom.maxAge') }}
           </label>
           <NumberField
             id="ff-max-age"
@@ -175,7 +177,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
             :min="1"
             :max="120"
             :step="1"
-            locale="es-ES"
+            :locale="locale"
           >
             <NumberFieldContent>
               <NumberFieldInput />
@@ -189,7 +191,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
   <Card>
     <CardHeader class="flex flex-row items-center justify-between">
       <CardTitle class="text-lg">
-        Gastos futuros
+        {{ $t('financialFreedom.expensesTitle') }}
       </CardTitle>
       <Button
         size="sm"
@@ -197,7 +199,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
         @click="addExpense"
       >
         <Plus class="size-4 mr-1" />
-        Añadir gasto
+        {{ $t('financialFreedom.addExpense') }}
       </Button>
     </CardHeader>
     <CardContent>
@@ -205,24 +207,24 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
         v-if="!expenses.length"
         class="text-center py-8 text-muted-foreground"
       >
-        No hay gastos configurados. Añade gastos para calcular tu libertad financiera.
+        {{ $t('financialFreedom.noExpenses') }}
       </div>
 
       <Table v-else>
         <TableHeader>
           <TableRow>
-            <TableHead>Nombre</TableHead>
+            <TableHead>{{ $t('financialFreedom.expenseName') }}</TableHead>
             <TableHead class="w-50">
-              Gasto mensual ($)
+              {{ $t('financialFreedom.monthlyExpense') }}
             </TableHead>
             <TableHead class="w-30">
-              Desde Libertad
+              {{ $t('financialFreedom.fromFreedom') }}
             </TableHead>
             <TableHead class="w-36">
-              Desde año
+              {{ $t('financialFreedom.fromYear') }}
             </TableHead>
             <TableHead class="w-36">
-              Hasta año
+              {{ $t('financialFreedom.toYear') }}
             </TableHead>
             <TableHead class="w-10" />
           </TableRow>
@@ -236,7 +238,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
               <input
                 v-model="expense.name"
                 type="text"
-                placeholder="Ej: Alquiler pueblo"
+                :placeholder="$t('financialFreedom.expensePlaceholder')"
                 class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               >
             </TableCell>
@@ -245,7 +247,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
                 v-model="expense.monthlyAmount"
                 :min="0"
                 :step="50"
-                locale="es-ES"
+                :locale="locale"
                 :formatOptions="{ maximumFractionDigits: 2 }"
               >
                 <NumberFieldContent>
@@ -267,7 +269,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
                   :min="0"
                   :max="99"
                   :step="1"
-                  locale="es-ES"
+                  :locale="locale"
                 >
                   <NumberFieldContent>
                     <NumberFieldInput />
@@ -281,7 +283,7 @@ function toggleFromFinancialFreedom(id: string, checked: boolean) {
                 :min="0"
                 :max="99"
                 :step="1"
-                locale="es-ES"
+                :locale="locale"
               >
                 <NumberFieldContent>
                   <NumberFieldInput />

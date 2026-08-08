@@ -173,7 +173,7 @@ const deleteWorkspace = (ws: Workspace) => {
           :sideOffset="4"
         >
           <DropdownMenuLabel class="text-xs text-muted-foreground">
-            Workspaces
+            {{ $t('workspace.label') }}
           </DropdownMenuLabel>
           <DropdownMenuItem
             v-for="workspace in dbStore.workspaces"
@@ -207,7 +207,7 @@ const deleteWorkspace = (ws: Workspace) => {
               <Plus class="size-4" />
             </div>
             <div class="font-medium text-muted-foreground">
-              Nuevo workspace
+              {{ $t('workspace.new') }}
             </div>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -216,21 +216,21 @@ const deleteWorkspace = (ws: Workspace) => {
               variant="outline"
               size="sm"
               class="flex-1"
-              title="Exportar base de datos como JSON"
+              :title="$t('workspace.exportTitle')"
               @click.stop="handleExportDB"
             >
               <Download class="size-4" />
-              Exportar
+              {{ $t('common.export') }}
             </Button>
             <Button
               variant="outline"
               size="sm"
               class="flex-1"
-              title="Importar base de datos desde JSON"
+              :title="$t('workspace.importTitle')"
               @click.stop="handleImportDB"
             >
               <Upload class="size-4" />
-              Importar
+              {{ $t('common.import') }}
             </Button>
           </div>
           <DropdownMenuItem
@@ -241,7 +241,7 @@ const deleteWorkspace = (ws: Workspace) => {
               <RotateCcw class="size-4" />
             </div>
             <div class="font-medium">
-              Resetear base de datos
+              {{ $t('workspace.resetDb') }}
             </div>
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -257,12 +257,12 @@ const deleteWorkspace = (ws: Workspace) => {
     <DialogContent class="sm:max-w-md">
       <DialogHeader>
         <DialogTitle>
-          {{ createUpdateWorkspaceDialogMode === CreateUpdateWorkspaceDialogMode.CREATE ? 'Crear workspace' : 'Editar workspace' }}
+          {{ createUpdateWorkspaceDialogMode === CreateUpdateWorkspaceDialogMode.CREATE ? $t('workspace.createTitle') : $t('workspace.editTitle') }}
         </DialogTitle>
         <DialogDescription>
           {{ createUpdateWorkspaceDialogMode === CreateUpdateWorkspaceDialogMode.CREATE
-            ? 'Crea un nuevo workspace para organizar tus herramientas.'
-            : 'Modifica el nombre o la descripción del workspace.' }}
+            ? $t('workspace.createDescription')
+            : $t('workspace.editDescription') }}
         </DialogDescription>
       </DialogHeader>
 
@@ -271,25 +271,25 @@ const deleteWorkspace = (ws: Workspace) => {
         @submit.prevent="onDialogSubmit"
       >
         <div class="grid gap-2">
-          <Label for="ws-name">Nombre</Label>
+          <Label for="ws-name">{{ $t('common.name') }}</Label>
           <Input
             id="ws-name"
             v-model="wsName"
-            placeholder="Mi workspace"
+            :placeholder="$t('workspace.namePlaceholder')"
           />
           <p
             v-if="wsNameAlreadyExists && createUpdateWorkspaceDialogMode === CreateUpdateWorkspaceDialogMode.CREATE"
             class="text-xs text-destructive"
           >
-            Ya existe un workspace con ese nombre.
+            {{ $t('workspace.nameTaken') }}
           </p>
         </div>
         <div class="grid gap-2">
-          <Label for="ws-description">Descripción</Label>
+          <Label for="ws-description">{{ $t('common.description') }}</Label>
           <Input
             id="ws-description"
             v-model="wsDescription"
-            placeholder="Descripción opcional"
+            :placeholder="$t('workspace.descriptionPlaceholder')"
           />
         </div>
 
@@ -299,13 +299,13 @@ const deleteWorkspace = (ws: Workspace) => {
             variant="outline"
             @click="createUpdateWorkspaceDialogMode = CreateUpdateWorkspaceDialogMode.NOTHING"
           >
-            Cancelar
+            {{ $t('common.cancel') }}
           </Button>
           <Button
             type="submit"
             :disabled="!wsName.trim() || (wsNameAlreadyExists && createUpdateWorkspaceDialogMode === CreateUpdateWorkspaceDialogMode.CREATE)"
           >
-            {{ createUpdateWorkspaceDialogMode === CreateUpdateWorkspaceDialogMode.CREATE ? 'Crear' : 'Guardar' }}
+            {{ createUpdateWorkspaceDialogMode === CreateUpdateWorkspaceDialogMode.CREATE ? $t('common.create') : $t('common.save') }}
           </Button>
         </DialogFooter>
       </form>
@@ -316,18 +316,18 @@ const deleteWorkspace = (ws: Workspace) => {
   <AlertDialog v-model:open="resetDialogOpen">
     <AlertDialogContent>
       <AlertDialogHeader>
-        <AlertDialogTitle>Resetear base de datos</AlertDialogTitle>
+        <AlertDialogTitle>{{ $t('workspace.resetDb') }}</AlertDialogTitle>
         <AlertDialogDescription>
-          Esta acción eliminará todos los datos almacenados, incluyendo todos los workspaces y su contenido. Esta acción no se puede deshacer.
+          {{ $t('workspace.resetDescription') }}
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
-        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+        <AlertDialogCancel>{{ $t('common.cancel') }}</AlertDialogCancel>
         <AlertDialogAction
           class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           @click="handleResetDB"
         >
-          Resetear
+          {{ $t('common.reset') }}
         </AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>

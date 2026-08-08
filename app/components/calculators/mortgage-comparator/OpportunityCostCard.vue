@@ -13,15 +13,14 @@ const { common } = useMortgageComparator()
     v-if="!result"
     class="text-sm text-muted-foreground"
   >
-    Sin datos todavía.
+    {{ $t('mortgage.opportunity.noData') }}
   </div>
 
   <div
     v-else-if="!common?.opportunityCostEnabled"
     class="rounded-lg border border-dashed p-4 text-sm text-muted-foreground"
   >
-    El coste de oportunidad está desactivado. Actívalo en los datos comunes para simular qué pasa
-    con el ahorro que no metes en la entrada.
+    {{ $t('mortgage.opportunity.disabled') }}
   </div>
 
   <div
@@ -29,53 +28,53 @@ const { common } = useMortgageComparator()
     class="flex flex-col gap-4"
   >
     <p class="text-xs text-muted-foreground">
-      Pedir menos capital ahorra intereses pero inmoviliza ahorro. Aquí se simula la otra mitad:
-      el dinero que esta oferta te deja libre, invertido al
-      {{ formatPercent(common.expectedReturnPct) }} durante {{ result.years }} años y tributando
-      al {{ formatPercent(common.capitalGainsTaxPct) }} al rescatarlo. La rentabilidad y el
-      impuesto se editan en los datos comunes.
+      {{ $t('mortgage.opportunity.intro', {
+        returnPct: formatPercent(common.expectedReturnPct),
+        years: result.years,
+        taxPct: formatPercent(common.capitalGainsTaxPct),
+      }) }}
     </p>
 
     <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
       <div class="rounded-lg border bg-muted/40 p-3">
         <p class="text-xs text-muted-foreground">
-          Entrada aportada
+          {{ $t('mortgage.opportunity.downPayment') }}
         </p>
         <p class="text-lg font-semibold tracking-tight">
           {{ formatCurrency(result.opportunityCost.downPayment) }}
         </p>
         <p class="text-xs text-muted-foreground">
-          Vivienda − capital
+          {{ $t('mortgage.opportunity.downPaymentHint') }}
         </p>
       </div>
 
       <div class="rounded-lg border bg-muted/40 p-3">
         <p class="text-xs text-muted-foreground">
-          Capital libre
+          {{ $t('mortgage.opportunity.freeCapital') }}
         </p>
         <p class="text-lg font-semibold tracking-tight">
           {{ formatCurrency(result.opportunityCost.freeCapital) }}
         </p>
         <p class="text-xs text-muted-foreground">
-          Ahorro − entrada − gastos
+          {{ $t('mortgage.opportunity.freeCapitalHint') }}
         </p>
       </div>
 
       <div class="rounded-lg border bg-muted/40 p-3">
         <p class="text-xs text-muted-foreground">
-          Cartera final neta
+          {{ $t('mortgage.opportunity.netPortfolio') }}
         </p>
         <p class="text-lg font-semibold tracking-tight">
           {{ formatCurrency(result.opportunityCost.netPortfolio) }}
         </p>
         <p class="text-xs text-muted-foreground">
-          Impuesto: {{ formatCurrency(result.opportunityCost.capitalGainsTax) }}
+          {{ $t('mortgage.opportunity.taxHint', { value: formatCurrency(result.opportunityCost.capitalGainsTax) }) }}
         </p>
       </div>
 
       <div class="rounded-lg border border-primary/40 bg-primary/5 p-3">
         <p class="text-xs text-muted-foreground">
-          Patrimonio neto
+          {{ $t('mortgage.opportunity.netWorth') }}
         </p>
         <p
           class="text-lg font-semibold tracking-tight"
@@ -84,7 +83,7 @@ const { common } = useMortgageComparator()
           {{ formatCurrency(result.netWorth) }}
         </p>
         <p class="text-xs text-muted-foreground">
-          Cartera neta − coste total
+          {{ $t('mortgage.opportunity.netWorthHint') }}
         </p>
       </div>
     </div>
@@ -95,13 +94,10 @@ const { common } = useMortgageComparator()
     >
       <TriangleAlert class="mt-0.5 size-4 shrink-0 text-amber-500" />
       <span v-if="result.opportunityCost.negativeDownPayment">
-        El capital de esta oferta supera el precio de la vivienda, así que no hay entrada que
-        aportar. Revisa el capital o el precio.
+        {{ $t('mortgage.opportunity.negativeDownPayment') }}
       </span>
       <span v-else>
-        Tu ahorro no cubre la entrada más los gastos: te faltan
-        {{ formatCurrency(-result.opportunityCost.freeCapital) }}. La oferta queda fuera del
-        ranking, pero se sigue calculando.
+        {{ $t('mortgage.opportunity.notAffordable', { value: formatCurrency(-result.opportunityCost.freeCapital) }) }}
       </span>
     </div>
   </div>

@@ -1,0 +1,631 @@
+{
+  "common": {
+    "active": "Active",
+    "add": "Add",
+    "cancel": "Cancel",
+    "create": "Create",
+    "delete": "Delete",
+    "description": "Description",
+    "done": "Done",
+    "duplicate": "Duplicate",
+    "emptyValue": "—",
+    "export": "Export",
+    "import": "Import",
+    "month": "Month",
+    "name": "Name",
+    "no": "No",
+    "none": "None",
+    "notAvailable": "n/a",
+    "progress": "Progress",
+    "rename": "Rename",
+    "reset": "Reset",
+    "results": "Results",
+    "save": "Save",
+    "toggle": "Toggle",
+    "total": "Total",
+    "year": "Year",
+    "years": "years",
+    "yearsCount": "{count} years",
+    "yes": "Yes"
+  },
+  "locale": {
+    "label": "Language"
+  },
+  "layout": {
+    "breadcrumb": {
+      "home": "Home"
+    },
+    "footer": {
+      "madeWith": "Made with",
+      "by": "by",
+      "license": "AGPL-3.0 License"
+    },
+    "nav": {
+      "groupLabel": "Tools",
+      "helpers": "Helpers",
+      "calculators": "Calculators"
+    }
+  },
+  "workspace": {
+    "label": "Workspaces",
+    "new": "New workspace",
+    "exportTitle": "Export database as JSON",
+    "importTitle": "Import database from JSON",
+    "resetDb": "Reset database",
+    "createTitle": "Create workspace",
+    "editTitle": "Edit workspace",
+    "createDescription": "Create a new workspace to organise your tools.",
+    "editDescription": "Change the workspace name or description.",
+    "namePlaceholder": "My workspace",
+    "descriptionPlaceholder": "Optional description",
+    "nameTaken": "A workspace with that name already exists.",
+    "resetDescription": "This will delete every stored piece of data, including all workspaces and their contents. This action cannot be undone."
+  },
+  "home": {
+    "betaTitle": "Project in early beta",
+    "betaDescription": "This application is at a very early stage of development. Bugs, breaking changes or data loss can happen at any time. Do not store critical information without an external backup.",
+    "welcomeTitle": "Welcome to Investools",
+    "welcomeSubtitle": "Your toolbox for managing investments.",
+    "privacyTitle": "Your data is only yours",
+    "privacyDescription": "Everything is stored locally in your browser. Nothing is sent to any external server.",
+    "evolvingTitle": "Constantly evolving",
+    "evolvingDescription": "New tools and utilities will be added regularly to cover more investment needs.",
+    "workspacesTitle": "Your workspaces",
+    "workspacesDescription": "Each workspace works as an independent database inside the app. You can create several to separate portfolios, strategies or simulations, and switch between them at any time.",
+    "toolsTitle": "Tools",
+    "toolsDescription": "Access the available utilities to analyse and manage your investments. New tools will be added over time."
+  },
+  "toolHeader": {
+    "whatIsThis": "What this tool does"
+  },
+  "tools": {
+    "portfolioRebalancing": {
+      "navTitle": "Fund rebalancing",
+      "title": "Portfolio Rebalancing",
+      "description": "Works out the transfers needed to rebalance your fund portfolio towards the target allocation you define.",
+      "category": "Helpers"
+    },
+    "sp500": {
+      "navTitle": "S&P 500 Calculator",
+      "title": "S&P 500 Calculator"
+    },
+    "financialFreedom": {
+      "navTitle": "Financial Freedom",
+      "breadcrumb": "Financial Freedom Calculator",
+      "title": "Financial Freedom Calculator"
+    },
+    "mortgageComparator": {
+      "navTitle": "Mortgage comparator",
+      "title": "Mortgage comparator"
+    }
+  },
+  "sp500": {
+    "intro": "Simulate your DCA investment using historical S&P 500 data to see the best, worst and current case. This tool runs on S&P 500 historical data since 1927. Values are in US dollars (USD). It does not matter if you work in another currency — this tool is only an estimate.",
+    "inputTitle": "Investment data",
+    "initialAmount": "Initial amount ($)",
+    "monthlyDca": "Monthly DCA ($)",
+    "horizon": "Time horizon (years)",
+    "calculating": "Calculating scenarios...",
+    "loading": "Loading historical data...",
+    "invested": "Invested",
+    "worstCase": "Worst case",
+    "currentCase": "Current case",
+    "bestCase": "Best case",
+    "profit": "profit",
+    "series": {
+      "invested": "Money invested",
+      "worstCase": "Worst historical case",
+      "currentCase": "Current case",
+      "bestCase": "Best historical case"
+    },
+    "yearLabel": "Year {year}"
+  },
+  "financialFreedom": {
+    "intro": "Work out how many years you need to keep contributing to live off S&P 500 returns alone, taking your future expenses into account. Based on historical data since 1927.",
+    "inputTitle": "Investment data",
+    "initialAmount": "Initial amount ($)",
+    "monthlyContribution": "Monthly contribution ($)",
+    "currentAge": "Current age",
+    "maxAge": "Maximum age",
+    "expensesTitle": "Future expenses",
+    "addExpense": "Add expense",
+    "noExpenses": "No expenses configured. Add expenses to calculate your financial freedom.",
+    "expenseName": "Name",
+    "monthlyExpense": "Monthly expense ($)",
+    "fromFreedom": "From Freedom",
+    "fromYear": "From year",
+    "toYear": "To year",
+    "expensePlaceholder": "E.g. Village rent",
+    "calculating": "Calculating scenarios...",
+    "loading": "Loading historical data...",
+    "totalInvested": "Total invested",
+    "worstCase": "Worst case",
+    "currentCase": "Current case",
+    "bestCase": "Best case",
+    "freedomAtAge": "Financial freedom at age {age}",
+    "series": {
+      "worstCaseInvested": "Contributed (worst case)",
+      "currentCaseInvested": "Contributed (current case)",
+      "bestCaseInvested": "Contributed (best case)",
+      "worstCase": "Worst historical case",
+      "currentCase": "Current case",
+      "bestCase": "Best historical case"
+    },
+    "yearLabel": "Year {year} ({age})"
+  },
+  "portfolioRebalancing": {
+    "intro": "Enter your current portfolio and your target allocation to work out the optimal transfers.",
+    "current": {
+      "title": "Current Portfolio",
+      "description": "Funds you currently hold. The percentage is calculated automatically.",
+      "fundName": "Fund name",
+      "isin": "ISIN",
+      "amount": "Amount (€)",
+      "share": "% Portfolio",
+      "namePlaceholder": "E.g. Amundi MSCI World",
+      "isinPlaceholder": "E.g. LU1234567890",
+      "empty": "There are no funds in the current portfolio.",
+      "addFund": "Add fund",
+      "fundIndex": "Fund {index}"
+    },
+    "target": {
+      "title": "Target Portfolio",
+      "description": "Desired allocation after rebalancing. The amount is calculated automatically.",
+      "targetShare": "% Target",
+      "resultingAmount": "Resulting amount",
+      "empty": "There are no funds in the target portfolio.",
+      "mustSum100": "Percentages must add up to exactly 100%.",
+      "copied": "Copied",
+      "copy": "Copy portfolio",
+      "paste": "Paste portfolio",
+      "copyToast": "Target portfolio copied to the clipboard",
+      "clipboardEmpty": "The clipboard is empty",
+      "clipboardError": "Could not read the clipboard",
+      "pastedToast": "{count} fund pasted | {count} funds pasted"
+    },
+    "calculate": {
+      "dcaParts": "Split into parts (DCA)",
+      "action": "Calculate transfers",
+      "splitHint": "Transfers will be split into {parts} equal parts for DCA.",
+      "singleHint": "A single transfer per movement will be calculated.",
+      "balancedToast": "Your portfolio is already balanced",
+      "calculatedToast": "Transfers calculated"
+    },
+    "transfers": {
+      "title": "Required transfers",
+      "balanced": "Your portfolio is already balanced. No transfers are needed.",
+      "single": "{count} transfer is needed to rebalance your portfolio. | {count} transfers are needed to rebalance your portfolio.",
+      "split": "{count} transfer is needed, split into {parts} parts (DCA). | {count} transfers are needed, split into {parts} parts (DCA).",
+      "completed": "{done} of {total} completed",
+      "source": "Source",
+      "destination": "Destination",
+      "part": "Part {index} of {total}",
+      "partComplete": "Completed",
+      "empty": "No transfers are needed."
+    }
+  },
+  "mortgage": {
+    "intro": "The APR published by the bank does not account for what tied products really cost you: it only includes the mandatory ones, at list price. Here three APRs are calculated —the official one, the real one with what you are actually going to sign, and the one you would get without optional tied products— and each product is charged only with the extra cost versus buying it on your own.",
+    "empty": {
+      "title": "No offers yet",
+      "description": "Add the mortgages you are considering, with their conditions, costs and tied products. You can also load two examples with plausible Spanish market figures —one fixed and one variable— to see how the tool works. They are not real offers nor a recommendation.",
+      "addMortgage": "Add mortgage",
+      "loadExample": "Load example"
+    },
+    "tabs": {
+      "unnamed": "Unnamed",
+      "options": "Options for {name}",
+      "exclude": "Exclude from the comparison",
+      "include": "Include in the comparison",
+      "comparison": "Comparison",
+      "renameTitle": "Rename mortgage",
+      "namePlaceholder": "E.g. BBVA fixed 2.45%",
+      "deleteTitle": "Delete “{name}”?",
+      "deleteDescription": "Its conditions, tied products and early repayments will be removed. This cannot be undone.",
+      "rateFixed": "{rate} fixed",
+      "rateMixed": "mixed {rate}",
+      "rateVariable": "Eur+{rate}"
+    },
+    "globalSettings": {
+      "button": "Global data",
+      "title": "Global data for the comparison",
+      "description": "Principal, term, property price, savings, opportunity cost and Euribor scenario. They are shared by every offer so the comparison stays fair.",
+      "scenarioHeading": "Euribor scenario",
+      "hint": "This is where the data shared by every mortgage is set —{summary}—.",
+      "summaryPrincipal": "Principal {value}",
+      "summaryEuribor": "Euribor today {value}",
+      "summaryScenario": "Scenario"
+    },
+    "common": {
+      "propertyPrice": "Property price (€)",
+      "appraisalValue": "Appraisal value (€)",
+      "availableCash": "Available savings (€)",
+      "principal": "Requested principal (€)",
+      "ltv": "LTV {value}",
+      "termYears": "Term (years)",
+      "euriborToday": "Euribor today (%)",
+      "euriborTooltip": "Seed for the three predefined scenarios. No market value is stored in the tool so it does not age silently.",
+      "opportunityCostToggle": "Simulate the opportunity cost of the capital not paid up front",
+      "expectedReturn": "Expected equity return (%)",
+      "capitalGainsTax": "Capital gains tax (%)",
+      "expectedReturnHint": "The expected return is a hypothesis, not a promise. Set it to 0% to switch off its effect without disabling the simulation."
+    },
+    "scenario": {
+      "placeholder": "Scenario",
+      "restore": "Restore",
+      "hint": "The scenario is shared by the whole comparison so it stays fair. Points are interpolated linearly and the value stays constant after the last one. The ±1 pp shift over 5 years is a sensitivity convention, not a forecast.",
+      "indexPct": "Index (%)",
+      "addPoint": "Add point",
+      "current": "Current (constant)",
+      "optimistic": "Optimistic (−1 pp over 5 years)",
+      "pessimistic": "Pessimistic (+1 pp over 5 years)",
+      "custom": "Custom"
+    },
+    "conditions": {
+      "namePlaceholder": "E.g. BBVA fixed 2.45%",
+      "bank": "Bank",
+      "bankPlaceholder": "E.g. BBVA",
+      "colorAndState": "Colour and state",
+      "colorAria": "Colour {color}",
+      "inComparison": "In the comparison",
+      "rateType": "Interest rate type",
+      "rateTypes": {
+        "fixed": "Fixed",
+        "variable": "Variable",
+        "mixed": "Mixed"
+      },
+      "tin": "Nominal rate (%)",
+      "tinFixedTranche": "Nominal rate of the fixed tranche (%)",
+      "fixedYears": "Years at a fixed rate",
+      "initialRate": "Initial period rate (%)",
+      "initialMonths": "Months in the initial period",
+      "spread": "Spread over the index (%)",
+      "review": "Rate review",
+      "review6": "Every 6 months",
+      "review12": "Every 12 months",
+      "ownPrincipal": "Own principal (€)",
+      "ownTerm": "Own term (years)",
+      "inherited": "Inherited from the global data",
+      "floor": "Floor (%)",
+      "cap": "Cap (%)",
+      "maxBonus": "Discount cap (pp)"
+    },
+    "costs": {
+      "lcciNote": "Since Spanish Law 5/2019 (LCCI) the bank pays notary, agency, registry and stamp duty; the client pays the appraisal and the deed copy. All of them can be set in case the offer is old, a subrogation or a special case. Only the items charged to the client feed into the APR.",
+      "upfrontLabel": "{label} (€)",
+      "paidByClient": "I pay it",
+      "paidByBank": "The bank pays it",
+      "openingFee": "Arrangement fee (%)",
+      "openingFeeHint": "On the principal, always charged to you.",
+      "earlyRepaymentTitle": "Early repayment fees",
+      "earlyRepaymentNote": "Tiers preloaded with the LCCI caps for each loan type. They are editable: an offer predating the law or a foreign one may fall outside them, and in that case you only get a warning.",
+      "tier": "Tier",
+      "fromYear": "From year",
+      "toYear": "To year",
+      "feePct": "Fee (%)",
+      "endPlaceholder": "End",
+      "bounded": "Bounded",
+      "partial": "Partial repayment",
+      "totalCancellation": "Full cancellation",
+      "keys": {
+        "appraisal": "Appraisal",
+        "notary": "Notary",
+        "registry": "Registry",
+        "agency": "Agency",
+        "ajd": "Stamp duty",
+        "brokerFee": "Broker / intermediary",
+        "other": "Other"
+      }
+    },
+    "bindings": {
+      "note": "The chargeable cost is always the difference: what it costs at the bank minus what you would spend on that product if the mortgage did not exist. It can come out negative if the bank product is cheaper than yours.",
+      "add": "Add tied product",
+      "empty": "No tied products. Add the ones the bank requires or offers you to see their real cost.",
+      "product": "Product",
+      "requiredShort": "Req.",
+      "bonusShort": "Disc.",
+      "costModel": "Cost model",
+      "atBank": "At the bank",
+      "outside": "Outside",
+      "netCostTotal": "Total net cost",
+      "validity": "Validity",
+      "activeColumn": "Active",
+      "perYear": "{value}/year",
+      "lifetime": "Whole term",
+      "fromYear": "From year {year}",
+      "yearRange": "Years {from}–{to}",
+      "costModes": {
+        "free": "No cost",
+        "annual": "Annual fee or premium",
+        "permille": "Per mille on outstanding principal",
+        "singlePremium": "Single premium",
+        "investment": "Investment product"
+      },
+      "catalog": {
+        "nomina": {
+          "label": "Salary direct deposit",
+          "hint": "The most profitable one: zero cost. It usually requires a minimum monthly income and, with two borrowers, both salaries."
+        },
+        "recibosDomiciliados": {
+          "label": "Direct debits",
+          "hint": "Electricity, water, gas or phone. Zero cost; sometimes a minimum number of bills is required."
+        },
+        "tarjetaDebito": {
+          "label": "Debit card",
+          "hint": "Usually free."
+        },
+        "tarjetaCredito": {
+          "label": "Credit card",
+          "hint": "Typical annual fee of €30–50, often free the first year. If it requires a minimum spend you would make anyway, the outside cost is 0."
+        },
+        "cuentaMantenimiento": {
+          "label": "Account with maintenance fee",
+          "hint": "Maintenance fee charged if the account requirements stop being met."
+        },
+        "seguroHogar": {
+          "label": "Home insurance",
+          "hint": "Building cover is required by law with a mortgage, so the outside cost is almost never 0."
+        },
+        "seguroVida": {
+          "label": "Life / repayment insurance",
+          "hint": "Not required by law even if the bank presents it as such. Common variant: a financed single premium."
+        },
+        "seguroProteccionPagos": {
+          "label": "Payment protection insurance",
+          "hint": "Almost nobody would buy it elsewhere, so the whole cost is charged. Cover comes with many exclusions."
+        },
+        "seguroSalud": {
+          "label": "Health insurance",
+          "hint": "Outside cost 0 if you would not want it; equal to your current policy if you already have one."
+        },
+        "seguroCoche": {
+          "label": "Car insurance",
+          "hint": "Often net negative: if the bank's is cheaper than yours, you save."
+        },
+        "alarma": {
+          "label": "Alarm / security",
+          "hint": "Monthly fee of €30–45, above market. Outside cost 0 unless you already have an alarm."
+        },
+        "planPensiones": {
+          "label": "Pension plan",
+          "hint": "The contribution is not an expense, it is your own saving. The real cost is the fees versus your alternative, plus the illiquidity."
+        },
+        "inversionFondos": {
+          "label": "Investment funds / managed portfolio",
+          "hint": "Typical bank fee of 1.2–1.9% versus 0.2–0.4% for an index tracker. It usually comes with a minimum holding period."
+        },
+        "cuentaValores": {
+          "label": "Securities account / bank broker",
+          "hint": "Custody and trading fees versus your current broker."
+        },
+        "otro": {
+          "label": "Other",
+          "hint": "Free-form, for whatever each bank comes up with."
+        }
+      }
+    },
+    "bindingForm": {
+      "title": "Tied product",
+      "description": "The cost charged to the mortgage is always the difference between what it costs at the bank and what you would spend on that product if the mortgage did not exist. It can be negative.",
+      "product": "Product",
+      "bonus": "Rate discount (pp)",
+      "costModel": "Cost model",
+      "required": "Mandatory to be granted the loan",
+      "active": "I sign it",
+      "fromYear": "From year",
+      "toYear": "To year (excluded)",
+      "lifetimePlaceholder": "Whole term",
+      "annualBankCost": "Annual cost at the bank (€)",
+      "annualMarketCost": "Annual cost elsewhere (€)",
+      "annualMarketHint": "What you would spend on this if the mortgage did not exist. 0 if you would never buy it.",
+      "annualGrowth": "Annual increase (%)",
+      "annualDiscount": "Bank discount in the first year (%)",
+      "permilleBank": "Bank premium (‰ on outstanding principal)",
+      "permilleMarket": "Premium elsewhere (‰)",
+      "singlePremiumBank": "Single premium at the bank (€)",
+      "singlePremiumMarket": "Equivalent elsewhere (€)",
+      "coverYears": "Years covered by the premium",
+      "coverYearsHint": "If it covers fewer years than the term, automatic renewal at the same amount is assumed.",
+      "financed": "Financed inside the loan",
+      "investmentNote": "The contribution is not an expense: it is your own saving. The chargeable cost is the fees and the worse management versus what you would buy on your own.",
+      "openAssistant": "Open cost assistant",
+      "requirement": "Requirement to keep the discount",
+      "requirementPlaceholder": "E.g. minimum income of €1,200/month",
+      "requirementHint": "Informational: it does not enter the calculation, but it flags the risk of losing the discount."
+    },
+    "investment": {
+      "title": "Cost assistant — {name}",
+      "description": "The money is not lost, but it is managed more expensively than if you invested it yourself. Two portfolios are simulated in parallel with the same contributions and the chargeable cost is how far apart they drift.",
+      "bankHeading": "Buying it from the bank",
+      "bankFee": "Total annual fee (%)",
+      "bankGap": "Extra return lost to worse management (%)",
+      "alternativeHeading": "Doing it on my own",
+      "alternativeFee": "Fee of the alternative product (%)",
+      "ownReturn": "Own gross return (%)",
+      "inheritedHint": "{value} inherited from the global data. It is the same gross return for both portfolios: what changes is the fees, not the market.",
+      "finalBalance": "Final balance:",
+      "initialContribution": "Required initial contribution (€)",
+      "annualContribution": "Required annual contribution (€)",
+      "minYears": "Minimum holding period (years)",
+      "exitPenalty": "Early exit penalty (%)",
+      "taxDeduction": "Income tax relief (%)",
+      "taxDeductionHint": "Pension plans only, at your marginal rate. Careful: what you deduct now is taxed on withdrawal.",
+      "wouldInvestAnyway": "I was going to invest that money anyway",
+      "notInvestingHint": "As this is not money you were going to invest, the contributions also count as a cash outflow and their recovery as an inflow once the holding period ends, so the APR captures the cost of having it locked up.",
+      "verdictPending": "Add the tied product to the comparison to see the verdict.",
+      "verdict": "Buying the bank product costs you {cost} over {years} years; the {bonus} discount saves you {savings} →",
+      "worthIt": "worth it",
+      "notWorthIt": "not worth it",
+      "contributed": "Total contributed: {value}. The chargeable cost is the gap between the two portfolios, not the contribution."
+    },
+    "prepayments": {
+      "note": "One-off or recurring payments. “Reduce term” keeps the instalment and shortens the loan; “reduce instalment” keeps the term and recalculates the instalment. The applicable fee comes from the tiers set in Costs and fees.",
+      "add": "Add early repayment",
+      "empty": "No early repayments configured.",
+      "amount": "Amount (€)",
+      "mode": "Mode",
+      "recurrence": "Recurrence (months)",
+      "fee": "Fee",
+      "netSaving": "Net saving",
+      "reduceTerm": "Reduce term",
+      "reduceInstallment": "Reduce instalment",
+      "oncePlaceholder": "One-off",
+      "monthsSaved": "−{months} months",
+      "summary": "Total interest saved: {savings}; fees paid: {fees}. The loan is cancelled in month {month} of {termMonths}."
+    },
+    "opportunity": {
+      "noData": "No data yet.",
+      "disabled": "Opportunity cost is switched off. Enable it in the global data to simulate what happens to the savings you do not put into the down payment.",
+      "intro": "Borrowing less saves interest but locks up savings. This is the other half of the picture: the money this offer leaves free, invested at {returnPct} for {years} years and taxed at {taxPct} on withdrawal. The return and the tax are edited in the global data.",
+      "downPayment": "Down payment",
+      "downPaymentHint": "Property − principal",
+      "freeCapital": "Free capital",
+      "freeCapitalHint": "Savings − down payment − costs",
+      "netPortfolio": "Final net portfolio",
+      "taxHint": "Tax: {value}",
+      "netWorth": "Net worth",
+      "netWorthHint": "Net portfolio − total cost",
+      "negativeDownPayment": "The principal of this offer exceeds the property price, so there is no down payment to make. Check the principal or the price.",
+      "notAffordable": "Your savings do not cover the down payment plus the costs: you are {value} short. The offer drops out of the ranking, but it is still calculated."
+    },
+    "panel": {
+      "conditions": "Conditions",
+      "costs": "Costs and fees",
+      "bindings": "Tied products",
+      "prepayments": "Early repayments",
+      "opportunity": "Opportunity cost",
+      "disabled": "Disabled",
+      "conditionsMixed": "{rate} for {years} years, then Eur+{spread}",
+      "conditionsVariable": "Eur+{spread}",
+      "costsSummary": "{upfront} charged to you · arrangement {openingFee}",
+      "bindingsSummary": "{count} active · −{bonus}{cost} | {count} active · −{bonus}{cost}",
+      "bindingsCost": " · {value}/year net",
+      "prepaymentsSummary": "{count} payment · {total}{saving} | {count} payments · {total}{saving}",
+      "prepaymentsSaving": " · saving {value}",
+      "opportunitySummary": "Down payment {downPayment} · free {freeCapital} → {netPortfolio}"
+    },
+    "summary": {
+      "initialInstallment": "Initial instalment",
+      "maxInstallment": "Maximum instalment",
+      "effectiveRate": "Effective nominal rate",
+      "realApr": "Real APR",
+      "totalCost": "Total cost",
+      "netWorth": "Net worth",
+      "mobile": "{installment}/month · real APR {apr}",
+      "recalculating": "Recalculating…",
+      "official": "Official APR {official} · without optional tied products {without}"
+    },
+    "amortization": {
+      "open": "View amortisation schedule",
+      "title": "Amortisation schedule — {name}",
+      "description": "Month by month with the rate applied after discounts, the net cost of the tied products charged to each month and the early repayments.",
+      "onlyYearEnds": "Year ends only",
+      "monthsBadge": "{count} months",
+      "cancelledEarly": "Cancelled early",
+      "financedPremiums": "Financed premiums: {value}",
+      "baseRate": "Base rate",
+      "appliedRate": "Applied rate",
+      "installment": "Instalment",
+      "interest": "Interest",
+      "principal": "Principal",
+      "prepayment": "Early repayment",
+      "fee": "Fee",
+      "bindings": "Tied products",
+      "outstanding": "Outstanding"
+    },
+    "comparisonPanel": {
+      "singleOffer": "Only one offer is loaded: here you see its results on their own. Add another one for the comparison to make sense.",
+      "disabledCount": "{count} mortgage disabled and out of the comparison. Re-enable it from its tab menu. | {count} mortgages disabled and out of the comparison. Re-enable them from their tab menu."
+    },
+    "comparisonTable": {
+      "title": "Comparison",
+      "description": "The winner is decided by real APR: it includes the costs charged to you, the arrangement fee and the net cost of the tied products. Net worth sits alongside as a second reading, but it depends on a hypothetical return and does not drive the ranking.",
+      "empty": "There are no active mortgages in the comparison.",
+      "mortgage": "Mortgage",
+      "initialInstallment": "Initial instalment",
+      "maxInstallment": "Maximum instalment",
+      "interest": "Interest",
+      "upfront": "Costs",
+      "bindingGross": "Tied products (gross)",
+      "bindingNet": "Tied products (net)",
+      "totalCost": "Total cost",
+      "officialApr": "Official APR",
+      "realApr": "Real APR",
+      "downPayment": "Down payment",
+      "freeCapital": "Free capital",
+      "netWorth": "Net worth",
+      "hints": {
+        "upfront": "Charged to you, arrangement fee included",
+        "bindingGross": "What you pay the bank for the products",
+        "bindingNet": "Net of what you would spend elsewhere anyway",
+        "officialApr": "Bank of Spain criterion: mandatory tied products only, at gross cost",
+        "realApr": "The metric that decides the ranking"
+      },
+      "captionApr": "APR #{rank}",
+      "captionNetWorth": "net worth #{rank}",
+      "captionNotViable": "not viable",
+      "gap": "{amount} more expensive in total cost",
+      "gapPp": "({pp} of real APR)",
+      "bestCaption": "Best real APR · total cost {value}",
+      "rankingMismatch": "The two rankings disagree: the offer with the lowest real APR is not the one that leaves you with the most net worth. That usually happens when the cheap one demands a bigger down payment and leaves you with less invested savings. The lowest real APR is still highlighted, because net worth depends on a return that has not happened yet.",
+      "crossover": "The cumulative cost of the two best offers crosses in year {year}: before that point the other one comes out ahead.",
+      "sortHint": "Click a header to sort. Non-viable mortgages (savings do not cover the down payment plus costs) are shown, but stay out of the ranking."
+    },
+    "worthIt": {
+      "title": "Are the tied products worth it?",
+      "description": "For each product the mortgage is recalculated with and without it. It is worth it if the interest you save thanks to the discount beats its cumulative net cost. The break-even point is the maximum net cost at which it would stop being worth it.",
+      "empty": "No active mortgage has tied products.",
+      "mortgage": "Mortgage",
+      "binding": "Tied product",
+      "bonus": "Rate discount",
+      "interestSavings": "Interest saved",
+      "netCost": "Net cost",
+      "balance": "Balance",
+      "breakEven": "Break-even",
+      "verdict": "Verdict",
+      "requiredBadge": "Mandatory",
+      "inactiveNote": "Disabled: figures for what would happen if you signed it."
+    },
+    "charts": {
+      "installment": "Instalment",
+      "installmentDescription": "Monthly instalment at the end of each year. On variable rates you can see the effect of every review.",
+      "cumulativeCost": "Cumulative cost",
+      "cumulativeCostDescription": "Upfront costs + interest + net cost of tied products + fees, accumulated. Where two lines cross, the better option changes.",
+      "outstanding": "Outstanding principal",
+      "outstandingDescription": "What is left to repay to the bank at the end of each year.",
+      "netWorth": "Net worth",
+      "netWorthDescription": "Portfolio of the free capital net of tax minus the cumulative cost of the mortgage.",
+      "calculating": "Calculating…",
+      "empty": "Enable a mortgage to see the charts.",
+      "crossoverLabel": "Crossover: year {year}"
+    },
+    "sensitivity": {
+      "title": "Euribor sensitivity",
+      "description": "Real APR of each offer in each index scenario. A fixed rate barely moves; on a variable one the range is the measure of the risk you take on.",
+      "empty": "There are no active mortgages.",
+      "mortgage": "Mortgage",
+      "spread": "Range",
+      "activeBadge": "active",
+      "note": "In green, the winning offer within each scenario. If it changes from one column to another, the decision depends on where the Euribor goes and not only on the offer."
+    },
+    "warnings": {
+      "feeCapExceeded": "Some early repayment fee exceeds the LCCI cap ({cap}%) for this loan type. It is calculated anyway, in case the offer predates the law.",
+      "invalidPrincipalOrTerm": "Invalid principal or term: check the global data or this mortgage's own data.",
+      "floorAboveCap": "The floor is above the cap: check the rate limits.",
+      "negativeDownPayment": "The principal granted exceeds the property price: the down payment comes out negative.",
+      "notAffordable": "Your available savings do not cover the down payment plus the costs of this offer.",
+      "requiredBindingInactive": "“{name}” is mandatory and disabled: the bank would not grant the mortgage without it.",
+      "singlePremiumRenewal": "“{name}”: the premium covers {coverYears} of the {years} years; renewal at the same price is assumed.",
+      "bonusCapped": "The accumulated discount exceeds the {cap} pp cap and has been trimmed."
+    },
+    "templates": {
+      "mortgageName": "Mortgage {index}",
+      "exampleFixedName": "Bank A · fixed",
+      "exampleFixedBank": "Bank A",
+      "exampleVariableName": "Bank B · variable",
+      "exampleVariableBank": "Bank B",
+      "exampleLifeInsurance": "Life insurance",
+      "exampleRequirement": "Minimum income of €1,200/month"
+    }
+  }
+}

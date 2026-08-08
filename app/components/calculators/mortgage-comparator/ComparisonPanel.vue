@@ -18,8 +18,7 @@ const disabledCount = computed(() => mortgages.value.filter(mortgage => !mortgag
     >
       <Info class="mt-0.5 size-4 shrink-0 text-primary" />
       <span>
-        Solo hay una oferta cargada: aquí ves sus resultados en solitario. Añade otra para que la
-        comparativa tenga sentido.
+        {{ $t('mortgage.comparisonPanel.singleOffer') }}
       </span>
     </div>
 
@@ -27,8 +26,7 @@ const disabledCount = computed(() => mortgages.value.filter(mortgage => !mortgag
       v-else-if="disabledCount"
       class="text-xs text-muted-foreground"
     >
-      {{ disabledCount }} hipoteca{{ disabledCount === 1 ? '' : 's' }} desactivada{{ disabledCount === 1 ? '' : 's' }}
-      fuera de la comparativa. Se reactivan desde el menú de su pestaña.
+      {{ $t('mortgage.comparisonPanel.disabledCount', { count: disabledCount }, disabledCount) }}
     </p>
 
     <ComparisonTableCard />

@@ -26,6 +26,8 @@ import {
 import { feeTierPct } from '~/lib/mortgage/amortization'
 import { formatCurrency, formatPercent } from '~/composables/useMortgageComparator'
 
+const { locale } = useI18n()
+
 const props = defineProps<{ mortgageId: string, result: MortgageResult | null }>()
 
 const { findMortgage } = useMortgageComparator()
@@ -84,9 +86,7 @@ function monthsSavedBy(prepaymentId: string): number | null {
   >
     <div class="flex flex-wrap items-center justify-between gap-2">
       <p class="max-w-2xl text-xs text-muted-foreground">
-        Pagos puntuales o recurrentes. «Reducir plazo» mantiene la cuota y acorta el préstamo;
-        «reducir cuota» mantiene el plazo y recalcula la cuota. La comisión aplicable sale de los
-        tramos configurados en Gastos y comisiones.
+        {{ $t('mortgage.prepayments.note') }}
       </p>
       <Button
         size="sm"
@@ -94,7 +94,7 @@ function monthsSavedBy(prepaymentId: string): number | null {
         @click="addPrepayment"
       >
         <Plus class="mr-1 size-4" />
-        Añadir amortización
+        {{ $t('mortgage.prepayments.add') }}
       </Button>
     </div>
 
@@ -102,7 +102,7 @@ function monthsSavedBy(prepaymentId: string): number | null {
       v-if="!mortgage.prepayments.length"
       class="rounded-lg border border-dashed py-8 text-center text-sm text-muted-foreground"
     >
-      Ninguna amortización anticipada configurada.
+      {{ $t('mortgage.prepayments.empty') }}
     </div>
 
     <div v-else>
@@ -110,22 +110,22 @@ function monthsSavedBy(prepaymentId: string): number | null {
         <TableHeader>
           <TableRow>
             <TableHead class="w-28">
-              Mes
+              {{ $t('common.month') }}
             </TableHead>
             <TableHead class="w-44">
-              Importe (€)
+              {{ $t('mortgage.prepayments.amount') }}
             </TableHead>
             <TableHead class="w-48">
-              Modo
+              {{ $t('mortgage.prepayments.mode') }}
             </TableHead>
             <TableHead class="w-56">
-              Recurrencia (meses)
+              {{ $t('mortgage.prepayments.recurrence') }}
             </TableHead>
             <TableHead class="w-28 text-right">
-              Comisión
+              {{ $t('mortgage.prepayments.fee') }}
             </TableHead>
             <TableHead class="w-40 text-right">
-              Ahorro neto
+              {{ $t('mortgage.prepayments.netSaving') }}
             </TableHead>
             <TableHead class="w-12" />
           </TableRow>
@@ -141,7 +141,7 @@ function monthsSavedBy(prepaymentId: string): number | null {
                 :min="1"
                 :max="600"
                 :step="1"
-                locale="es-ES"
+                :locale="locale"
               >
                 <NumberFieldContent>
                   <NumberFieldInput />
@@ -153,7 +153,7 @@ function monthsSavedBy(prepaymentId: string): number | null {
                 v-model="prepayment.amount"
                 :min="0"
                 :step="1000"
-                locale="es-ES"
+                :locale="locale"
                 :formatOptions="amountFormat"
               >
                 <NumberFieldContent>
@@ -168,10 +168,10 @@ function monthsSavedBy(prepaymentId: string): number | null {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="reduceTerm">
-                    Reducir plazo
+                    {{ $t('mortgage.prepayments.reduceTerm') }}
                   </SelectItem>
                   <SelectItem value="reduceInstallment">
-                    Reducir cuota
+                    {{ $t('mortgage.prepayments.reduceInstallment') }}
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -190,10 +190,10 @@ function monthsSavedBy(prepaymentId: string): number | null {
                   :max="120"
                   :step="1"
                   :disabled="prepayment.recurringEveryMonths === null"
-                  locale="es-ES"
+                  :locale="locale"
                 >
                   <NumberFieldContent>
-                    <NumberFieldInput placeholder="Único" />
+                    <NumberFieldInput :placeholder="$t('mortgage.prepayments.oncePlaceholder')" />
                   </NumberFieldContent>
                 </NumberField>
               </div>
@@ -208,12 +208,12 @@ function monthsSavedBy(prepaymentId: string): number | null {
               >
                 {{ formatCurrency(savingOf(prepayment.id)) }}
               </span>
-              <span v-else>—</span>
+              <span v-else>{{ $t('common.emptyValue') }}</span>
               <p
                 v-if="prepayment.mode === 'reduceTerm' && monthsSavedBy(prepayment.id)"
                 class="text-xs text-muted-foreground"
               >
-                −{{ monthsSavedBy(prepayment.id) }} meses
+                {{ $t('mortgage.prepayments.monthsSaved', { months: monthsSavedBy(prepayment.id) }) }}
               </p>
             </TableCell>
             <TableCell>
@@ -235,9 +235,12 @@ function monthsSavedBy(prepaymentId: string): number | null {
       v-if="totalFees !== null"
       class="text-xs text-muted-foreground"
     >
-      Intereses ahorrados en total: {{ formatCurrency(result?.prepaymentInterestSavings) }};
-      comisiones pagadas: {{ formatCurrency(totalFees) }}.
-      El préstamo se cancela en el mes {{ result?.simulation.months }} de {{ result?.termMonths }}.
+      {{ $t('mortgage.prepayments.summary', {
+        savings: formatCurrency(result?.prepaymentInterestSavings),
+        fees: formatCurrency(totalFees),
+        month: result?.simulation.months,
+        termMonths: result?.termMonths,
+      }) }}
     </p>
   </div>
 </template>

@@ -7,20 +7,28 @@ import type {
 
 export type BindingCatalogEntry = {
   type: MortgageBindingType
-  label: string
-  /** Shown as help text when adding the binding */
-  hint: string
   defaultRateReductionPp: number
   defaultRequired: boolean
   createCost: () => MortgageBindingCost
 }
 
-export const BINDING_COST_MODE_LABELS: Record<MortgageBindingCostMode, string> = {
-  free: 'Sin coste',
-  annual: 'Cuota o prima anual',
-  permille: 'Por mil sobre capital pendiente',
-  singlePremium: 'Prima única',
-  investment: 'Producto de inversión',
+export const BINDING_COST_MODES: MortgageBindingCostMode[] = [
+  'free', 'annual', 'permille', 'singlePremium', 'investment',
+]
+
+/** i18n key of a cost model, resolved by the component that renders it. */
+export function bindingCostModeKey(mode: MortgageBindingCostMode): string {
+  return `mortgage.bindings.costModes.${mode}`
+}
+
+/** i18n key of a catalog entry label. */
+export function bindingLabelKey(type: MortgageBindingType): string {
+  return `mortgage.bindings.catalog.${type}.label`
+}
+
+/** i18n key of the help text shown when adding a catalog entry. */
+export function bindingHintKey(type: MortgageBindingType): string {
+  return `mortgage.bindings.catalog.${type}.hint`
 }
 
 export function createFreeCost(): MortgageBindingCost {
@@ -69,96 +77,72 @@ export function createCostForMode(mode: MortgageBindingCostMode): MortgageBindin
 export const BINDING_CATALOG: BindingCatalogEntry[] = [
   {
     type: 'nomina',
-    label: 'Nómina domiciliada',
-    hint: 'La más rentable: coste 0. Suele exigir un ingreso mínimo mensual y, con dos titulares, ambas nóminas.',
     defaultRateReductionPp: 0.5,
     defaultRequired: false,
     createCost: createFreeCost,
   },
   {
     type: 'recibosDomiciliados',
-    label: 'Recibos domiciliados',
-    hint: 'Luz, agua, gas o teléfono. Coste 0; a veces exige un número mínimo de recibos.',
     defaultRateReductionPp: 0.1,
     defaultRequired: false,
     createCost: createFreeCost,
   },
   {
     type: 'tarjetaDebito',
-    label: 'Tarjeta de débito',
-    hint: 'Normalmente gratuita.',
     defaultRateReductionPp: 0.05,
     defaultRequired: false,
     createCost: createFreeCost,
   },
   {
     type: 'tarjetaCredito',
-    label: 'Tarjeta de crédito',
-    hint: 'Cuota anual habitual de 30–50 €, a menudo gratis el primer año. Si exige un gasto mínimo que harías igual, el coste fuera es 0.',
     defaultRateReductionPp: 0.1,
     defaultRequired: false,
     createCost: () => createAnnualCost(40, 0, 100),
   },
   {
     type: 'cuentaMantenimiento',
-    label: 'Cuenta con mantenimiento',
-    hint: 'Comisión de mantenimiento si se dejan de cumplir los requisitos de la cuenta.',
     defaultRateReductionPp: 0,
     defaultRequired: false,
     createCost: () => createAnnualCost(60, 0),
   },
   {
     type: 'seguroHogar',
-    label: 'Seguro de hogar',
-    hint: 'El continente es obligatorio por ley con hipoteca, así que el coste fuera casi nunca es 0.',
     defaultRateReductionPp: 0.1,
     defaultRequired: false,
     createCost: () => createAnnualCost(380, 180),
   },
   {
     type: 'seguroVida',
-    label: 'Seguro de vida / amortización',
-    hint: 'No es obligatorio por ley aunque el banco lo presente como tal. Variante habitual: prima única financiada.',
     defaultRateReductionPp: 0.3,
     defaultRequired: false,
     createCost: () => createAnnualCost(420, 0),
   },
   {
     type: 'seguroProteccionPagos',
-    label: 'Seguro de protección de pagos',
-    hint: 'Casi nadie lo contrataría fuera, así que el coste se imputa íntegro. Coberturas con muchas exclusiones.',
     defaultRateReductionPp: 0.15,
     defaultRequired: false,
     createCost: () => createAnnualCost(350, 0),
   },
   {
     type: 'seguroSalud',
-    label: 'Seguro de salud',
-    hint: 'Coste fuera 0 si no lo querrías; igual a tu póliza actual si ya la tienes.',
     defaultRateReductionPp: 0.15,
     defaultRequired: false,
     createCost: () => createAnnualCost(600, 0),
   },
   {
     type: 'seguroCoche',
-    label: 'Seguro de coche',
-    hint: 'Frecuentemente neto negativo: si el del banco es más barato que el tuyo, ahorras.',
     defaultRateReductionPp: 0.1,
     defaultRequired: false,
     createCost: () => createAnnualCost(400, 480),
   },
   {
     type: 'alarma',
-    label: 'Alarma / seguridad',
-    hint: 'Cuota mensual de 30–45 €, por encima del mercado. Coste fuera 0 salvo que ya tengas alarma.',
     defaultRateReductionPp: 0.05,
     defaultRequired: false,
     createCost: () => createAnnualCost(450, 0),
   },
   {
     type: 'planPensiones',
-    label: 'Plan de pensiones',
-    hint: 'La aportación no es gasto, es ahorro tuyo. El coste real son las comisiones frente a tu alternativa, más la iliquidez.',
     defaultRateReductionPp: 0.15,
     defaultRequired: false,
     createCost: () => {
@@ -172,8 +156,6 @@ export const BINDING_CATALOG: BindingCatalogEntry[] = [
   },
   {
     type: 'inversionFondos',
-    label: 'Fondos de inversión / cartera gestionada',
-    hint: 'Comisión típica del banco 1,2–1,9 % frente a 0,2–0,4 % de un indexado. Suele llevar permanencia mínima.',
     defaultRateReductionPp: 0.2,
     defaultRequired: false,
     createCost: () => {
@@ -187,16 +169,12 @@ export const BINDING_CATALOG: BindingCatalogEntry[] = [
   },
   {
     type: 'cuentaValores',
-    label: 'Cuenta de valores / bróker del banco',
-    hint: 'Custodia y comisiones de compraventa frente a tu bróker actual.',
     defaultRateReductionPp: 0.05,
     defaultRequired: false,
     createCost: () => createAnnualCost(120, 0),
   },
   {
     type: 'otro',
-    label: 'Otro',
-    hint: 'Libre, para lo que se invente cada banco.',
     defaultRateReductionPp: 0.1,
     defaultRequired: false,
     createCost: createAnnualCost,
@@ -207,10 +185,10 @@ export function findCatalogEntry(type: MortgageBindingType): BindingCatalogEntry
   return BINDING_CATALOG.find(entry => entry.type === type)
 }
 
-export function createBindingFromCatalog(entry: BindingCatalogEntry): MortgageBinding {
+export function createBindingFromCatalog(entry: BindingCatalogEntry, name: string): MortgageBinding {
   return {
     id: crypto.randomUUID(),
-    name: entry.label,
+    name,
     type: entry.type,
     required: entry.defaultRequired,
     active: true,

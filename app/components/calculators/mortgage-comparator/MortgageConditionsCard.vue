@@ -20,6 +20,7 @@ import { MORTGAGE_COLORS } from '~/lib/mortgage/templates'
 const props = defineProps<{ mortgageId: string }>()
 
 const { common, applyRateTypeDefaults, findMortgage } = useMortgageComparator()
+const { t, locale } = useI18n()
 
 /** The editors write straight into the store object, so only its id travels as a prop. */
 const mortgage = computed(() => findMortgage(props.mortgageId))
@@ -31,11 +32,11 @@ function edit(mutate: (mortgage: Mortgage) => void) {
 
 const amountFormat = { maximumFractionDigits: 0 } as const
 
-const RATE_TYPE_OPTIONS: { value: MortgageRateType, label: string }[] = [
-  { value: 'fixed', label: 'Fija' },
-  { value: 'variable', label: 'Variable' },
-  { value: 'mixed', label: 'Mixta' },
-]
+const RATE_TYPE_OPTIONS = computed<{ value: MortgageRateType, label: string }[]>(() => [
+  { value: 'fixed', label: t('mortgage.conditions.rateTypes.fixed') },
+  { value: 'variable', label: t('mortgage.conditions.rateTypes.variable') },
+  { value: 'mixed', label: t('mortgage.conditions.rateTypes.mixed') },
+])
 
 const rateType = computed({
   get: () => mortgage.value?.rateType ?? 'fixed',
@@ -118,11 +119,11 @@ const hasMaxBonus = computed({
       <label
         :for="`mc-name-${mortgage.id}`"
         class="text-sm font-medium"
-      >Nombre</label>
+      >{{ $t('common.name') }}</label>
       <Input
         :id="`mc-name-${mortgage.id}`"
         v-model="mortgage.name"
-        placeholder="Ej: BBVA fija 2,45 %"
+        :placeholder="$t('mortgage.conditions.namePlaceholder')"
       />
     </div>
 
@@ -130,16 +131,16 @@ const hasMaxBonus = computed({
       <label
         :for="`mc-bank-${mortgage.id}`"
         class="text-sm font-medium"
-      >Banco</label>
+      >{{ $t('mortgage.conditions.bank') }}</label>
       <Input
         :id="`mc-bank-${mortgage.id}`"
         v-model="mortgage.bankName"
-        placeholder="Ej: BBVA"
+        :placeholder="$t('mortgage.conditions.bankPlaceholder')"
       />
     </div>
 
     <div class="flex flex-col gap-2">
-      <span class="text-sm font-medium">Color y estado</span>
+      <span class="text-sm font-medium">{{ $t('mortgage.conditions.colorAndState') }}</span>
       <div class="flex min-h-9 flex-wrap items-center gap-x-4 gap-y-2">
         <div class="flex gap-1.5">
           <button
@@ -148,7 +149,7 @@ const hasMaxBonus = computed({
             type="button"
             class="size-5 rounded-full border-2 transition-transform hover:scale-110"
             :style="{ backgroundColor: color, borderColor: mortgage.color === color ? 'currentColor' : 'transparent' }"
-            :aria-label="`Color ${color}`"
+            :aria-label="$t('mortgage.conditions.colorAria', { color })"
             @click="mortgage.color = color"
           />
         </div>
@@ -160,13 +161,13 @@ const hasMaxBonus = computed({
           <label
             :for="`mc-enabled-${mortgage.id}`"
             class="text-sm"
-          >En la comparativa</label>
+          >{{ $t('mortgage.conditions.inComparison') }}</label>
         </div>
       </div>
     </div>
 
     <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium">Tipo de interés</label>
+      <label class="text-sm font-medium">{{ $t('mortgage.conditions.rateType') }}</label>
       <Select v-model="rateType">
         <SelectTrigger class="w-full">
           <SelectValue />
@@ -191,7 +192,7 @@ const hasMaxBonus = computed({
         :for="`mc-fixed-rate-${mortgage.id}`"
         class="text-sm font-medium"
       >
-        {{ mortgage.rateType === 'mixed' ? 'TIN del tramo fijo (%)' : 'TIN (%)' }}
+        {{ mortgage.rateType === 'mixed' ? $t('mortgage.conditions.tinFixedTranche') : $t('mortgage.conditions.tin') }}
       </label>
       <NumberField
         :id="`mc-fixed-rate-${mortgage.id}`"
@@ -199,7 +200,7 @@ const hasMaxBonus = computed({
         :min="0"
         :max="20"
         :step="0.05"
-        locale="es-ES"
+        :locale="locale"
       >
         <NumberFieldContent>
           <NumberFieldInput />
@@ -214,14 +215,14 @@ const hasMaxBonus = computed({
       <label
         :for="`mc-mixed-years-${mortgage.id}`"
         class="text-sm font-medium"
-      >Años a tipo fijo</label>
+      >{{ $t('mortgage.conditions.fixedYears') }}</label>
       <NumberField
         :id="`mc-mixed-years-${mortgage.id}`"
         v-model="mixedFixedYears"
         :min="0"
         :max="40"
         :step="1"
-        locale="es-ES"
+        :locale="locale"
       >
         <NumberFieldContent>
           <NumberFieldInput />
@@ -234,14 +235,14 @@ const hasMaxBonus = computed({
         <label
           :for="`mc-initial-rate-${mortgage.id}`"
           class="text-sm font-medium"
-        >TIN periodo inicial (%)</label>
+        >{{ $t('mortgage.conditions.initialRate') }}</label>
         <NumberField
           :id="`mc-initial-rate-${mortgage.id}`"
           v-model="mortgage.initialRatePct"
           :min="0"
           :max="20"
           :step="0.05"
-          locale="es-ES"
+          :locale="locale"
         >
           <NumberFieldContent>
             <NumberFieldInput />
@@ -253,14 +254,14 @@ const hasMaxBonus = computed({
         <label
           :for="`mc-initial-months-${mortgage.id}`"
           class="text-sm font-medium"
-        >Meses del periodo inicial</label>
+        >{{ $t('mortgage.conditions.initialMonths') }}</label>
         <NumberField
           :id="`mc-initial-months-${mortgage.id}`"
           v-model="mortgage.initialRateMonths"
           :min="0"
           :max="120"
           :step="1"
-          locale="es-ES"
+          :locale="locale"
         >
           <NumberFieldContent>
             <NumberFieldInput />
@@ -274,14 +275,14 @@ const hasMaxBonus = computed({
         <label
           :for="`mc-spread-${mortgage.id}`"
           class="text-sm font-medium"
-        >Diferencial sobre el índice (%)</label>
+        >{{ $t('mortgage.conditions.spread') }}</label>
         <NumberField
           :id="`mc-spread-${mortgage.id}`"
           v-model="mortgage.spreadPct"
           :min="0"
           :max="10"
           :step="0.05"
-          locale="es-ES"
+          :locale="locale"
         >
           <NumberFieldContent>
             <NumberFieldInput />
@@ -290,17 +291,17 @@ const hasMaxBonus = computed({
       </div>
 
       <div class="flex flex-col gap-2">
-        <label class="text-sm font-medium">Revisión del tipo</label>
+        <label class="text-sm font-medium">{{ $t('mortgage.conditions.review') }}</label>
         <Select v-model="reviewEveryMonths">
           <SelectTrigger class="w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="6">
-              Cada 6 meses
+              {{ $t('mortgage.conditions.review6') }}
             </SelectItem>
             <SelectItem value="12">
-              Cada 12 meses
+              {{ $t('mortgage.conditions.review12') }}
             </SelectItem>
           </SelectContent>
         </Select>
@@ -316,14 +317,14 @@ const hasMaxBonus = computed({
         <label
           :for="`mc-own-principal-${mortgage.id}`"
           class="text-sm font-medium"
-        >Capital propio (€)</label>
+        >{{ $t('mortgage.conditions.ownPrincipal') }}</label>
       </div>
       <NumberField
         v-model="ownPrincipal"
         :min="0"
         :step="5000"
         :disabled="!overridesPrincipal"
-        locale="es-ES"
+        :locale="locale"
         :formatOptions="amountFormat"
       >
         <NumberFieldContent>
@@ -334,7 +335,7 @@ const hasMaxBonus = computed({
         v-if="!overridesPrincipal"
         class="text-xs text-muted-foreground"
       >
-        Heredado de los datos comunes
+        {{ $t('mortgage.conditions.inherited') }}
       </p>
     </div>
 
@@ -347,7 +348,7 @@ const hasMaxBonus = computed({
         <label
           :for="`mc-own-term-${mortgage.id}`"
           class="text-sm font-medium"
-        >Plazo propio (años)</label>
+        >{{ $t('mortgage.conditions.ownTerm') }}</label>
       </div>
       <NumberField
         v-model="ownTermYears"
@@ -355,7 +356,7 @@ const hasMaxBonus = computed({
         :max="50"
         :step="1"
         :disabled="!overridesTerm"
-        locale="es-ES"
+        :locale="locale"
       >
         <NumberFieldContent>
           <NumberFieldInput />
@@ -365,7 +366,7 @@ const hasMaxBonus = computed({
         v-if="!overridesTerm"
         class="text-xs text-muted-foreground"
       >
-        Heredado de los datos comunes
+        {{ $t('mortgage.conditions.inherited') }}
       </p>
     </div>
 
@@ -378,7 +379,7 @@ const hasMaxBonus = computed({
         <label
           :for="`mc-floor-${mortgage.id}`"
           class="text-sm font-medium"
-        >Suelo (%)</label>
+        >{{ $t('mortgage.conditions.floor') }}</label>
       </div>
       <NumberField
         v-model="mortgage.floorPct"
@@ -386,7 +387,7 @@ const hasMaxBonus = computed({
         :max="20"
         :step="0.05"
         :disabled="!hasFloor"
-        locale="es-ES"
+        :locale="locale"
       >
         <NumberFieldContent>
           <NumberFieldInput />
@@ -403,7 +404,7 @@ const hasMaxBonus = computed({
         <label
           :for="`mc-cap-${mortgage.id}`"
           class="text-sm font-medium"
-        >Techo (%)</label>
+        >{{ $t('mortgage.conditions.cap') }}</label>
       </div>
       <NumberField
         v-model="mortgage.capPct"
@@ -411,7 +412,7 @@ const hasMaxBonus = computed({
         :max="30"
         :step="0.05"
         :disabled="!hasCap"
-        locale="es-ES"
+        :locale="locale"
       >
         <NumberFieldContent>
           <NumberFieldInput />
@@ -428,7 +429,7 @@ const hasMaxBonus = computed({
         <label
           :for="`mc-max-bonus-${mortgage.id}`"
           class="text-sm font-medium"
-        >Tope de bonificación (pp)</label>
+        >{{ $t('mortgage.conditions.maxBonus') }}</label>
       </div>
       <NumberField
         v-model="mortgage.maxBonusPp"
@@ -436,7 +437,7 @@ const hasMaxBonus = computed({
         :max="5"
         :step="0.05"
         :disabled="!hasMaxBonus"
-        locale="es-ES"
+        :locale="locale"
       >
         <NumberFieldContent>
           <NumberFieldInput />

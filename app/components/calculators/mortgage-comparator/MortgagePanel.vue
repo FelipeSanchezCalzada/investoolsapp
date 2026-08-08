@@ -15,6 +15,7 @@ import { formatCompactCurrency, formatPercent, formatPp } from '~/composables/us
 const props = defineProps<{ mortgage: Mortgage }>()
 
 const { common, resultFor } = useMortgageComparator()
+const { t } = useI18n()
 
 const result = computed(() => resultFor(props.mortgage.id))
 
@@ -26,69 +27,82 @@ const openSections = ref({
   opportunity: false,
 })
 
-const RATE_TYPE_LABELS = {
-  fixed: 'Fija',
-  variable: 'Variable',
-  mixed: 'Mixta',
-} as const
-
 const conditionsSummary = computed(() => {
   const mortgage = props.mortgage
   const rate = mortgage.rateType === 'fixed'
     ? formatPercent(mortgage.fixedRatePct)
     : mortgage.rateType === 'mixed'
-      ? `${formatPercent(mortgage.fixedRatePct)} ${Math.round(mortgage.mixedFixedMonths / 12)} años, luego Eur+${formatPercent(mortgage.spreadPct, '')}`
-      : `Eur+${formatPercent(mortgage.spreadPct, '')}`
+      ? t('mortgage.panel.conditionsMixed', {
+          rate: formatPercent(mortgage.fixedRatePct),
+          years: Math.round(mortgage.mixedFixedMonths / 12),
+          spread: formatPercent(mortgage.spreadPct, ''),
+        })
+      : t('mortgage.panel.conditionsVariable', { spread: formatPercent(mortgage.spreadPct, '') })
 
   const principal = result.value?.principal ?? mortgage.principal ?? common.value?.principal ?? 0
   const months = result.value?.termMonths ?? mortgage.termMonths ?? common.value?.termMonths ?? 0
 
   return [
-    RATE_TYPE_LABELS[mortgage.rateType],
+    t(`mortgage.conditions.rateTypes.${mortgage.rateType}`),
     rate,
     formatCompactCurrency(principal),
-    `${Math.round(months / 12)} años`,
+    t('common.yearsCount', { count: Math.round(months / 12) }),
   ].join(' · ')
 })
 
 const costsSummary = computed(() => {
   const current = result.value
-  if (!current) return '—'
-  return `${formatCompactCurrency(current.clientUpfrontCost)} a tu cargo · apertura ${formatPercent(props.mortgage.upfrontCosts.openingFeePct)}`
+  if (!current) return t('common.emptyValue')
+  return t('mortgage.panel.costsSummary', {
+    upfront: formatCompactCurrency(current.clientUpfrontCost),
+    openingFee: formatPercent(props.mortgage.upfrontCosts.openingFeePct),
+  })
 })
 
 const bindingsSummary = computed(() => {
   const active = props.mortgage.bindings.filter(binding => binding.active)
-  if (!active.length) return 'Ninguna'
+  if (!active.length) return t('common.none')
   const bonus = active.reduce((sum, binding) => sum + binding.rateReductionPp, 0)
   const current = result.value
   const perYear = current && current.years > 0 ? current.totalBindingNetCost / current.years : null
-  const cost = perYear === null ? '' : ` · ${formatCompactCurrency(perYear)}/año netos`
-  return `${active.length} activa${active.length === 1 ? '' : 's'} · −${formatPp(bonus)}${cost}`
+  const cost = perYear === null
+    ? ''
+    : t('mortgage.panel.bindingsCost', { value: formatCompactCurrency(perYear) })
+  return t('mortgage.panel.bindingsSummary', { count: active.length, bonus: formatPp(bonus), cost }, active.length)
 })
 
 const prepaymentsSummary = computed(() => {
   const prepayments = props.mortgage.prepayments
-  if (!prepayments.length) return 'Ninguna'
+  if (!prepayments.length) return t('common.none')
   const total = prepayments.reduce((sum, prepayment) => sum + prepayment.amount, 0)
   const savings = result.value?.prepaymentInterestSavings ?? null
-  const suffix = savings === null ? '' : ` · ahorro ${formatCompactCurrency(savings)}`
-  return `${prepayments.length} pago${prepayments.length === 1 ? '' : 's'} · ${formatCompactCurrency(total)}${suffix}`
+  const saving = savings === null
+    ? ''
+    : t('mortgage.panel.prepaymentsSaving', { value: formatCompactCurrency(savings) })
+  return t('mortgage.panel.prepaymentsSummary', {
+    count: prepayments.length,
+    total: formatCompactCurrency(total),
+    saving,
+  }, prepayments.length)
 })
 
 const opportunitySummary = computed(() => {
-  if (!common.value?.opportunityCostEnabled) return 'Desactivado'
+  if (!common.value?.opportunityCostEnabled) return t('mortgage.panel.disabled')
   const opportunity = result.value?.opportunityCost
-  if (!opportunity) return '—'
-  return `Entrada ${formatCompactCurrency(opportunity.downPayment)} · libre ${formatCompactCurrency(opportunity.freeCapital)} → ${formatCompactCurrency(opportunity.netPortfolio)}`
+  if (!opportunity) return t('common.emptyValue')
+  return t('mortgage.panel.opportunitySummary', {
+    downPayment: formatCompactCurrency(opportunity.downPayment),
+    freeCapital: formatCompactCurrency(opportunity.freeCapital),
+    netPortfolio: formatCompactCurrency(opportunity.netPortfolio),
+  })
 })
 
 const sections = computed(() => [
-  { key: 'conditions' as const, title: 'Condiciones', summary: conditionsSummary.value },
-  { key: 'costs' as const, title: 'Gastos y comisiones', summary: costsSummary.value },
-  { key: 'bindings' as const, title: 'Vinculaciones', summary: bindingsSummary.value },
-  { key: 'prepayments' as const, title: 'Amortizaciones anticipadas', summary: prepaymentsSummary.value },
-  { key: 'opportunity' as const, title: 'Coste de oportunidad', summary: opportunitySummary.value },
+  { key: 'conditions' as const, title: t('mortgage.panel.conditions'), summary: conditionsSummary.value },
+  { key: 'costs' as const, title: t('mortgage.panel.costs'), summary: costsSummary.value },
+  { key: 'bindings' as const, title: t('mortgage.panel.bindings'), summary: bindingsSummary.value },
+  { key: 'prepayments' as const, title: t('mortgage.panel.prepayments'), summary: prepaymentsSummary.value },
+  { key: 'opportunity' as const, title: t('mortgage.panel.opportunity'), summary: opportunitySummary.value },
 ])
 </script>
 
@@ -100,11 +114,11 @@ const sections = computed(() => [
     >
       <p
         v-for="warning in result.warnings"
-        :key="warning"
+        :key="warning.key"
         class="flex items-start gap-2 text-sm"
       >
         <TriangleAlert class="mt-0.5 size-4 shrink-0 text-amber-500" />
-        {{ warning }}
+        {{ $t(warning.key, warning.params ?? {}) }}
       </p>
     </div>
 

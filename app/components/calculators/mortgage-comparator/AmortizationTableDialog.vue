@@ -39,15 +39,14 @@ const rows = computed(() => {
         variant="outline"
         :disabled="!result"
       >
-        Ver cuadro de amortización
+        {{ $t('mortgage.amortization.open') }}
       </Button>
     </DialogTrigger>
     <DialogContent class="flex max-h-[90dvh] flex-col gap-3 overflow-hidden sm:max-w-5xl">
       <DialogHeader>
-        <DialogTitle>Cuadro de amortización — {{ result?.mortgage.name }}</DialogTitle>
+        <DialogTitle>{{ $t('mortgage.amortization.title', { name: result?.mortgage.name }) }}</DialogTitle>
         <DialogDescription>
-          Mes a mes con el tipo aplicado tras bonificaciones, el coste neto de las vinculaciones
-          imputado a cada mes y las amortizaciones anticipadas.
+          {{ $t('mortgage.amortization.description') }}
         </DialogDescription>
       </DialogHeader>
 
@@ -57,23 +56,23 @@ const rows = computed(() => {
           :variant="showOnlyYearEnds ? 'default' : 'outline'"
           @click="showOnlyYearEnds = !showOnlyYearEnds"
         >
-          Solo cierres de año
+          {{ $t('mortgage.amortization.onlyYearEnds') }}
         </Button>
         <Badge variant="outline">
-          {{ result?.simulation.months ?? 0 }} meses
+          {{ $t('mortgage.amortization.monthsBadge', { count: result?.simulation.months ?? 0 }) }}
         </Badge>
         <Badge
           v-if="result?.simulation.cancelledEarly"
           variant="outline"
           class="border-green-500/40 text-green-600 dark:text-green-400"
         >
-          Cancelada antes de tiempo
+          {{ $t('mortgage.amortization.cancelledEarly') }}
         </Badge>
         <Badge
           v-if="(result?.simulation.financedPremiums ?? 0) > 0"
           variant="outline"
         >
-          Primas financiadas: {{ formatCurrency(result?.simulation.financedPremiums) }}
+          {{ $t('mortgage.amortization.financedPremiums', { value: formatCurrency(result?.simulation.financedPremiums) }) }}
         </Badge>
       </div>
 
@@ -82,34 +81,34 @@ const rows = computed(() => {
           <TableHeader class="[&_th]:sticky [&_th]:top-0 [&_th]:z-10 [&_th]:bg-background [&_th]:whitespace-nowrap">
             <TableRow>
               <TableHead class="w-16">
-                Mes
+                {{ $t('common.month') }}
               </TableHead>
               <TableHead class="text-right">
-                Tipo base
+                {{ $t('mortgage.amortization.baseRate') }}
               </TableHead>
               <TableHead class="text-right">
-                Tipo aplicado
+                {{ $t('mortgage.amortization.appliedRate') }}
               </TableHead>
               <TableHead class="text-right">
-                Cuota
+                {{ $t('mortgage.amortization.installment') }}
               </TableHead>
               <TableHead class="text-right">
-                Intereses
+                {{ $t('mortgage.amortization.interest') }}
               </TableHead>
               <TableHead class="text-right">
-                Capital
+                {{ $t('mortgage.amortization.principal') }}
               </TableHead>
               <TableHead class="text-right">
-                Amort. anticipada
+                {{ $t('mortgage.amortization.prepayment') }}
               </TableHead>
               <TableHead class="text-right">
-                Comisión
+                {{ $t('mortgage.amortization.fee') }}
               </TableHead>
               <TableHead class="text-right">
-                Vinculaciones
+                {{ $t('mortgage.amortization.bindings') }}
               </TableHead>
               <TableHead class="text-right">
-                Pendiente
+                {{ $t('mortgage.amortization.outstanding') }}
               </TableHead>
             </TableRow>
           </TableHeader>

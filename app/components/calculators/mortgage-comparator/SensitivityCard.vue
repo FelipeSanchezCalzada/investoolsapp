@@ -51,11 +51,10 @@ function spreadOf(mortgageId: string): number | null {
   <Card>
     <CardHeader>
       <CardTitle class="text-lg">
-        Sensibilidad al Euríbor
+        {{ $t('mortgage.sensitivity.title') }}
       </CardTitle>
       <CardDescription>
-        TAE real de cada oferta en cada escenario del índice. Una fija apenas se mueve; en una
-        variable la horquilla es la medida del riesgo que asumes.
+        {{ $t('mortgage.sensitivity.description') }}
       </CardDescription>
     </CardHeader>
     <CardContent>
@@ -63,7 +62,7 @@ function spreadOf(mortgageId: string): number | null {
         v-if="!rows.length"
         class="rounded-lg border border-dashed py-10 text-center text-sm text-muted-foreground"
       >
-        No hay hipotecas activas.
+        {{ $t('mortgage.sensitivity.empty') }}
       </div>
 
       <div v-else>
@@ -71,7 +70,7 @@ function spreadOf(mortgageId: string): number | null {
           <TableHeader>
             <TableRow>
               <TableHead class="min-w-40">
-                Hipoteca
+                {{ $t('mortgage.sensitivity.mortgage') }}
               </TableHead>
               <TableHead
                 v-for="scenario in scenarios"
@@ -84,11 +83,11 @@ function spreadOf(mortgageId: string): number | null {
                   variant="outline"
                   class="ml-1 text-[10px]"
                 >
-                  activo
+                  {{ $t('mortgage.sensitivity.activeBadge') }}
                 </Badge>
               </TableHead>
               <TableHead class="text-right">
-                Horquilla
+                {{ $t('mortgage.sensitivity.spread') }}
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -125,8 +124,7 @@ function spreadOf(mortgageId: string): number | null {
       </div>
 
       <p class="mt-3 text-xs text-muted-foreground">
-        En verde, la oferta ganadora dentro de cada escenario. Si cambia de una columna a otra, la
-        decisión depende de por dónde vaya el Euríbor y no solo de la oferta.
+        {{ $t('mortgage.sensitivity.note') }}
       </p>
     </CardContent>
   </Card>

@@ -18,14 +18,15 @@ export const UPFRONT_COST_KEYS: MortgageUpfrontCostKey[] = [
   'appraisal', 'notary', 'registry', 'agency', 'ajd', 'brokerFee', 'other',
 ]
 
-export const UPFRONT_COST_LABELS: Record<MortgageUpfrontCostKey, string> = {
-  appraisal: 'Tasación',
-  notary: 'Notaría',
-  registry: 'Registro',
-  agency: 'Gestoría',
-  ajd: 'AJD',
-  brokerFee: 'Bróker / intermediario',
-  other: 'Otros',
+/** i18n key of an upfront cost concept, resolved by the component that renders it. */
+export function upfrontCostLabelKey(key: MortgageUpfrontCostKey): string {
+  return `mortgage.costs.keys.${key}`
+}
+
+/** Warnings travel as i18n keys plus params so they follow the active locale. */
+export type MortgageWarning = {
+  key: string
+  params?: Record<string, string | number>
 }
 
 export function resolvePrincipal(mortgage: Mortgage, common: MortgageComparatorCommon): number {
@@ -120,7 +121,7 @@ export type MortgageResult = {
   /** Interest saved by all the prepayments together */
   prepaymentInterestSavings: number
   yearly: MortgageYearlySeries
-  warnings: string[]
+  warnings: MortgageWarning[]
   viable: boolean
   computable: boolean
 }
@@ -198,14 +199,12 @@ function buildYearlySeries(
   return { years: yearsAxis, installment, cumulativeCost, outstanding, netWorth }
 }
 
-function legalFeeWarnings(mortgage: Mortgage): string[] {
-  const warnings: string[] = []
+function legalFeeWarnings(mortgage: Mortgage): MortgageWarning[] {
+  const warnings: MortgageWarning[] = []
   const cap = mortgage.rateType === 'variable' ? 0.25 : 2
   const tiers = [...mortgage.earlyRepaymentFees.partial, ...mortgage.earlyRepaymentFees.total]
   if (tiers.some(tier => tier.pct > cap + 1e-9)) {
-    warnings.push(
-      `Alguna comisión de amortización supera el tope de la LCCI (${cap.toLocaleString('es-ES')} %) para este tipo de préstamo. Se calcula igual, por si la oferta es anterior a la ley.`,
-    )
+    warnings.push({ key: 'mortgage.warnings.feeCapExceeded', params: { cap } })
   }
   return warnings
 }
@@ -228,7 +227,7 @@ export function calculateMortgageResult(
   const indexAt = scenarioIndexFn(selectedScenario, common.currentIndexPct)
   const constantIndexAt = () => common.currentIndexPct
 
-  const warnings: string[] = [...legalFeeWarnings(mortgage)]
+  const warnings: MortgageWarning[] = [...legalFeeWarnings(mortgage)]
   const computable = principal > 0 && termMonths > 0
 
   const baseOptions = {
@@ -368,33 +367,34 @@ export function calculateMortgageResult(
   })
 
   if (!computable) {
-    warnings.push('Capital o plazo no válidos: revisa los datos comunes o los de esta hipoteca.')
+    warnings.push({ key: 'mortgage.warnings.invalidPrincipalOrTerm' })
   }
   if (mortgage.floorPct !== null && mortgage.capPct !== null && mortgage.floorPct > mortgage.capPct) {
-    warnings.push('El suelo está por encima del techo: revisa los límites del tipo.')
+    warnings.push({ key: 'mortgage.warnings.floorAboveCap' })
   }
   if (opportunityCost.negativeDownPayment) {
-    warnings.push('El capital concedido supera el precio de la vivienda: la entrada sale negativa.')
+    warnings.push({ key: 'mortgage.warnings.negativeDownPayment' })
   }
   if (opportunityCost.notAffordable) {
-    warnings.push('Tu ahorro disponible no cubre la entrada más los gastos de esta oferta.')
+    warnings.push({ key: 'mortgage.warnings.notAffordable' })
   }
   const inactiveRequired = mortgage.bindings.filter(binding => binding.required && !binding.active)
   for (const binding of inactiveRequired) {
-    warnings.push(`«${binding.name}» es obligatoria y está desactivada: el banco no concedería la hipoteca sin ella.`)
+    warnings.push({ key: 'mortgage.warnings.requiredBindingInactive', params: { name: binding.name } })
   }
   const renewedPremiums = simulation.preparedBindings.filter(prepared => prepared.singlePremiumRenewals > 0)
   for (const prepared of renewedPremiums) {
     const cost = prepared.binding.cost
     if (cost.mode !== 'singlePremium') continue
-    warnings.push(
-      `«${prepared.binding.name}»: la prima cubre ${cost.coverYears} de los ${years} años; se asume renovación al mismo precio.`,
-    )
+    warnings.push({
+      key: 'mortgage.warnings.singlePremiumRenewal',
+      params: { name: prepared.binding.name, coverYears: cost.coverYears, years },
+    })
   }
   const cappedBonus = mortgage.maxBonusPp !== null
     && activeBindings(mortgage).reduce((sum, binding) => sum + binding.rateReductionPp, 0) > mortgage.maxBonusPp
   if (cappedBonus) {
-    warnings.push(`La bonificación acumulada supera el tope de ${mortgage.maxBonusPp} pp y se ha recortado.`)
+    warnings.push({ key: 'mortgage.warnings.bonusCapped', params: { cap: mortgage.maxBonusPp! } })
   }
 
   return {

@@ -25,7 +25,7 @@ import useFrontDB from '~/db/useFrontDB'
 type PortfolioRebalancingHelper = NonNullable<Workspace['portfolioRebalancingHelper']>
 type TargetFund = PortfolioRebalancingHelper['target'][number]
 
-const browserLocale = 'es-ES'
+const { t, locale } = useI18n()
 
 const { selectedWorkspace } = storeToRefs(useFrontDB())
 
@@ -70,7 +70,7 @@ function removeTargetFund(id: string) {
 }
 
 function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('es-ES', {
+  return new Intl.NumberFormat(locale.value, {
     style: 'currency',
     currency: 'EUR',
   }).format(value)
@@ -93,14 +93,14 @@ function copyTargetPortfolio() {
   setTimeout(() => {
     copiedTarget.value = false
   }, 1500)
-  toast.success('Cartera objetivo copiada al portapapeles')
+  toast.success(t('portfolioRebalancing.target.copyToast'))
 }
 
 async function pasteTargetPortfolio() {
   try {
     const text = await navigator.clipboard.readText()
     if (!text.trim()) {
-      toast.error('El portapapeles está vacío')
+      toast.error(t('portfolioRebalancing.target.clipboardEmpty'))
       return
     }
     const lines = text.trim().split('\n').filter(l => l.trim())
@@ -114,9 +114,9 @@ async function pasteTargetPortfolio() {
       }
     })
     targetFunds.value.splice(0, targetFunds.value.length, ...funds)
-    toast.success(`${funds.length} fondo${funds.length > 1 ? 's' : ''} pegado${funds.length > 1 ? 's' : ''}`)
+    toast.success(t('portfolioRebalancing.target.pastedToast', { count: funds.length }, funds.length))
   } catch {
-    toast.error('No se pudo leer el portapapeles')
+    toast.error(t('portfolioRebalancing.target.clipboardError'))
   }
 }
 </script>
@@ -126,9 +126,9 @@ async function pasteTargetPortfolio() {
     <CardHeader>
       <div class="flex items-center justify-between">
         <div>
-          <CardTitle>Cartera Objetivo</CardTitle>
+          <CardTitle>{{ $t('portfolioRebalancing.target.title') }}</CardTitle>
           <CardDescription>
-            Distribución deseada tras el rebalanceo. El monto se calcula automáticamente.
+            {{ $t('portfolioRebalancing.target.description') }}
           </CardDescription>
         </div>
         <div class="text-right">
@@ -150,13 +150,13 @@ async function pasteTargetPortfolio() {
           <TableHeader>
             <TableRow>
               <TableHead class="w-10" />
-              <TableHead>Nombre del fondo</TableHead>
-              <TableHead>ISIN</TableHead>
+              <TableHead>{{ $t('portfolioRebalancing.current.fundName') }}</TableHead>
+              <TableHead>{{ $t('portfolioRebalancing.current.isin') }}</TableHead>
               <TableHead class="text-right">
-                % Objetivo
+                {{ $t('portfolioRebalancing.target.targetShare') }}
               </TableHead>
               <TableHead class="text-right">
-                Monto resultante
+                {{ $t('portfolioRebalancing.target.resultingAmount') }}
               </TableHead>
               <TableHead class="w-10" />
             </TableRow>
@@ -176,14 +176,14 @@ async function pasteTargetPortfolio() {
                 <TableCell>
                   <Input
                     v-model="fund.name"
-                    placeholder="Ej: Amundi MSCI World"
+                    :placeholder="$t('portfolioRebalancing.current.namePlaceholder')"
                     class="h-9"
                   />
                 </TableCell>
                 <TableCell class="w-50">
                   <Input
                     v-model="fund.isin"
-                    placeholder="Ej: LU1234567890"
+                    :placeholder="$t('portfolioRebalancing.current.isinPlaceholder')"
                     class="h-9 font-mono"
                   />
                 </TableCell>
@@ -193,7 +193,7 @@ async function pasteTargetPortfolio() {
                     :min="0"
                     :max="100"
                     :step="0.01"
-                    :locale="browserLocale"
+                    :locale="locale"
                     :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
                   >
                     <NumberFieldContent>
@@ -233,7 +233,7 @@ async function pasteTargetPortfolio() {
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <GripVertical class="drag-handle size-4 text-muted-foreground cursor-grab active:cursor-grabbing" />
-                <span class="text-xs font-medium text-muted-foreground">Fondo {{ index + 1 }}</span>
+                <span class="text-xs font-medium text-muted-foreground">{{ $t('portfolioRebalancing.current.fundIndex', { index: index + 1 }) }}</span>
               </div>
               <Button
                 variant="ghost"
@@ -245,12 +245,12 @@ async function pasteTargetPortfolio() {
             </div>
             <Input
               v-model="fund.name"
-              placeholder="Nombre del fondo"
+              :placeholder="$t('portfolioRebalancing.current.fundName')"
               class="h-9"
             />
             <Input
               v-model="fund.isin"
-              placeholder="ISIN"
+              :placeholder="$t('portfolioRebalancing.current.isin')"
               class="h-9 font-mono"
             />
             <div class="flex items-center gap-2">
@@ -260,7 +260,7 @@ async function pasteTargetPortfolio() {
                   :min="0"
                   :max="100"
                   :step="0.01"
-                  :locale="browserLocale"
+                  :locale="locale"
                   :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
                 >
                   <NumberFieldContent>
@@ -281,7 +281,7 @@ async function pasteTargetPortfolio() {
         class="flex flex-col items-center justify-center py-8 text-muted-foreground"
       >
         <p class="text-sm">
-          No hay fondos en la cartera objetivo.
+          {{ $t('portfolioRebalancing.target.empty') }}
         </p>
       </div>
 
@@ -292,14 +292,14 @@ async function pasteTargetPortfolio() {
           @click="addTargetFund"
         >
           <Plus class="size-4 mr-2" />
-          Añadir fondo
+          {{ $t('portfolioRebalancing.current.addFund') }}
         </Button>
 
         <p
           v-if="targetFunds.length > 0 && !isTargetValid"
           class="text-sm text-destructive"
         >
-          Los porcentajes deben sumar exactamente 100%.
+          {{ $t('portfolioRebalancing.target.mustSum100') }}
         </p>
 
         <div class="flex items-center gap-2 ml-auto">
@@ -313,7 +313,7 @@ async function pasteTargetPortfolio() {
               :is="copiedTarget ? Check : Copy"
               :class="cn('size-4 mr-2', copiedTarget && 'text-green-500')"
             />
-            {{ copiedTarget ? 'Copiada' : 'Copiar cartera' }}
+            {{ copiedTarget ? $t('portfolioRebalancing.target.copied') : $t('portfolioRebalancing.target.copy') }}
           </Button>
 
           <Button
@@ -322,7 +322,7 @@ async function pasteTargetPortfolio() {
             @click="pasteTargetPortfolio"
           >
             <ClipboardPaste class="size-4 mr-2" />
-            Pegar cartera
+            {{ $t('portfolioRebalancing.target.paste') }}
           </Button>
         </div>
       </div>

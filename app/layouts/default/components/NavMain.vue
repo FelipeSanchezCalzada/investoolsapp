@@ -22,6 +22,7 @@ import {
 import { PAGE_NAMES } from '~/pages/routeNames'
 
 const { isMobile, setOpenMobile } = useSidebar()
+const { t } = useI18n()
 
 function handleNavigate() {
   if (isMobile.value)
@@ -30,30 +31,30 @@ function handleNavigate() {
 
 const menuItems = computed(() => {
   return [{
-    title: 'Ayudantes',
+    title: t('layout.nav.helpers'),
     icon: Toolbox,
     isActive: true,
     items: [
       {
-        title: 'Rebalanceo de fondos',
+        title: t('tools.portfolioRebalancing.navTitle'),
         routeName: PAGE_NAMES.HELPERS.PORTFOLIO_REBALANCING,
       },
     ],
   }, {
-    title: 'Calculadoras',
+    title: t('layout.nav.calculators'),
     icon: Calculator,
     isActive: true,
     items: [
       {
-        title: 'Calculadora S&P 500',
+        title: t('tools.sp500.navTitle'),
         routeName: PAGE_NAMES.CALCULATORS.SP500,
       },
       {
-        title: 'Libertad Financiera',
+        title: t('tools.financialFreedom.navTitle'),
         routeName: PAGE_NAMES.CALCULATORS.FINANCIAL_FREEDOM,
       },
       {
-        title: 'Comparador de hipotecas',
+        title: t('tools.mortgageComparator.navTitle'),
         routeName: PAGE_NAMES.CALCULATORS.MORTGAGE_COMPARATOR,
       },
     ],
@@ -63,7 +64,7 @@ const menuItems = computed(() => {
 
 <template>
   <SidebarGroup>
-    <SidebarGroupLabel>Herramientas</SidebarGroupLabel>
+    <SidebarGroupLabel>{{ $t('layout.nav.groupLabel') }}</SidebarGroupLabel>
     <SidebarMenu>
       <Collapsible
         v-for="item in menuItems"
@@ -96,7 +97,7 @@ const menuItems = computed(() => {
               class="hover:bg-transparent! hover:text-sidebar-foreground! !peer-hover/menu-button:text-sidebar-foreground"
             >
               <ChevronRight :class="open ? 'rotate-90' : ''" />
-              <span class="sr-only">Toggle</span>
+              <span class="sr-only">{{ $t('common.toggle') }}</span>
             </SidebarMenuAction>
             <CollapsibleContent>
               <SidebarMenuSub>

@@ -4,12 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
 const { isLoading, results } = useSP500Calculator()
+const { t, locale } = useI18n()
 
-const usdFormatter = new Intl.NumberFormat('es-ES', {
+const usdFormatter = computed(() => new Intl.NumberFormat(locale.value, {
   style: 'currency',
   currency: 'USD',
   maximumFractionDigits: 0,
-})
+}))
 
 const chartOption = computed(() => {
   if (!results.value) return {}
@@ -17,7 +18,7 @@ const chartOption = computed(() => {
   return {
     tooltip: {
       trigger: 'axis',
-      valueFormatter: (value: number) => usdFormatter.format(value),
+      valueFormatter: (value: number) => usdFormatter.value.format(value),
     },
     legend: {
       top: 0,
@@ -39,12 +40,12 @@ const chartOption = computed(() => {
     yAxis: {
       type: 'value',
       axisLabel: {
-        formatter: (value: number) => usdFormatter.format(value),
+        formatter: (value: number) => usdFormatter.value.format(value),
       },
     },
     series: [
       {
-        name: 'Dinero invertido',
+        name: t('sp500.series.invested'),
         type: 'line',
         data: results.value.invested,
         smooth: 0.4,
@@ -53,7 +54,7 @@ const chartOption = computed(() => {
         itemStyle: { color: '#6b7280' },
       },
       {
-        name: 'Peor caso histórico',
+        name: t('sp500.series.worstCase'),
         type: 'line',
         data: results.value.worstCase,
         smooth: 0.4,
@@ -62,7 +63,7 @@ const chartOption = computed(() => {
         itemStyle: { color: '#ef4444' },
       },
       {
-        name: 'Caso actual',
+        name: t('sp500.series.currentCase'),
         type: 'line',
         data: results.value.currentCase,
         smooth: 0.4,
@@ -71,7 +72,7 @@ const chartOption = computed(() => {
         itemStyle: { color: '#3b82f6' },
       },
       {
-        name: 'Mejor caso histórico',
+        name: t('sp500.series.bestCase'),
         type: 'line',
         data: results.value.bestCase,
         smooth: 0.4,
@@ -87,8 +88,8 @@ function caseStats(finalValue: number, invested: number) {
   const profit = finalValue - invested
   const multiplier = invested > 0 ? finalValue / invested : 0
   return {
-    total: usdFormatter.format(finalValue),
-    profit: usdFormatter.format(profit),
+    total: usdFormatter.value.format(finalValue),
+    profit: usdFormatter.value.format(profit),
     multiplier: `x${multiplier.toFixed(1)}`,
     isNegative: profit < 0,
   }
@@ -99,7 +100,7 @@ const finalSummary = computed(() => {
   const last = (arr: number[]) => arr[arr.length - 1]!
   const invested = last(results.value.invested)
   return {
-    invested: usdFormatter.format(invested),
+    invested: usdFormatter.value.format(invested),
     worstCase: caseStats(last(results.value.worstCase), invested),
     bestCase: caseStats(last(results.value.bestCase), invested),
     currentCase: caseStats(last(results.value.currentCase), invested),
@@ -111,7 +112,7 @@ const finalSummary = computed(() => {
   <Card>
     <CardHeader>
       <CardTitle class="text-lg">
-        Resultados
+        {{ $t('common.results') }}
       </CardTitle>
     </CardHeader>
     <CardContent>
@@ -120,14 +121,14 @@ const finalSummary = computed(() => {
         class="flex items-center justify-center py-20"
       >
         <Loader2 class="size-8 animate-spin text-muted-foreground" />
-        <span class="ml-3 text-muted-foreground">Calculando escenarios...</span>
+        <span class="ml-3 text-muted-foreground">{{ $t('sp500.calculating') }}</span>
       </div>
 
       <div
         v-else-if="!results"
         class="text-center py-20 text-muted-foreground"
       >
-        Cargando datos históricos...
+        {{ $t('sp500.loading') }}
       </div>
 
       <template v-else>
@@ -136,7 +137,7 @@ const finalSummary = computed(() => {
             <div class="flex items-center justify-between mb-1 sm:mb-2">
               <div class="flex items-center gap-2 text-muted-foreground">
                 <Wallet class="size-4" />
-                <span class="text-xs font-medium">Invertido</span>
+                <span class="text-xs font-medium">{{ $t('sp500.invested') }}</span>
               </div>
               <Badge
                 variant="outline"
@@ -154,7 +155,7 @@ const finalSummary = computed(() => {
             <div class="flex items-center justify-between mb-1 sm:mb-2">
               <div class="flex items-center gap-2 text-red-500">
                 <TrendingDown class="size-4" />
-                <span class="text-xs font-medium">Peor caso</span>
+                <span class="text-xs font-medium">{{ $t('sp500.worstCase') }}</span>
               </div>
               <Badge
                 variant="outline"
@@ -168,7 +169,7 @@ const finalSummary = computed(() => {
             </p>
             <div class="flex items-center gap-2 mt-1 text-xs text-red-500/80">
               <span class="font-semibold">{{ finalSummary!.worstCase.multiplier }}</span>
-              <span>{{ finalSummary!.worstCase.profit }} ganancia</span>
+              <span>{{ finalSummary!.worstCase.profit }} {{ $t('sp500.profit') }}</span>
             </div>
           </div>
 
@@ -176,7 +177,7 @@ const finalSummary = computed(() => {
             <div class="flex items-center justify-between mb-1 sm:mb-2">
               <div class="flex items-center gap-2 text-blue-500">
                 <Activity class="size-4" />
-                <span class="text-xs font-medium">Caso actual</span>
+                <span class="text-xs font-medium">{{ $t('sp500.currentCase') }}</span>
               </div>
               <Badge
                 variant="outline"
@@ -190,7 +191,7 @@ const finalSummary = computed(() => {
             </p>
             <div class="flex items-center gap-2 mt-1 text-xs text-blue-500/80">
               <span class="font-semibold">{{ finalSummary!.currentCase.multiplier }}</span>
-              <span>{{ finalSummary!.currentCase.profit }} ganancia</span>
+              <span>{{ finalSummary!.currentCase.profit }} {{ $t('sp500.profit') }}</span>
             </div>
           </div>
 
@@ -198,7 +199,7 @@ const finalSummary = computed(() => {
             <div class="flex items-center justify-between mb-1 sm:mb-2">
               <div class="flex items-center gap-2 text-green-500">
                 <TrendingUp class="size-4" />
-                <span class="text-xs font-medium">Mejor caso</span>
+                <span class="text-xs font-medium">{{ $t('sp500.bestCase') }}</span>
               </div>
               <Badge
                 variant="outline"
@@ -212,7 +213,7 @@ const finalSummary = computed(() => {
             </p>
             <div class="flex items-center gap-2 mt-1 text-xs text-green-500/80">
               <span class="font-semibold">{{ finalSummary!.bestCase.multiplier }}</span>
-              <span>{{ finalSummary!.bestCase.profit }} ganancia</span>
+              <span>{{ finalSummary!.bestCase.profit }} {{ $t('sp500.profit') }}</span>
             </div>
           </div>
         </div>

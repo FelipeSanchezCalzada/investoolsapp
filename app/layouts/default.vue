@@ -13,7 +13,10 @@ import {
 
 <template>
   <div class="[--header-height:calc(--spacing(14))]">
-    <SidebarProvider class="flex flex-col">
+    <SidebarProvider
+      class="flex flex-col"
+      :style="{ '--sidebar-width': '16.2rem' }"
+    >
       <SiteHeader />
       <div class="flex flex-1">
         <AppSidebar />
@@ -27,7 +30,7 @@ import {
     <footer class="border-t border-border/40 py-4 px-6 text-center text-xs text-muted-foreground/60">
       <div class="flex flex-col items-center gap-1 sm:flex-row sm:justify-center sm:gap-4">
         <span>
-          Made with <Heart class="inline-block size-3.5 text-red-500 fill-red-500" /> by
+          {{ $t('layout.footer.madeWith') }} <Heart class="inline-block size-3.5 text-red-500 fill-red-500" /> {{ $t('layout.footer.by') }}
           <a
             href="https://github.com/FelipeSanchezCalzada"
             target="_blank"
@@ -43,7 +46,7 @@ import {
           class="underline underline-offset-4 hover:text-foreground transition-colors"
         >GitHub</a>
         <span class="hidden sm:inline">&middot;</span>
-        <span>AGPL-3.0 License</span>
+        <span>{{ $t('layout.footer.license') }}</span>
       </div>
     </footer>
   </div>

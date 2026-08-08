@@ -26,12 +26,13 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import InvestmentBindingDialog from '~/components/calculators/mortgage-comparator/InvestmentBindingDialog.vue'
-import { BINDING_CATALOG, BINDING_COST_MODE_LABELS, createCostForMode, findCatalogEntry } from '~/lib/mortgage/bindingCatalog'
+import { BINDING_CATALOG, BINDING_COST_MODES, bindingCostModeKey, bindingHintKey, createCostForMode } from '~/lib/mortgage/bindingCatalog'
 
 const props = defineProps<{ bindingId: string | null, mortgageId: string }>()
 const emit = defineEmits<{ close: [] }>()
 
 const { findMortgage } = useMortgageComparator()
+const { t, locale } = useI18n()
 
 /** The form writes straight into the store object, so only ids travel as props. */
 const binding = computed<MortgageBinding | null>(() =>
@@ -77,7 +78,7 @@ const requirement = computed({
   }),
 })
 
-const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? '')
+const catalogHint = computed(() => t(bindingHintKey(bindingType.value)))
 </script>
 
 <template>
@@ -90,10 +91,9 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
       class="max-h-[90dvh] overflow-y-auto sm:max-w-2xl"
     >
       <DialogHeader>
-        <DialogTitle>Vinculación</DialogTitle>
+        <DialogTitle>{{ $t('mortgage.bindingForm.title') }}</DialogTitle>
         <DialogDescription>
-          El coste imputable a la hipoteca es siempre el diferencial entre lo que cuesta en el
-          banco y lo que gastarías en ese producto si la hipoteca no existiera. Puede ser negativo.
+          {{ $t('mortgage.bindingForm.description') }}
         </DialogDescription>
       </DialogHeader>
 
@@ -102,7 +102,7 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
           <label
             for="mc-binding-name"
             class="text-sm font-medium"
-          >Nombre</label>
+          >{{ $t('common.name') }}</label>
           <Input
             id="mc-binding-name"
             v-model="binding.name"
@@ -110,7 +110,7 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
         </div>
 
         <div class="flex flex-col gap-2">
-          <label class="text-sm font-medium">Producto</label>
+          <label class="text-sm font-medium">{{ $t('mortgage.bindingForm.product') }}</label>
           <Select v-model="bindingType">
             <SelectTrigger class="w-full">
               <SelectValue />
@@ -121,7 +121,7 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
                 :key="entry.type"
                 :value="entry.type"
               >
-                {{ entry.label }}
+                {{ $t(`mortgage.bindings.catalog.${entry.type}.label`) }}
               </SelectItem>
             </SelectContent>
           </Select>
@@ -138,14 +138,14 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
           <label
             for="mc-binding-bonus"
             class="text-sm font-medium"
-          >Bonificación (pp)</label>
+          >{{ $t('mortgage.bindingForm.bonus') }}</label>
           <NumberField
             id="mc-binding-bonus"
             v-model="binding.rateReductionPp"
             :min="0"
             :max="3"
             :step="0.05"
-            locale="es-ES"
+            :locale="locale"
           >
             <NumberFieldContent>
               <NumberFieldInput />
@@ -154,18 +154,18 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
         </div>
 
         <div class="flex flex-col gap-2">
-          <label class="text-sm font-medium">Modelo de coste</label>
+          <label class="text-sm font-medium">{{ $t('mortgage.bindingForm.costModel') }}</label>
           <Select v-model="costMode">
             <SelectTrigger class="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectItem
-                v-for="(label, mode) in BINDING_COST_MODE_LABELS"
+                v-for="mode in BINDING_COST_MODES"
                 :key="mode"
                 :value="mode"
               >
-                {{ label }}
+                {{ $t(bindingCostModeKey(mode)) }}
               </SelectItem>
             </SelectContent>
           </Select>
@@ -180,7 +180,7 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             <label
               for="mc-binding-required"
               class="text-sm"
-            >Obligatoria para conceder el préstamo</label>
+            >{{ $t('mortgage.bindingForm.required') }}</label>
           </div>
           <div class="flex items-center gap-2">
             <Switch
@@ -190,7 +190,7 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             <label
               for="mc-binding-active"
               class="text-sm"
-            >La contrato</label>
+            >{{ $t('mortgage.bindingForm.active') }}</label>
           </div>
         </div>
 
@@ -198,14 +198,14 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
           <label
             for="mc-binding-from"
             class="text-sm font-medium"
-          >Desde el año</label>
+          >{{ $t('mortgage.bindingForm.fromYear') }}</label>
           <NumberField
             id="mc-binding-from"
             v-model="binding.fromYear"
             :min="0"
             :max="50"
             :step="1"
-            locale="es-ES"
+            :locale="locale"
           >
             <NumberFieldContent>
               <NumberFieldInput />
@@ -222,7 +222,7 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             <label
               for="mc-binding-has-to"
               class="text-sm font-medium"
-            >Hasta el año (excluido)</label>
+            >{{ $t('mortgage.bindingForm.toYear') }}</label>
           </div>
           <NumberField
             v-model="binding.toYear"
@@ -230,10 +230,10 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             :max="50"
             :step="1"
             :disabled="binding.toYear === null"
-            locale="es-ES"
+            :locale="locale"
           >
             <NumberFieldContent>
-              <NumberFieldInput placeholder="Toda la vida" />
+              <NumberFieldInput :placeholder="$t('mortgage.bindingForm.lifetimePlaceholder')" />
             </NumberFieldContent>
           </NumberField>
         </div>
@@ -244,13 +244,13 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             <label
               for="mc-binding-bank-cost"
               class="text-sm font-medium"
-            >Coste anual en el banco (€)</label>
+            >{{ $t('mortgage.bindingForm.annualBankCost') }}</label>
             <NumberField
               id="mc-binding-bank-cost"
               v-model="binding.cost.bankCost"
               :min="0"
               :step="10"
-              locale="es-ES"
+              :locale="locale"
               :formatOptions="amountFormat"
             >
               <NumberFieldContent>
@@ -262,13 +262,13 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             <label
               for="mc-binding-market-cost"
               class="text-sm font-medium"
-            >Coste anual fuera (€)</label>
+            >{{ $t('mortgage.bindingForm.annualMarketCost') }}</label>
             <NumberField
               id="mc-binding-market-cost"
               v-model="binding.cost.marketCost"
               :min="0"
               :step="10"
-              locale="es-ES"
+              :locale="locale"
               :formatOptions="amountFormat"
             >
               <NumberFieldContent>
@@ -276,21 +276,21 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
               </NumberFieldContent>
             </NumberField>
             <p class="text-xs text-muted-foreground">
-              Lo que gastarías en esto si no existiera la hipoteca. 0 si no lo contratarías nunca.
+              {{ $t('mortgage.bindingForm.annualMarketHint') }}
             </p>
           </div>
           <div class="flex flex-col gap-2">
             <label
               for="mc-binding-growth"
               class="text-sm font-medium"
-            >Subida anual (%)</label>
+            >{{ $t('mortgage.bindingForm.annualGrowth') }}</label>
             <NumberField
               id="mc-binding-growth"
               v-model="binding.cost.growthPct"
               :min="0"
               :max="20"
               :step="0.5"
-              locale="es-ES"
+              :locale="locale"
             >
               <NumberFieldContent>
                 <NumberFieldInput />
@@ -301,14 +301,14 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             <label
               for="mc-binding-discount"
               class="text-sm font-medium"
-            >Descuento del banco el primer año (%)</label>
+            >{{ $t('mortgage.bindingForm.annualDiscount') }}</label>
             <NumberField
               id="mc-binding-discount"
               v-model="binding.cost.bankFirstYearDiscountPct"
               :min="0"
               :max="100"
               :step="5"
-              locale="es-ES"
+              :locale="locale"
             >
               <NumberFieldContent>
                 <NumberFieldInput />
@@ -322,14 +322,14 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             <label
               for="mc-binding-permille"
               class="text-sm font-medium"
-            >Prima del banco (‰ sobre capital pendiente)</label>
+            >{{ $t('mortgage.bindingForm.permilleBank') }}</label>
             <NumberField
               id="mc-binding-permille"
               v-model="binding.cost.permille"
               :min="0"
               :max="50"
               :step="0.1"
-              locale="es-ES"
+              :locale="locale"
             >
               <NumberFieldContent>
                 <NumberFieldInput />
@@ -340,14 +340,14 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             <label
               for="mc-binding-market-permille"
               class="text-sm font-medium"
-            >Prima fuera (‰)</label>
+            >{{ $t('mortgage.bindingForm.permilleMarket') }}</label>
             <NumberField
               id="mc-binding-market-permille"
               v-model="binding.cost.marketPermille"
               :min="0"
               :max="50"
               :step="0.1"
-              locale="es-ES"
+              :locale="locale"
             >
               <NumberFieldContent>
                 <NumberFieldInput />
@@ -361,13 +361,13 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             <label
               for="mc-binding-premium"
               class="text-sm font-medium"
-            >Prima única en el banco (€)</label>
+            >{{ $t('mortgage.bindingForm.singlePremiumBank') }}</label>
             <NumberField
               id="mc-binding-premium"
               v-model="binding.cost.amount"
               :min="0"
               :step="100"
-              locale="es-ES"
+              :locale="locale"
               :formatOptions="amountFormat"
             >
               <NumberFieldContent>
@@ -379,13 +379,13 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             <label
               for="mc-binding-premium-market"
               class="text-sm font-medium"
-            >Equivalente fuera (€)</label>
+            >{{ $t('mortgage.bindingForm.singlePremiumMarket') }}</label>
             <NumberField
               id="mc-binding-premium-market"
               v-model="binding.cost.marketAmount"
               :min="0"
               :step="100"
-              locale="es-ES"
+              :locale="locale"
               :formatOptions="amountFormat"
             >
               <NumberFieldContent>
@@ -397,21 +397,21 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             <label
               for="mc-binding-cover-years"
               class="text-sm font-medium"
-            >Años cubiertos por la prima</label>
+            >{{ $t('mortgage.bindingForm.coverYears') }}</label>
             <NumberField
               id="mc-binding-cover-years"
               v-model="binding.cost.coverYears"
               :min="1"
               :max="50"
               :step="1"
-              locale="es-ES"
+              :locale="locale"
             >
               <NumberFieldContent>
                 <NumberFieldInput />
               </NumberFieldContent>
             </NumberField>
             <p class="text-xs text-muted-foreground">
-              Si cubre menos años que el plazo, se asume renovación automática al mismo importe.
+              {{ $t('mortgage.bindingForm.coverYearsHint') }}
             </p>
           </div>
           <div class="flex items-center gap-2 self-end pb-2">
@@ -422,15 +422,14 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
             <label
               for="mc-binding-financed"
               class="text-sm"
-            >Financiada dentro del préstamo</label>
+            >{{ $t('mortgage.bindingForm.financed') }}</label>
           </div>
         </template>
 
         <template v-else-if="binding.cost.mode === 'investment'">
           <div class="rounded-lg border bg-muted/40 p-3 sm:col-span-2">
             <p class="mb-2 text-sm text-muted-foreground">
-              La aportación no es un gasto: es ahorro tuyo. El coste imputable son las comisiones
-              y la peor gestión frente a lo que contratarías por tu cuenta.
+              {{ $t('mortgage.bindingForm.investmentNote') }}
             </p>
             <Button
               size="sm"
@@ -438,7 +437,7 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
               @click="investmentDialogOpen = true"
             >
               <Wand2 class="mr-1 size-4" />
-              Abrir asistente de coste
+              {{ $t('mortgage.bindingForm.openAssistant') }}
             </Button>
           </div>
         </template>
@@ -447,21 +446,21 @@ const catalogHint = computed(() => findCatalogEntry(bindingType.value)?.hint ?? 
           <label
             for="mc-binding-requirement"
             class="text-sm font-medium"
-          >Requisito para mantener la bonificación</label>
+          >{{ $t('mortgage.bindingForm.requirement') }}</label>
           <Input
             id="mc-binding-requirement"
             v-model="requirement"
-            placeholder="Ej: ingreso mínimo de 1.200 €/mes"
+            :placeholder="$t('mortgage.bindingForm.requirementPlaceholder')"
           />
           <p class="text-xs text-muted-foreground">
-            Informativo: no entra en el cálculo, pero avisa del riesgo de perder la bonificación.
+            {{ $t('mortgage.bindingForm.requirementHint') }}
           </p>
         </div>
       </div>
 
       <DialogFooter>
         <Button @click="emit('close')">
-          Hecho
+          {{ $t('common.done') }}
         </Button>
       </DialogFooter>
     </DialogContent>

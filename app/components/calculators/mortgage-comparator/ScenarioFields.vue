@@ -16,6 +16,7 @@ import {
 import { createSeedScenarios, SCENARIO_IDS } from '~/lib/mortgage/templates'
 
 const { comparator, scenarios, selectedScenario, common } = useMortgageComparator()
+const { t, locale } = useI18n()
 
 const selectedScenarioId = computed({
   get: () => comparator.value?.selectedScenarioId ?? SCENARIO_IDS.CURRENT,
@@ -43,7 +44,7 @@ function removePoint(index: number) {
 function resetScenario() {
   const scenario = selectedScenario.value
   if (!scenario || !common.value || !comparator.value) return
-  const seed = createSeedScenarios(common.value.currentIndexPct).find(item => item.id === scenario.id)
+  const seed = createSeedScenarios(common.value.currentIndexPct, t).find(item => item.id === scenario.id)
   if (seed) scenario.points = seed.points
 }
 </script>
@@ -53,7 +54,7 @@ function resetScenario() {
     <div class="flex w-full flex-wrap items-center gap-2">
       <Select v-model="selectedScenarioId">
         <SelectTrigger class="w-full min-w-0 sm:w-64">
-          <SelectValue placeholder="Escenario" />
+          <SelectValue :placeholder="$t('mortgage.scenario.placeholder')" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem
@@ -72,14 +73,12 @@ function resetScenario() {
         @click="resetScenario"
       >
         <RotateCcw class="mr-1 size-4" />
-        Restaurar
+        {{ $t('mortgage.scenario.restore') }}
       </Button>
     </div>
 
     <p class="text-xs text-muted-foreground">
-      El escenario es común a toda la comparativa, para que la comparación sea justa.
-      Los puntos se interpolan linealmente y el valor se mantiene constante tras el último.
-      El desplazamiento de ±1 pp a 5 años es una convención de sensibilidad, no una previsión.
+      {{ $t('mortgage.scenario.hint') }}
     </p>
 
     <div
@@ -92,13 +91,13 @@ function resetScenario() {
         class="flex items-end gap-2 rounded-lg border p-2"
       >
         <div class="flex flex-col gap-1">
-          <span class="text-xs text-muted-foreground">Año</span>
+          <span class="text-xs text-muted-foreground">{{ $t('common.year') }}</span>
           <NumberField
             v-model="point.year"
             :min="0"
             :max="50"
             :step="1"
-            locale="es-ES"
+            :locale="locale"
             class="w-24"
           >
             <NumberFieldContent>
@@ -107,13 +106,13 @@ function resetScenario() {
           </NumberField>
         </div>
         <div class="flex flex-col gap-1">
-          <span class="text-xs text-muted-foreground">Índice (%)</span>
+          <span class="text-xs text-muted-foreground">{{ $t('mortgage.scenario.indexPct') }}</span>
           <NumberField
             v-model="point.valuePct"
             :min="-2"
             :max="20"
             :step="0.1"
-            locale="es-ES"
+            :locale="locale"
             class="w-28"
           >
             <NumberFieldContent>
@@ -138,7 +137,7 @@ function resetScenario() {
         @click="addPoint"
       >
         <Plus class="mr-1 size-4" />
-        Añadir punto
+        {{ $t('mortgage.scenario.addPoint') }}
       </Button>
     </div>
   </div>

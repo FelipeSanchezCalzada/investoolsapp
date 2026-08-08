@@ -23,7 +23,7 @@ import useFrontDB from '~/db/useFrontDB'
 type PortfolioRebalancingHelper = NonNullable<Workspace['portfolioRebalancingHelper']>
 type CurrentFund = PortfolioRebalancingHelper['current'][number]
 
-const browserLocale = 'es-ES'
+const { locale } = useI18n()
 
 const { selectedWorkspace } = storeToRefs(useFrontDB())
 
@@ -60,7 +60,7 @@ function removeCurrentFund(id: string) {
 }
 
 function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('es-ES', {
+  return new Intl.NumberFormat(locale.value, {
     style: 'currency',
     currency: 'EUR',
   }).format(value)
@@ -76,14 +76,14 @@ function formatPercentage(value: number): string {
     <CardHeader>
       <div class="flex items-center justify-between">
         <div>
-          <CardTitle>Cartera Actual</CardTitle>
+          <CardTitle>{{ $t('portfolioRebalancing.current.title') }}</CardTitle>
           <CardDescription>
-            Fondos que tienes actualmente. El porcentaje se calcula automáticamente.
+            {{ $t('portfolioRebalancing.current.description') }}
           </CardDescription>
         </div>
         <div class="text-right">
           <div class="text-sm text-muted-foreground">
-            Total
+            {{ $t('common.total') }}
           </div>
           <div class="text-lg font-semibold">
             {{ formatCurrency(totalCurrentAmount) }}
@@ -101,13 +101,13 @@ function formatPercentage(value: number): string {
           <TableHeader>
             <TableRow>
               <TableHead class="w-10" />
-              <TableHead>Nombre del fondo</TableHead>
-              <TableHead>ISIN</TableHead>
+              <TableHead>{{ $t('portfolioRebalancing.current.fundName') }}</TableHead>
+              <TableHead>{{ $t('portfolioRebalancing.current.isin') }}</TableHead>
               <TableHead class="text-right">
-                Monto (€)
+                {{ $t('portfolioRebalancing.current.amount') }}
               </TableHead>
               <TableHead class="text-right">
-                % Cartera
+                {{ $t('portfolioRebalancing.current.share') }}
               </TableHead>
               <TableHead class="w-10" />
             </TableRow>
@@ -127,14 +127,14 @@ function formatPercentage(value: number): string {
                 <TableCell>
                   <Input
                     v-model="fund.name"
-                    placeholder="Ej: Amundi MSCI World"
+                    :placeholder="$t('portfolioRebalancing.current.namePlaceholder')"
                     class="h-9"
                   />
                 </TableCell>
                 <TableCell class="w-50">
                   <Input
                     v-model="fund.isin"
-                    placeholder="Ej: LU1234567890"
+                    :placeholder="$t('portfolioRebalancing.current.isinPlaceholder')"
                     class="h-9 font-mono"
                   />
                 </TableCell>
@@ -143,7 +143,7 @@ function formatPercentage(value: number): string {
                     v-model="fund.amount"
                     :min="0"
                     :step="0.01"
-                    :locale="browserLocale"
+                    :locale="locale"
                     :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
                   >
                     <NumberFieldContent>
@@ -183,7 +183,7 @@ function formatPercentage(value: number): string {
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <GripVertical class="drag-handle size-4 text-muted-foreground cursor-grab active:cursor-grabbing" />
-                <span class="text-xs font-medium text-muted-foreground">Fondo {{ index + 1 }}</span>
+                <span class="text-xs font-medium text-muted-foreground">{{ $t('portfolioRebalancing.current.fundIndex', { index: index + 1 }) }}</span>
               </div>
               <Button
                 variant="ghost"
@@ -195,12 +195,12 @@ function formatPercentage(value: number): string {
             </div>
             <Input
               v-model="fund.name"
-              placeholder="Nombre del fondo"
+              :placeholder="$t('portfolioRebalancing.current.fundName')"
               class="h-9"
             />
             <Input
               v-model="fund.isin"
-              placeholder="ISIN"
+              :placeholder="$t('portfolioRebalancing.current.isin')"
               class="h-9 font-mono"
             />
             <div class="flex items-center gap-2">
@@ -209,7 +209,7 @@ function formatPercentage(value: number): string {
                   v-model="fund.amount"
                   :min="0"
                   :step="0.01"
-                  :locale="browserLocale"
+                  :locale="locale"
                   :formatOptions="{ minimumFractionDigits: 2, maximumFractionDigits: 2 }"
                 >
                   <NumberFieldContent>
@@ -233,7 +233,7 @@ function formatPercentage(value: number): string {
         class="flex flex-col items-center justify-center py-8 text-muted-foreground"
       >
         <p class="text-sm">
-          No hay fondos en la cartera actual.
+          {{ $t('portfolioRebalancing.current.empty') }}
         </p>
       </div>
 
@@ -244,7 +244,7 @@ function formatPercentage(value: number): string {
         @click="addCurrentFund"
       >
         <Plus class="size-4 mr-2" />
-        Añadir fondo
+        {{ $t('portfolioRebalancing.current.addFund') }}
       </Button>
     </CardContent>
   </Card>

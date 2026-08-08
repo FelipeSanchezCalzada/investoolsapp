@@ -8,6 +8,8 @@ import {
 import type { Workspace } from '~/db/types'
 import useFrontDB from '~/db/useFrontDB'
 
+const { locale } = useI18n()
+
 const { selectedWorkspace } = storeToRefs(useFrontDB())
 
 type SP500Calculator = NonNullable<Workspace['sp500Calculator']>
@@ -42,7 +44,7 @@ const years = computed({
   <Card>
     <CardHeader>
       <CardTitle class="text-lg">
-        Datos de inversión
+        {{ $t('sp500.inputTitle') }}
       </CardTitle>
     </CardHeader>
     <CardContent>
@@ -52,14 +54,14 @@ const years = computed({
             for="initial-amount"
             class="text-sm font-medium"
           >
-            Monto inicial ($)
+            {{ $t('sp500.initialAmount') }}
           </label>
           <NumberField
             id="initial-amount"
             v-model="initialAmount"
             :min="0"
             :step="100"
-            locale="es-ES"
+            :locale="locale"
             :formatOptions="{ maximumFractionDigits: 2 }"
           >
             <NumberFieldContent>
@@ -73,14 +75,14 @@ const years = computed({
             for="monthly-dca"
             class="text-sm font-medium"
           >
-            DCA mensual ($)
+            {{ $t('sp500.monthlyDca') }}
           </label>
           <NumberField
             id="monthly-dca"
             v-model="monthlyDCA"
             :min="0"
             :step="50"
-            locale="es-ES"
+            :locale="locale"
             :formatOptions="{ maximumFractionDigits: 2 }"
           >
             <NumberFieldContent>
@@ -94,7 +96,7 @@ const years = computed({
             for="years"
             class="text-sm font-medium"
           >
-            Horizonte temporal (años)
+            {{ $t('sp500.horizon') }}
           </label>
           <NumberField
             id="years"
@@ -102,7 +104,7 @@ const years = computed({
             :min="1"
             :max="50"
             :step="1"
-            locale="es-ES"
+            :locale="locale"
           >
             <NumberFieldContent>
               <NumberFieldInput />

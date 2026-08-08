@@ -11,6 +11,7 @@ import useFrontDB from '~/db/useFrontDB'
 type PortfolioRebalancingHelper = NonNullable<Workspace['portfolioRebalancingHelper']>
 type Transfer = PortfolioRebalancingHelper['dcaTransfers'][number][number]
 
+const { locale } = useI18n()
 const { selectedWorkspace } = storeToRefs(useFrontDB())
 
 const dcaTransfers = computed(() =>
@@ -59,7 +60,7 @@ function copyIsin(isin: string, key: string) {
 }
 
 function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('es-ES', {
+  return new Intl.NumberFormat(locale.value, {
     style: 'currency',
     currency: 'EUR',
   }).format(value)
@@ -69,13 +70,13 @@ function formatCurrency(value: number): string {
 <template>
   <Card v-if="hasCalculated">
     <CardHeader>
-      <CardTitle>Traspasos necesarios</CardTitle>
+      <CardTitle>{{ $t('portfolioRebalancing.transfers.title') }}</CardTitle>
       <CardDescription>
         {{ dcaTransfers.length === 0
-          ? 'Tu cartera ya está balanceada. No se necesitan traspasos.'
+          ? $t('portfolioRebalancing.transfers.balanced')
           : dcaTransfers.length === 1
-            ? `Se necesitan ${dcaTransfers[0]!.length} traspaso${dcaTransfers[0]!.length > 1 ? 's' : ''} para rebalancear tu cartera.`
-            : `Se necesitan ${dcaTransfers[0]!.length} traspaso${dcaTransfers[0]!.length > 1 ? 's' : ''} divididos en ${dcaTransfers.length} partes (DCA).`
+            ? $t('portfolioRebalancing.transfers.single', { count: dcaTransfers[0]!.length }, dcaTransfers[0]!.length)
+            : $t('portfolioRebalancing.transfers.split', { count: dcaTransfers[0]!.length, parts: dcaTransfers.length }, dcaTransfers[0]!.length)
         }}
       </CardDescription>
     </CardHeader>
@@ -87,10 +88,10 @@ function formatCurrency(value: number): string {
       >
         <div class="flex items-center justify-between mb-2">
           <span class="text-sm font-medium">
-            Progreso
+            {{ $t('common.progress') }}
           </span>
           <span class="text-sm tabular-nums text-muted-foreground">
-            {{ globalProgress.done }} de {{ globalProgress.total }} completados
+            {{ $t('portfolioRebalancing.transfers.completed', { done: globalProgress.done, total: globalProgress.total }) }}
           </span>
         </div>
         <Progress
@@ -143,7 +144,7 @@ function formatCurrency(value: number): string {
                     :class="cn('shrink-0', transfer.done && 'bg-muted text-muted-foreground/60 hover:bg-muted')"
                   >
                     <TrendingDown class="size-3 mr-1" />
-                    Origen
+                    {{ $t('portfolioRebalancing.transfers.source') }}
                   </Badge>
                   <div class="flex flex-col min-w-0">
                     <span :class="cn('text-sm font-medium truncate', transfer.done && 'text-muted-foreground/50')">{{ transfer.fromName }}</span>
@@ -173,7 +174,7 @@ function formatCurrency(value: number): string {
                     :class="cn('shrink-0', transfer.done ? 'bg-muted text-muted-foreground/60 hover:bg-muted' : 'bg-green-800 text-white hover:bg-green-800/80')"
                   >
                     <TrendingUp class="size-3 mr-1" />
-                    Destino
+                    {{ $t('portfolioRebalancing.transfers.destination') }}
                   </Badge>
                   <div class="flex flex-col min-w-0">
                     <span :class="cn('text-sm font-medium truncate', transfer.done ? 'text-muted-foreground/50' : 'text-green-800 dark:text-green-400')">{{ transfer.toName }}</span>
@@ -225,14 +226,14 @@ function formatCurrency(value: number): string {
                 />
                 <div class="flex items-center gap-2 flex-1 min-w-0">
                   <span class="font-semibold">
-                    Parte {{ partIndex + 1 }} de {{ dcaTransfers.length }}
+                    {{ $t('portfolioRebalancing.transfers.part', { index: partIndex + 1, total: dcaTransfers.length }) }}
                   </span>
                   <Badge
                     v-if="isPartComplete(part)"
                     class="bg-green-800 text-white hover:bg-green-800/80"
                   >
                     <Check class="size-3 mr-1" />
-                    Completada
+                    {{ $t('portfolioRebalancing.transfers.partComplete') }}
                   </Badge>
                   <Badge
                     v-else
@@ -293,7 +294,7 @@ function formatCurrency(value: number): string {
                       :class="cn('shrink-0', transfer.done && 'bg-muted text-muted-foreground/60 hover:bg-muted')"
                     >
                       <TrendingDown class="size-3 mr-1" />
-                      Origen
+                      {{ $t('portfolioRebalancing.transfers.source') }}
                     </Badge>
                     <div class="flex flex-col min-w-0">
                       <span :class="cn('text-sm font-medium truncate', transfer.done && 'text-muted-foreground/50')">{{ transfer.fromName }}</span>
@@ -323,7 +324,7 @@ function formatCurrency(value: number): string {
                       :class="cn('shrink-0', transfer.done ? 'bg-muted text-muted-foreground/60 hover:bg-muted' : 'bg-green-800 text-white hover:bg-green-800/80')"
                     >
                       <TrendingUp class="size-3 mr-1" />
-                      Destino
+                      {{ $t('portfolioRebalancing.transfers.destination') }}
                     </Badge>
                     <div class="flex flex-col min-w-0">
                       <span :class="cn('text-sm font-medium truncate', transfer.done ? 'text-muted-foreground/50' : 'text-green-800 dark:text-green-400')">{{ transfer.toName }}</span>
@@ -364,7 +365,7 @@ function formatCurrency(value: number): string {
       >
         <ArrowRightLeft class="size-8 mb-2" />
         <p class="text-sm">
-          No se necesitan traspasos.
+          {{ $t('portfolioRebalancing.transfers.empty') }}
         </p>
       </div>
     </CardContent>

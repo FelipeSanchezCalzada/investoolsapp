@@ -1,0 +1,631 @@
+{
+  "common": {
+    "active": "Activo",
+    "add": "Añadir",
+    "cancel": "Cancelar",
+    "create": "Crear",
+    "delete": "Borrar",
+    "description": "Descripción",
+    "done": "Hecho",
+    "duplicate": "Duplicar",
+    "emptyValue": "—",
+    "export": "Exportar",
+    "import": "Importar",
+    "month": "Mes",
+    "name": "Nombre",
+    "no": "No",
+    "none": "Ninguna",
+    "notAvailable": "n/d",
+    "progress": "Progreso",
+    "rename": "Renombrar",
+    "reset": "Resetear",
+    "results": "Resultados",
+    "save": "Guardar",
+    "toggle": "Toggle",
+    "total": "Total",
+    "year": "Año",
+    "years": "años",
+    "yearsCount": "{count} años",
+    "yes": "Sí"
+  },
+  "locale": {
+    "label": "Idioma"
+  },
+  "layout": {
+    "breadcrumb": {
+      "home": "Inicio"
+    },
+    "footer": {
+      "madeWith": "Hecho con",
+      "by": "por",
+      "license": "Licencia AGPL-3.0"
+    },
+    "nav": {
+      "groupLabel": "Herramientas",
+      "helpers": "Ayudantes",
+      "calculators": "Calculadoras"
+    }
+  },
+  "workspace": {
+    "label": "Workspaces",
+    "new": "Nuevo workspace",
+    "exportTitle": "Exportar base de datos como JSON",
+    "importTitle": "Importar base de datos desde JSON",
+    "resetDb": "Resetear base de datos",
+    "createTitle": "Crear workspace",
+    "editTitle": "Editar workspace",
+    "createDescription": "Crea un nuevo workspace para organizar tus herramientas.",
+    "editDescription": "Modifica el nombre o la descripción del workspace.",
+    "namePlaceholder": "Mi workspace",
+    "descriptionPlaceholder": "Descripción opcional",
+    "nameTaken": "Ya existe un workspace con ese nombre.",
+    "resetDescription": "Esta acción eliminará todos los datos almacenados, incluyendo todos los workspaces y su contenido. Esta acción no se puede deshacer."
+  },
+  "home": {
+    "betaTitle": "Proyecto en fase beta temprana",
+    "betaDescription": "Esta aplicación se encuentra en una fase muy temprana de desarrollo. Pueden producirse errores, cambios importantes o pérdidas de datos en cualquier momento. No almacenes información crítica sin tener una copia de seguridad externa.",
+    "welcomeTitle": "Bienvenido a Investools",
+    "welcomeSubtitle": "Tu caja de herramientas para gestionar inversiones.",
+    "privacyTitle": "Tus datos son solo tuyos",
+    "privacyDescription": "Toda la información se almacena localmente en tu navegador. No se envía nada a ningún servidor externo.",
+    "evolvingTitle": "En constante evolución",
+    "evolvingDescription": "Se irán añadiendo nuevas herramientas y utilidades periódicamente para cubrir más necesidades de inversión.",
+    "workspacesTitle": "Tus workspaces",
+    "workspacesDescription": "Cada workspace funciona como una base de datos independiente dentro de la app. Puedes crear varios para separar carteras, estrategias o simulaciones, y cambiar entre ellos en cualquier momento.",
+    "toolsTitle": "Herramientas",
+    "toolsDescription": "Accede a las utilidades disponibles para analizar y gestionar tus inversiones. Se irán añadiendo nuevas herramientas con el tiempo."
+  },
+  "toolHeader": {
+    "whatIsThis": "Qué hace esta herramienta"
+  },
+  "tools": {
+    "portfolioRebalancing": {
+      "navTitle": "Rebalanceo de fondos",
+      "title": "Rebalanceo de Cartera",
+      "description": "Calcula los traspasos necesarios para rebalancear tu cartera de fondos hacia la distribución objetivo que definas.",
+      "category": "Ayudantes"
+    },
+    "sp500": {
+      "navTitle": "Calculadora S&P 500",
+      "title": "Calculadora S&P 500"
+    },
+    "financialFreedom": {
+      "navTitle": "Libertad Financiera",
+      "breadcrumb": "Calculadora Libertad Financiera",
+      "title": "Calculadora de Libertad Financiera"
+    },
+    "mortgageComparator": {
+      "navTitle": "Comparador de hipotecas",
+      "title": "Comparador de hipotecas"
+    }
+  },
+  "sp500": {
+    "intro": "Simula tu inversión con DCA usando datos históricos del S&P 500 para ver el mejor, peor y caso actual. Esta herramienta funciona con datos históricos desde el año 1927 del S&P 500. Los valores son en dólares (USD). No importa que tú trabajes en otra divisa, esta herramienta es solo una estimación.",
+    "inputTitle": "Datos de inversión",
+    "initialAmount": "Monto inicial ($)",
+    "monthlyDca": "DCA mensual ($)",
+    "horizon": "Horizonte temporal (años)",
+    "calculating": "Calculando escenarios...",
+    "loading": "Cargando datos históricos...",
+    "invested": "Invertido",
+    "worstCase": "Peor caso",
+    "currentCase": "Caso actual",
+    "bestCase": "Mejor caso",
+    "profit": "ganancia",
+    "series": {
+      "invested": "Dinero invertido",
+      "worstCase": "Peor caso histórico",
+      "currentCase": "Caso actual",
+      "bestCase": "Mejor caso histórico"
+    },
+    "yearLabel": "Año {year}"
+  },
+  "financialFreedom": {
+    "intro": "Calcula cuántos años necesitas seguir aportando para poder vivir solo de las ganancias del S&P 500, teniendo en cuenta tus gastos futuros. Basado en datos históricos desde 1927.",
+    "inputTitle": "Datos de inversión",
+    "initialAmount": "Monto inicial ($)",
+    "monthlyContribution": "Aportación mensual ($)",
+    "currentAge": "Edad actual",
+    "maxAge": "Edad máxima",
+    "expensesTitle": "Gastos futuros",
+    "addExpense": "Añadir gasto",
+    "noExpenses": "No hay gastos configurados. Añade gastos para calcular tu libertad financiera.",
+    "expenseName": "Nombre",
+    "monthlyExpense": "Gasto mensual ($)",
+    "fromFreedom": "Desde Libertad",
+    "fromYear": "Desde año",
+    "toYear": "Hasta año",
+    "expensePlaceholder": "Ej: Alquiler pueblo",
+    "calculating": "Calculando escenarios...",
+    "loading": "Cargando datos históricos...",
+    "totalInvested": "Invertido total",
+    "worstCase": "Peor caso",
+    "currentCase": "Caso actual",
+    "bestCase": "Mejor caso",
+    "freedomAtAge": "Libertad financiera a los {age} años",
+    "series": {
+      "worstCaseInvested": "Aportado (peor caso)",
+      "currentCaseInvested": "Aportado (caso actual)",
+      "bestCaseInvested": "Aportado (mejor caso)",
+      "worstCase": "Peor caso histórico",
+      "currentCase": "Caso actual",
+      "bestCase": "Mejor caso histórico"
+    },
+    "yearLabel": "Año {year} ({age})"
+  },
+  "portfolioRebalancing": {
+    "intro": "Introduce tu cartera actual y la distribución objetivo para calcular los traspasos óptimos.",
+    "current": {
+      "title": "Cartera Actual",
+      "description": "Fondos que tienes actualmente. El porcentaje se calcula automáticamente.",
+      "fundName": "Nombre del fondo",
+      "isin": "ISIN",
+      "amount": "Monto (€)",
+      "share": "% Cartera",
+      "namePlaceholder": "Ej: Amundi MSCI World",
+      "isinPlaceholder": "Ej: LU1234567890",
+      "empty": "No hay fondos en la cartera actual.",
+      "addFund": "Añadir fondo",
+      "fundIndex": "Fondo {index}"
+    },
+    "target": {
+      "title": "Cartera Objetivo",
+      "description": "Distribución deseada tras el rebalanceo. El monto se calcula automáticamente.",
+      "targetShare": "% Objetivo",
+      "resultingAmount": "Monto resultante",
+      "empty": "No hay fondos en la cartera objetivo.",
+      "mustSum100": "Los porcentajes deben sumar exactamente 100%.",
+      "copied": "Copiada",
+      "copy": "Copiar cartera",
+      "paste": "Pegar cartera",
+      "copyToast": "Cartera objetivo copiada al portapapeles",
+      "clipboardEmpty": "El portapapeles está vacío",
+      "clipboardError": "No se pudo leer el portapapeles",
+      "pastedToast": "{count} fondo pegado | {count} fondos pegados"
+    },
+    "calculate": {
+      "dcaParts": "Dividir en partes (DCA)",
+      "action": "Calcular traspasos",
+      "splitHint": "Los traspasos se dividirán en {parts} partes iguales para hacer DCA.",
+      "singleHint": "Se calculará un único traspaso por movimiento.",
+      "balancedToast": "Tu cartera ya está balanceada",
+      "calculatedToast": "Traspasos calculados"
+    },
+    "transfers": {
+      "title": "Traspasos necesarios",
+      "balanced": "Tu cartera ya está balanceada. No se necesitan traspasos.",
+      "single": "Se necesita {count} traspaso para rebalancear tu cartera. | Se necesitan {count} traspasos para rebalancear tu cartera.",
+      "split": "Se necesita {count} traspaso dividido en {parts} partes (DCA). | Se necesitan {count} traspasos divididos en {parts} partes (DCA).",
+      "completed": "{done} de {total} completados",
+      "source": "Origen",
+      "destination": "Destino",
+      "part": "Parte {index} de {total}",
+      "partComplete": "Completada",
+      "empty": "No se necesitan traspasos."
+    }
+  },
+  "mortgage": {
+    "intro": "La TAE que publica el banco no cuenta lo que te cuestan de verdad las vinculaciones: solo mete las obligatorias y a precio de tarifa. Aquí se calculan tres TAE —la oficial, la real con lo que vas a contratar de verdad y la que tendrías sin vinculaciones opcionales— y se imputa de cada producto solo el sobrecoste frente a contratarlo por tu cuenta.",
+    "empty": {
+      "title": "Todavía no hay ninguna oferta",
+      "description": "Añade las hipotecas que estés valorando, con sus condiciones, gastos y vinculaciones. También puedes cargar dos ejemplos con cifras plausibles del mercado español —una fija y una variable— para ver cómo funciona la herramienta. No son ofertas reales ni una recomendación.",
+      "addMortgage": "Añadir hipoteca",
+      "loadExample": "Cargar ejemplo"
+    },
+    "tabs": {
+      "unnamed": "Sin nombre",
+      "options": "Opciones de {name}",
+      "exclude": "Excluir de la comparativa",
+      "include": "Incluir en la comparativa",
+      "comparison": "Comparativa",
+      "renameTitle": "Renombrar hipoteca",
+      "namePlaceholder": "Ej: BBVA fija 2,45 %",
+      "deleteTitle": "¿Borrar «{name}»?",
+      "deleteDescription": "Se eliminan sus condiciones, vinculaciones y amortizaciones anticipadas. No se puede deshacer.",
+      "rateFixed": "{rate} fijo",
+      "rateMixed": "mixta {rate}",
+      "rateVariable": "Eur+{rate}"
+    },
+    "globalSettings": {
+      "button": "Datos globales",
+      "title": "Datos globales de la comparativa",
+      "description": "Capital, plazo, precio de la vivienda, ahorro, coste de oportunidad y escenario de Euríbor. Son comunes a todas las ofertas para que la comparación sea justa.",
+      "scenarioHeading": "Escenario de Euríbor",
+      "hint": "Aquí se configuran los datos comunes a todas las hipotecas —{summary}—.",
+      "summaryPrincipal": "Capital {value}",
+      "summaryEuribor": "Euríbor hoy {value}",
+      "summaryScenario": "Escenario"
+    },
+    "common": {
+      "propertyPrice": "Precio vivienda (€)",
+      "appraisalValue": "Valor de tasación (€)",
+      "availableCash": "Ahorro disponible (€)",
+      "principal": "Capital solicitado (€)",
+      "ltv": "LTV {value}",
+      "termYears": "Plazo (años)",
+      "euriborToday": "Euríbor hoy (%)",
+      "euriborTooltip": "Semilla de los tres escenarios predefinidos. No se guarda ningún valor de mercado en la herramienta para que no envejezca sin avisar.",
+      "opportunityCostToggle": "Simular el coste de oportunidad del capital no aportado",
+      "expectedReturn": "Rentabilidad esperada RV (%)",
+      "capitalGainsTax": "Impuesto plusvalías (%)",
+      "expectedReturnHint": "La rentabilidad esperada es una hipótesis, no una promesa. Ponla a 0 % para desactivar su efecto sin apagar la simulación."
+    },
+    "scenario": {
+      "placeholder": "Escenario",
+      "restore": "Restaurar",
+      "hint": "El escenario es común a toda la comparativa, para que la comparación sea justa. Los puntos se interpolan linealmente y el valor se mantiene constante tras el último. El desplazamiento de ±1 pp a 5 años es una convención de sensibilidad, no una previsión.",
+      "indexPct": "Índice (%)",
+      "addPoint": "Añadir punto",
+      "current": "Actual (constante)",
+      "optimistic": "Optimista (−1 pp en 5 años)",
+      "pessimistic": "Pesimista (+1 pp en 5 años)",
+      "custom": "Personalizado"
+    },
+    "conditions": {
+      "namePlaceholder": "Ej: BBVA fija 2,45 %",
+      "bank": "Banco",
+      "bankPlaceholder": "Ej: BBVA",
+      "colorAndState": "Color y estado",
+      "colorAria": "Color {color}",
+      "inComparison": "En la comparativa",
+      "rateType": "Tipo de interés",
+      "rateTypes": {
+        "fixed": "Fija",
+        "variable": "Variable",
+        "mixed": "Mixta"
+      },
+      "tin": "TIN (%)",
+      "tinFixedTranche": "TIN del tramo fijo (%)",
+      "fixedYears": "Años a tipo fijo",
+      "initialRate": "TIN periodo inicial (%)",
+      "initialMonths": "Meses del periodo inicial",
+      "spread": "Diferencial sobre el índice (%)",
+      "review": "Revisión del tipo",
+      "review6": "Cada 6 meses",
+      "review12": "Cada 12 meses",
+      "ownPrincipal": "Capital propio (€)",
+      "ownTerm": "Plazo propio (años)",
+      "inherited": "Heredado de los datos comunes",
+      "floor": "Suelo (%)",
+      "cap": "Techo (%)",
+      "maxBonus": "Tope de bonificación (pp)"
+    },
+    "costs": {
+      "lcciNote": "Desde la Ley 5/2019 (LCCI) el banco asume notaría, gestoría, registro y AJD; el cliente paga tasación y copia de escritura. Se pueden marcar todos por si la oferta es antigua, una subrogación o un caso especial. Solo los conceptos a cargo del cliente entran en la TAE.",
+      "upfrontLabel": "{label} (€)",
+      "paidByClient": "Lo pago yo",
+      "paidByBank": "Lo paga el banco",
+      "openingFee": "Comisión de apertura (%)",
+      "openingFeeHint": "Sobre el capital, siempre a tu cargo.",
+      "earlyRepaymentTitle": "Comisiones de amortización anticipada",
+      "earlyRepaymentNote": "Tramos precargados con los topes de la LCCI según el tipo de préstamo. Son editables: una oferta anterior a la ley o extranjera puede salirse de ellos, y en ese caso solo se avisa.",
+      "tier": "Tramo",
+      "fromYear": "Desde año",
+      "toYear": "Hasta año",
+      "feePct": "Comisión (%)",
+      "endPlaceholder": "Fin",
+      "bounded": "Acotado",
+      "partial": "Amortización parcial",
+      "totalCancellation": "Cancelación total",
+      "keys": {
+        "appraisal": "Tasación",
+        "notary": "Notaría",
+        "registry": "Registro",
+        "agency": "Gestoría",
+        "ajd": "AJD",
+        "brokerFee": "Bróker / intermediario",
+        "other": "Otros"
+      }
+    },
+    "bindings": {
+      "note": "El coste imputable es siempre el diferencial: lo que cuesta en el banco menos lo que gastarías en ese producto si no existiera la hipoteca. Puede salir negativo si el producto del banco es más barato que el tuyo.",
+      "add": "Añadir vinculación",
+      "empty": "Sin vinculaciones. Añade las que te exija o te ofrezca el banco para ver su coste real.",
+      "product": "Producto",
+      "requiredShort": "Oblig.",
+      "bonusShort": "Bonif.",
+      "costModel": "Modelo de coste",
+      "atBank": "En el banco",
+      "outside": "Fuera",
+      "netCostTotal": "Coste neto total",
+      "validity": "Vigencia",
+      "activeColumn": "Activa",
+      "perYear": "{value}/año",
+      "lifetime": "Toda la vida",
+      "fromYear": "Desde año {year}",
+      "yearRange": "Años {from}–{to}",
+      "costModes": {
+        "free": "Sin coste",
+        "annual": "Cuota o prima anual",
+        "permille": "Por mil sobre capital pendiente",
+        "singlePremium": "Prima única",
+        "investment": "Producto de inversión"
+      },
+      "catalog": {
+        "nomina": {
+          "label": "Nómina domiciliada",
+          "hint": "La más rentable: coste 0. Suele exigir un ingreso mínimo mensual y, con dos titulares, ambas nóminas."
+        },
+        "recibosDomiciliados": {
+          "label": "Recibos domiciliados",
+          "hint": "Luz, agua, gas o teléfono. Coste 0; a veces exige un número mínimo de recibos."
+        },
+        "tarjetaDebito": {
+          "label": "Tarjeta de débito",
+          "hint": "Normalmente gratuita."
+        },
+        "tarjetaCredito": {
+          "label": "Tarjeta de crédito",
+          "hint": "Cuota anual habitual de 30–50 €, a menudo gratis el primer año. Si exige un gasto mínimo que harías igual, el coste fuera es 0."
+        },
+        "cuentaMantenimiento": {
+          "label": "Cuenta con mantenimiento",
+          "hint": "Comisión de mantenimiento si se dejan de cumplir los requisitos de la cuenta."
+        },
+        "seguroHogar": {
+          "label": "Seguro de hogar",
+          "hint": "El continente es obligatorio por ley con hipoteca, así que el coste fuera casi nunca es 0."
+        },
+        "seguroVida": {
+          "label": "Seguro de vida / amortización",
+          "hint": "No es obligatorio por ley aunque el banco lo presente como tal. Variante habitual: prima única financiada."
+        },
+        "seguroProteccionPagos": {
+          "label": "Seguro de protección de pagos",
+          "hint": "Casi nadie lo contrataría fuera, así que el coste se imputa íntegro. Coberturas con muchas exclusiones."
+        },
+        "seguroSalud": {
+          "label": "Seguro de salud",
+          "hint": "Coste fuera 0 si no lo querrías; igual a tu póliza actual si ya la tienes."
+        },
+        "seguroCoche": {
+          "label": "Seguro de coche",
+          "hint": "Frecuentemente neto negativo: si el del banco es más barato que el tuyo, ahorras."
+        },
+        "alarma": {
+          "label": "Alarma / seguridad",
+          "hint": "Cuota mensual de 30–45 €, por encima del mercado. Coste fuera 0 salvo que ya tengas alarma."
+        },
+        "planPensiones": {
+          "label": "Plan de pensiones",
+          "hint": "La aportación no es gasto, es ahorro tuyo. El coste real son las comisiones frente a tu alternativa, más la iliquidez."
+        },
+        "inversionFondos": {
+          "label": "Fondos de inversión / cartera gestionada",
+          "hint": "Comisión típica del banco 1,2–1,9 % frente a 0,2–0,4 % de un indexado. Suele llevar permanencia mínima."
+        },
+        "cuentaValores": {
+          "label": "Cuenta de valores / bróker del banco",
+          "hint": "Custodia y comisiones de compraventa frente a tu bróker actual."
+        },
+        "otro": {
+          "label": "Otro",
+          "hint": "Libre, para lo que se invente cada banco."
+        }
+      }
+    },
+    "bindingForm": {
+      "title": "Vinculación",
+      "description": "El coste imputable a la hipoteca es siempre el diferencial entre lo que cuesta en el banco y lo que gastarías en ese producto si la hipoteca no existiera. Puede ser negativo.",
+      "product": "Producto",
+      "bonus": "Bonificación (pp)",
+      "costModel": "Modelo de coste",
+      "required": "Obligatoria para conceder el préstamo",
+      "active": "La contrato",
+      "fromYear": "Desde el año",
+      "toYear": "Hasta el año (excluido)",
+      "lifetimePlaceholder": "Toda la vida",
+      "annualBankCost": "Coste anual en el banco (€)",
+      "annualMarketCost": "Coste anual fuera (€)",
+      "annualMarketHint": "Lo que gastarías en esto si no existiera la hipoteca. 0 si no lo contratarías nunca.",
+      "annualGrowth": "Subida anual (%)",
+      "annualDiscount": "Descuento del banco el primer año (%)",
+      "permilleBank": "Prima del banco (‰ sobre capital pendiente)",
+      "permilleMarket": "Prima fuera (‰)",
+      "singlePremiumBank": "Prima única en el banco (€)",
+      "singlePremiumMarket": "Equivalente fuera (€)",
+      "coverYears": "Años cubiertos por la prima",
+      "coverYearsHint": "Si cubre menos años que el plazo, se asume renovación automática al mismo importe.",
+      "financed": "Financiada dentro del préstamo",
+      "investmentNote": "La aportación no es un gasto: es ahorro tuyo. El coste imputable son las comisiones y la peor gestión frente a lo que contratarías por tu cuenta.",
+      "openAssistant": "Abrir asistente de coste",
+      "requirement": "Requisito para mantener la bonificación",
+      "requirementPlaceholder": "Ej: ingreso mínimo de 1.200 €/mes",
+      "requirementHint": "Informativo: no entra en el cálculo, pero avisa del riesgo de perder la bonificación."
+    },
+    "investment": {
+      "title": "Asistente de coste — {name}",
+      "description": "El dinero no se pierde, pero se gestiona más caro que si lo invirtieras por tu cuenta. Se simulan dos carteras en paralelo con las mismas aportaciones y el coste imputable es cuánto se abre la brecha entre ellas.",
+      "bankHeading": "Contratándolo con el banco",
+      "bankFee": "Comisión total anual (%)",
+      "bankGap": "Rentabilidad extra perdida por peor gestión (%)",
+      "alternativeHeading": "Haciéndolo por mi cuenta",
+      "alternativeFee": "Comisión del producto alternativo (%)",
+      "ownReturn": "Rentabilidad bruta propia (%)",
+      "inheritedHint": "{value} heredado de los datos comunes. Es la misma rentabilidad bruta para las dos carteras: lo que cambia son las comisiones, no el mercado.",
+      "finalBalance": "Saldo final:",
+      "initialContribution": "Aportación inicial exigida (€)",
+      "annualContribution": "Aportación anual exigida (€)",
+      "minYears": "Permanencia mínima (años)",
+      "exitPenalty": "Penalización por salida anticipada (%)",
+      "taxDeduction": "Deducción en IRPF (%)",
+      "taxDeductionHint": "Solo planes de pensiones, a tu tipo marginal. Ojo: lo que desgravas ahora tributa al rescate.",
+      "wouldInvestAnyway": "Ese dinero lo iba a invertir igualmente",
+      "notInvestingHint": "Al no ser dinero que ibas a invertir, las aportaciones cuentan además como salida de caja y su recuperación como entrada al terminar la permanencia, de modo que la TAE recoja el coste de tenerlo inmovilizado.",
+      "verdictPending": "Añade la vinculación a la comparativa para ver el veredicto.",
+      "verdict": "Contratar el producto del banco te cuesta {cost} en {years} años; la bonificación de {bonus} te ahorra {savings} →",
+      "worthIt": "compensa",
+      "notWorthIt": "no compensa",
+      "contributed": "Aportado en total: {value}. El coste imputable es la brecha entre las dos carteras, no la aportación."
+    },
+    "prepayments": {
+      "note": "Pagos puntuales o recurrentes. «Reducir plazo» mantiene la cuota y acorta el préstamo; «reducir cuota» mantiene el plazo y recalcula la cuota. La comisión aplicable sale de los tramos configurados en Gastos y comisiones.",
+      "add": "Añadir amortización",
+      "empty": "Ninguna amortización anticipada configurada.",
+      "amount": "Importe (€)",
+      "mode": "Modo",
+      "recurrence": "Recurrencia (meses)",
+      "fee": "Comisión",
+      "netSaving": "Ahorro neto",
+      "reduceTerm": "Reducir plazo",
+      "reduceInstallment": "Reducir cuota",
+      "oncePlaceholder": "Único",
+      "monthsSaved": "−{months} meses",
+      "summary": "Intereses ahorrados en total: {savings}; comisiones pagadas: {fees}. El préstamo se cancela en el mes {month} de {termMonths}."
+    },
+    "opportunity": {
+      "noData": "Sin datos todavía.",
+      "disabled": "El coste de oportunidad está desactivado. Actívalo en los datos comunes para simular qué pasa con el ahorro que no metes en la entrada.",
+      "intro": "Pedir menos capital ahorra intereses pero inmoviliza ahorro. Aquí se simula la otra mitad: el dinero que esta oferta te deja libre, invertido al {returnPct} durante {years} años y tributando al {taxPct} al rescatarlo. La rentabilidad y el impuesto se editan en los datos comunes.",
+      "downPayment": "Entrada aportada",
+      "downPaymentHint": "Vivienda − capital",
+      "freeCapital": "Capital libre",
+      "freeCapitalHint": "Ahorro − entrada − gastos",
+      "netPortfolio": "Cartera final neta",
+      "taxHint": "Impuesto: {value}",
+      "netWorth": "Patrimonio neto",
+      "netWorthHint": "Cartera neta − coste total",
+      "negativeDownPayment": "El capital de esta oferta supera el precio de la vivienda, así que no hay entrada que aportar. Revisa el capital o el precio.",
+      "notAffordable": "Tu ahorro no cubre la entrada más los gastos: te faltan {value}. La oferta queda fuera del ranking, pero se sigue calculando."
+    },
+    "panel": {
+      "conditions": "Condiciones",
+      "costs": "Gastos y comisiones",
+      "bindings": "Vinculaciones",
+      "prepayments": "Amortizaciones anticipadas",
+      "opportunity": "Coste de oportunidad",
+      "disabled": "Desactivado",
+      "conditionsMixed": "{rate} {years} años, luego Eur+{spread}",
+      "conditionsVariable": "Eur+{spread}",
+      "costsSummary": "{upfront} a tu cargo · apertura {openingFee}",
+      "bindingsSummary": "{count} activa · −{bonus}{cost} | {count} activas · −{bonus}{cost}",
+      "bindingsCost": " · {value}/año netos",
+      "prepaymentsSummary": "{count} pago · {total}{saving} | {count} pagos · {total}{saving}",
+      "prepaymentsSaving": " · ahorro {value}",
+      "opportunitySummary": "Entrada {downPayment} · libre {freeCapital} → {netPortfolio}"
+    },
+    "summary": {
+      "initialInstallment": "Cuota inicial",
+      "maxInstallment": "Cuota máxima",
+      "effectiveRate": "TIN efectivo",
+      "realApr": "TAE real",
+      "totalCost": "Coste total",
+      "netWorth": "Patrimonio neto",
+      "mobile": "{installment}/mes · TAE real {apr}",
+      "recalculating": "Recalculando…",
+      "official": "TAE oficial {official} · sin vinculaciones opcionales {without}"
+    },
+    "amortization": {
+      "open": "Ver cuadro de amortización",
+      "title": "Cuadro de amortización — {name}",
+      "description": "Mes a mes con el tipo aplicado tras bonificaciones, el coste neto de las vinculaciones imputado a cada mes y las amortizaciones anticipadas.",
+      "onlyYearEnds": "Solo cierres de año",
+      "monthsBadge": "{count} meses",
+      "cancelledEarly": "Cancelada antes de tiempo",
+      "financedPremiums": "Primas financiadas: {value}",
+      "baseRate": "Tipo base",
+      "appliedRate": "Tipo aplicado",
+      "installment": "Cuota",
+      "interest": "Intereses",
+      "principal": "Capital",
+      "prepayment": "Amort. anticipada",
+      "fee": "Comisión",
+      "bindings": "Vinculaciones",
+      "outstanding": "Pendiente"
+    },
+    "comparisonPanel": {
+      "singleOffer": "Solo hay una oferta cargada: aquí ves sus resultados en solitario. Añade otra para que la comparativa tenga sentido.",
+      "disabledCount": "{count} hipoteca desactivada fuera de la comparativa. Se reactiva desde el menú de su pestaña. | {count} hipotecas desactivadas fuera de la comparativa. Se reactivan desde el menú de su pestaña."
+    },
+    "comparisonTable": {
+      "title": "Comparativa",
+      "description": "La ganadora se decide por TAE real: incluye gastos a tu cargo, comisión de apertura y el coste neto de las vinculaciones. El patrimonio neto va al lado como segunda lectura, pero depende de una rentabilidad hipotética y no manda sobre el ranking.",
+      "empty": "No hay hipotecas activas en la comparativa.",
+      "mortgage": "Hipoteca",
+      "initialInstallment": "Cuota inicial",
+      "maxInstallment": "Cuota máxima",
+      "interest": "Intereses",
+      "upfront": "Gastos",
+      "bindingGross": "Vinculaciones (bruto)",
+      "bindingNet": "Vinculaciones (neto)",
+      "totalCost": "Coste total",
+      "officialApr": "TAE oficial",
+      "realApr": "TAE real",
+      "downPayment": "Entrada",
+      "freeCapital": "Capital libre",
+      "netWorth": "Patrimonio neto",
+      "hints": {
+        "upfront": "A tu cargo, comisión de apertura incluida",
+        "bindingGross": "Lo que pagas al banco por los productos",
+        "bindingNet": "Descontando lo que gastarías igualmente fuera",
+        "officialApr": "Criterio del Banco de España: solo vinculaciones obligatorias, a coste bruto",
+        "realApr": "La métrica que decide el ranking"
+      },
+      "captionApr": "TAE #{rank}",
+      "captionNetWorth": "patrimonio #{rank}",
+      "captionNotViable": "no viable",
+      "gap": "{amount} más cara en coste total",
+      "gapPp": "({pp} de TAE real)",
+      "bestCaption": "Mejor TAE real · coste total {value}",
+      "rankingMismatch": "Los dos rankings no coinciden: la oferta con menor TAE real no es la que te deja más patrimonio. Suele pasar cuando la barata exige más entrada y te queda menos ahorro invertido. Se destaca igualmente la de menor TAE real, porque el patrimonio depende de una rentabilidad que aún no ha ocurrido.",
+      "crossover": "El coste acumulado de las dos mejores ofertas se cruza en el año {year}: antes de ese punto la otra sale mejor.",
+      "sortHint": "Pulsa una cabecera para ordenar. Las hipotecas no viables (el ahorro no cubre entrada más gastos) se muestran, pero quedan fuera del ranking."
+    },
+    "worthIt": {
+      "title": "¿Compensan las vinculaciones?",
+      "description": "Para cada producto se recalcula la hipoteca con y sin él. Compensa si lo que ahorras en intereses gracias a la bonificación supera su coste neto acumulado. El umbral de ruptura es el coste neto máximo al que dejaría de compensar.",
+      "empty": "Ninguna hipoteca activa tiene vinculaciones.",
+      "mortgage": "Hipoteca",
+      "binding": "Vinculación",
+      "bonus": "Bonificación",
+      "interestSavings": "Ahorro en intereses",
+      "netCost": "Coste neto",
+      "balance": "Balance",
+      "breakEven": "Umbral de ruptura",
+      "verdict": "Veredicto",
+      "requiredBadge": "Obligatoria",
+      "inactiveNote": "Desactivada: cifras de qué pasaría si la contrataras."
+    },
+    "charts": {
+      "installment": "Cuota",
+      "installmentDescription": "Cuota mensual al cierre de cada año. En las variables se ve el efecto de cada revisión.",
+      "cumulativeCost": "Coste acumulado",
+      "cumulativeCostDescription": "Gastos de entrada + intereses + coste neto de vinculaciones + comisiones, acumulado. Donde se cruzan dos líneas cambia cuál sale mejor.",
+      "outstanding": "Capital pendiente",
+      "outstandingDescription": "Lo que queda por devolver al banco al cierre de cada año.",
+      "netWorth": "Patrimonio neto",
+      "netWorthDescription": "Cartera del capital libre neta de impuestos menos el coste acumulado de la hipoteca.",
+      "calculating": "Calculando…",
+      "empty": "Activa alguna hipoteca para ver los gráficos.",
+      "crossoverLabel": "Cruce: año {year}"
+    },
+    "sensitivity": {
+      "title": "Sensibilidad al Euríbor",
+      "description": "TAE real de cada oferta en cada escenario del índice. Una fija apenas se mueve; en una variable la horquilla es la medida del riesgo que asumes.",
+      "empty": "No hay hipotecas activas.",
+      "mortgage": "Hipoteca",
+      "spread": "Horquilla",
+      "activeBadge": "activo",
+      "note": "En verde, la oferta ganadora dentro de cada escenario. Si cambia de una columna a otra, la decisión depende de por dónde vaya el Euríbor y no solo de la oferta."
+    },
+    "warnings": {
+      "feeCapExceeded": "Alguna comisión de amortización supera el tope de la LCCI ({cap} %) para este tipo de préstamo. Se calcula igual, por si la oferta es anterior a la ley.",
+      "invalidPrincipalOrTerm": "Capital o plazo no válidos: revisa los datos comunes o los de esta hipoteca.",
+      "floorAboveCap": "El suelo está por encima del techo: revisa los límites del tipo.",
+      "negativeDownPayment": "El capital concedido supera el precio de la vivienda: la entrada sale negativa.",
+      "notAffordable": "Tu ahorro disponible no cubre la entrada más los gastos de esta oferta.",
+      "requiredBindingInactive": "«{name}» es obligatoria y está desactivada: el banco no concedería la hipoteca sin ella.",
+      "singlePremiumRenewal": "«{name}»: la prima cubre {coverYears} de los {years} años; se asume renovación al mismo precio.",
+      "bonusCapped": "La bonificación acumulada supera el tope de {cap} pp y se ha recortado."
+    },
+    "templates": {
+      "mortgageName": "Hipoteca {index}",
+      "exampleFixedName": "Banco A · fija",
+      "exampleFixedBank": "Banco A",
+      "exampleVariableName": "Banco B · variable",
+      "exampleVariableBank": "Banco B",
+      "exampleLifeInsurance": "Seguro de vida",
+      "exampleRequirement": "Ingreso mínimo de 1.200 €/mes"
+    }
+  }
+}

@@ -9,6 +9,8 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { formatPercent } from '~/composables/useMortgageComparator'
 
+const { locale } = useI18n()
+
 const { common } = useMortgageComparator()
 
 const amountFormat = { maximumFractionDigits: 0 } as const
@@ -35,13 +37,13 @@ const ltv = computed(() => {
       <label
         for="mc-property-price"
         class="text-sm font-medium"
-      >Precio vivienda (€)</label>
+      >{{ $t('mortgage.common.propertyPrice') }}</label>
       <NumberField
         id="mc-property-price"
         v-model="common.propertyPrice"
         :min="0"
         :step="5000"
-        locale="es-ES"
+        :locale="locale"
         :formatOptions="amountFormat"
       >
         <NumberFieldContent>
@@ -54,13 +56,13 @@ const ltv = computed(() => {
       <label
         for="mc-appraisal-value"
         class="text-sm font-medium"
-      >Valor de tasación (€)</label>
+      >{{ $t('mortgage.common.appraisalValue') }}</label>
       <NumberField
         id="mc-appraisal-value"
         v-model="common.appraisalValue"
         :min="0"
         :step="5000"
-        locale="es-ES"
+        :locale="locale"
         :formatOptions="amountFormat"
       >
         <NumberFieldContent>
@@ -73,13 +75,13 @@ const ltv = computed(() => {
       <label
         for="mc-available-cash"
         class="text-sm font-medium"
-      >Ahorro disponible (€)</label>
+      >{{ $t('mortgage.common.availableCash') }}</label>
       <NumberField
         id="mc-available-cash"
         v-model="common.availableCash"
         :min="0"
         :step="1000"
-        locale="es-ES"
+        :locale="locale"
         :formatOptions="amountFormat"
       >
         <NumberFieldContent>
@@ -92,13 +94,13 @@ const ltv = computed(() => {
       <label
         for="mc-principal"
         class="text-sm font-medium"
-      >Capital solicitado (€)</label>
+      >{{ $t('mortgage.common.principal') }}</label>
       <NumberField
         id="mc-principal"
         v-model="common.principal"
         :min="0"
         :step="5000"
-        locale="es-ES"
+        :locale="locale"
         :formatOptions="amountFormat"
       >
         <NumberFieldContent>
@@ -106,7 +108,7 @@ const ltv = computed(() => {
         </NumberFieldContent>
       </NumberField>
       <p class="text-xs text-muted-foreground">
-        LTV {{ formatPercent(ltv) }}
+        {{ $t('mortgage.common.ltv', { value: formatPercent(ltv) }) }}
       </p>
     </div>
 
@@ -114,14 +116,14 @@ const ltv = computed(() => {
       <label
         for="mc-term-years"
         class="text-sm font-medium"
-      >Plazo (años)</label>
+      >{{ $t('mortgage.common.termYears') }}</label>
       <NumberField
         id="mc-term-years"
         v-model="termYears"
         :min="1"
         :max="50"
         :step="1"
-        locale="es-ES"
+        :locale="locale"
       >
         <NumberFieldContent>
           <NumberFieldInput />
@@ -134,15 +136,14 @@ const ltv = computed(() => {
         for="mc-current-index"
         class="flex items-center gap-1 text-sm font-medium"
       >
-        Euríbor hoy (%)
+        {{ $t('mortgage.common.euriborToday') }}
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Info class="size-3.5 text-muted-foreground" />
             </TooltipTrigger>
             <TooltipContent class="max-w-xs">
-              Semilla de los tres escenarios predefinidos. No se guarda ningún valor de mercado
-              en la herramienta para que no envejezca sin avisar.
+              {{ $t('mortgage.common.euriborTooltip') }}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -153,7 +154,7 @@ const ltv = computed(() => {
         :min="-2"
         :max="20"
         :step="0.1"
-        locale="es-ES"
+        :locale="locale"
       >
         <NumberFieldContent>
           <NumberFieldInput />
@@ -171,7 +172,7 @@ const ltv = computed(() => {
           for="mc-opportunity-cost"
           class="text-sm font-medium"
         >
-          Simular el coste de oportunidad del capital no aportado
+          {{ $t('mortgage.common.opportunityCostToggle') }}
         </label>
       </div>
 
@@ -180,7 +181,7 @@ const ltv = computed(() => {
           <label
             for="mc-expected-return"
             class="text-sm font-medium"
-          >Rentabilidad esperada RV (%)</label>
+          >{{ $t('mortgage.common.expectedReturn') }}</label>
           <NumberField
             id="mc-expected-return"
             v-model="common.expectedReturnPct"
@@ -188,7 +189,7 @@ const ltv = computed(() => {
             :max="30"
             :step="0.5"
             :disabled="!common.opportunityCostEnabled"
-            locale="es-ES"
+            :locale="locale"
           >
             <NumberFieldContent>
               <NumberFieldInput />
@@ -200,7 +201,7 @@ const ltv = computed(() => {
           <label
             for="mc-capital-gains-tax"
             class="text-sm font-medium"
-          >Impuesto plusvalías (%)</label>
+          >{{ $t('mortgage.common.capitalGainsTax') }}</label>
           <NumberField
             id="mc-capital-gains-tax"
             v-model="common.capitalGainsTaxPct"
@@ -208,7 +209,7 @@ const ltv = computed(() => {
             :max="60"
             :step="1"
             :disabled="!common.opportunityCostEnabled"
-            locale="es-ES"
+            :locale="locale"
           >
             <NumberFieldContent>
               <NumberFieldInput />
@@ -217,8 +218,7 @@ const ltv = computed(() => {
         </div>
 
         <p class="text-xs text-muted-foreground sm:col-span-2">
-          La rentabilidad esperada es una hipótesis, no una promesa. Ponla a 0 % para
-          desactivar su efecto sin apagar la simulación.
+          {{ $t('mortgage.common.expectedReturnHint') }}
         </p>
       </div>
     </div>

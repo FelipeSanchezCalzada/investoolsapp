@@ -181,6 +181,7 @@ const DEFAULT_CALCULATOR_DATA = {
 
 export function useFinancialFreedomCalculator() {
   const { selectedWorkspace } = storeToRefs(useFrontDB())
+  const { t } = useI18n()
 
   watchImmediate(selectedWorkspace, (ws) => {
     if (ws && !ws.financialFreedomCalculator) {
@@ -282,7 +283,7 @@ export function useFinancialFreedomCalculator() {
         const currentCasePortfolio: number[] = []
 
         for (let y = 0; y <= totalYears; y++) {
-          labels.push(`Año ${y} (${currentAge + y})`)
+          labels.push(t('financialFreedom.yearLabel', { year: y, age: currentAge + y }))
           worstCaseInvested.push(worstResult.timeline[y]?.invested ?? 0)
           bestCaseInvested.push(bestResult.timeline[y]?.invested ?? 0)
           currentCaseInvested.push(currentResult.timeline[y]?.invested ?? 0)

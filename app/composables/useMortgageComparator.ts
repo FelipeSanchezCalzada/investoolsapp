@@ -14,42 +14,70 @@ import {
 /** Id of the always-last comparison tab. */
 export const COMPARISON_TAB_ID = '__comparison__'
 
-export const currencyFormatter = new Intl.NumberFormat('es-ES', {
-  style: 'currency',
-  currency: 'EUR',
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-})
+/**
+ * The formatters follow the active locale, so they are plain functions instead of
+ * cached instances. The i18n instance is memoised on first use because they also
+ * run inside table cell renderers, where the Nuxt context may not be injectable.
+ */
+type I18nInstance = ReturnType<typeof useNuxtApp>['$i18n']
 
-export const compactCurrencyFormatter = new Intl.NumberFormat('es-ES', {
-  style: 'currency',
-  currency: 'EUR',
-  maximumFractionDigits: 0,
-})
+let i18nInstance: I18nInstance | null = null
 
-const percentFormatter = new Intl.NumberFormat('es-ES', {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-})
+function i18n(): I18nInstance {
+  if (!i18nInstance) i18nInstance = useNuxtApp().$i18n
+  return i18nInstance
+}
+
+function activeLocale(): string {
+  return i18n().locale.value
+}
+
+function notAvailable(): string {
+  return i18n().t('common.notAvailable')
+}
+
+export function currencyFormatter(): Intl.NumberFormat {
+  return new Intl.NumberFormat(activeLocale(), {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+}
+
+export function compactCurrencyFormatter(): Intl.NumberFormat {
+  return new Intl.NumberFormat(activeLocale(), {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  })
+}
+
+function percentFormatter(): Intl.NumberFormat {
+  return new Intl.NumberFormat(activeLocale(), {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+}
 
 export function formatCurrency(value: number | null | undefined): string {
-  if (value === null || value === undefined || !Number.isFinite(value)) return 'n/d'
-  return currencyFormatter.format(value)
+  if (value === null || value === undefined || !Number.isFinite(value)) return notAvailable()
+  return currencyFormatter().format(value)
 }
 
 export function formatCompactCurrency(value: number | null | undefined): string {
-  if (value === null || value === undefined || !Number.isFinite(value)) return 'n/d'
-  return compactCurrencyFormatter.format(value)
+  if (value === null || value === undefined || !Number.isFinite(value)) return notAvailable()
+  return compactCurrencyFormatter().format(value)
 }
 
 export function formatPercent(value: number | null | undefined, suffix = ' %'): string {
-  if (value === null || value === undefined || !Number.isFinite(value)) return 'n/d'
-  return `${percentFormatter.format(value)}${suffix}`
+  if (value === null || value === undefined || !Number.isFinite(value)) return notAvailable()
+  return `${percentFormatter().format(value)}${suffix}`
 }
 
 export function formatPp(value: number | null | undefined): string {
-  if (value === null || value === undefined || !Number.isFinite(value)) return 'n/d'
-  return `${percentFormatter.format(value)} pp`
+  if (value === null || value === undefined || !Number.isFinite(value)) return notAvailable()
+  return `${percentFormatter().format(value)} pp`
 }
 
 const isLoading = ref(false)
@@ -59,10 +87,14 @@ const activeTabId = ref<string>(COMPARISON_TAB_ID)
 
 export function useMortgageComparator() {
   const { selectedWorkspace } = storeToRefs(useFrontDB())
+  const { t } = useI18n()
+
+  // Warm the memoised instance from a context where it is guaranteed to resolve.
+  i18n()
 
   watchImmediate(selectedWorkspace, (workspace) => {
     if (workspace && !workspace.mortgageComparator) {
-      workspace.mortgageComparator = createDefaultComparator()
+      workspace.mortgageComparator = createDefaultComparator(t)
     }
   })
 
@@ -107,8 +139,8 @@ export function useMortgageComparator() {
       const current = comparator.value
       if (!current || currentIndexPct === undefined || previousIndexPct === undefined) return
 
-      const previousSeeds = createSeedScenarios(previousIndexPct)
-      const nextSeeds = createSeedScenarios(currentIndexPct)
+      const previousSeeds = createSeedScenarios(previousIndexPct, t)
+      const nextSeeds = createSeedScenarios(currentIndexPct, t)
 
       for (const seed of nextSeeds) {
         if (seed.id === SCENARIO_IDS.CUSTOM) continue
@@ -143,7 +175,7 @@ export function useMortgageComparator() {
   function addMortgage(rateType: MortgageRateType = 'fixed'): Mortgage | null {
     const current = comparator.value
     if (!current) return null
-    const mortgage = createMortgage(current.mortgages.length, rateType)
+    const mortgage = createMortgage(current.mortgages.length, rateType, t)
     current.mortgages.push(mortgage)
     activeTabId.value = mortgage.id
     return mortgage
@@ -152,7 +184,7 @@ export function useMortgageComparator() {
   function loadExamples() {
     const current = comparator.value
     if (!current) return
-    const examples = createExampleMortgages()
+    const examples = createExampleMortgages(t)
     current.mortgages.push(...examples)
     current.mortgages.forEach((mortgage, index) => {
       mortgage.color = colorForIndex(index)

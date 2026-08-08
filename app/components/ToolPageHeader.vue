@@ -16,7 +16,7 @@ defineProps<{
     <Popover>
       <PopoverTrigger
         class="text-muted-foreground hover:text-foreground focus-visible:ring-ring rounded-full transition-colors focus-visible:ring-2 focus-visible:outline-none"
-        aria-label="Qué hace esta herramienta"
+        :aria-label="$t('toolHeader.whatIsThis')"
       >
         <Info class="size-5" />
       </PopoverTrigger>

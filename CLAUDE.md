@@ -81,6 +81,7 @@ investoolsapp/
 │   │   └── tools/              # Directorio para herramientas (/tools/*)
 │   └── plugins/
 │       └── 01.ssr-width.ts      # Plugin para ancho SSR
+├── i18n/locales/                # Ficheros de traducción (es.json, en.json)
 ├── components.json              # Configuración shadcn
 ├── nuxt.config.ts               # Configuración Nuxt
 ├── tailwind.config.ts           # Configuración Tailwind (extender aquí)
@@ -100,7 +101,7 @@ investoolsapp/
 - Comentarios y JSDoc
 - Mensajes de commit
 
-Solo va en español el **texto visible para el usuario** (labels, títulos, descripciones, mensajes de error de la UI) y la documentación en `docs/`.
+El **texto visible para el usuario** nunca se escribe en el código: va en los ficheros de traducción de `i18n/locales/` (ver [i18n](#i18n)). Solo va en español la documentación en `docs/`.
 
 ```ts
 // ✅ Correcto
@@ -151,6 +152,16 @@ No usar `NumberFieldDecrement` ni `NumberFieldIncrement` en los `NumberField`. S
 ### Estado global
 Usar Pinia stores. Si se necesita persistencia, modelar como `useFrontDB.ts` con IndexedDB.
 
+### i18n
+Traducciones con **@nuxtjs/i18n**. Locales: `es` (por defecto) y `en`. Estrategia `no_prefix` (el idioma no va en la URL) con detección por navegador y persistencia en la cookie `i18n_locale`. El selector está en [LocaleSwitcher.vue](app/layouts/default/components/LocaleSwitcher.vue), dentro del header.
+
+- Ficheros de traducción: `i18n/locales/es.json` y `i18n/locales/en.json`. **Ambos deben tener exactamente las mismas claves.**
+- En templates: `$t('namespace.key')`, con parámetros `$t('key', { name })` y plurales `$t('key', { count }, count)`.
+- En `<script setup>` y composables: `const { t, locale } = useI18n()`.
+- Los `NumberField` y los `Intl.NumberFormat` reciben `locale` de `useI18n()`, nunca `'es-ES'` fijo.
+- En módulos de `app/lib/` no se traduce: se devuelven **claves i18n** que resuelve el componente (`upfrontCostLabelKey()`, `bindingLabelKey()`, `MortgageWarning = { key, params }`). Los nombres que se persisten en la DB (escenarios, hipotecas de ejemplo) se traducen una sola vez al crearlos, pasando `t` a la factory (`Translate` en [templates.ts](app/lib/mortgage/templates.ts)).
+- Las migas de pan de `definePageMeta` guardan `labelKey`, no el texto.
+
 ---
 
 ## Módulos Nuxt configurados
@@ -162,6 +173,7 @@ Usar Pinia stores. Si se necesita persistencia, modelar como `useFrontDB.ts` con
 | `@vueuse/nuxt` | Auto-import de composables VueUse |
 | `@nuxtjs/color-mode` | Dark/light mode |
 | `@pinia/nuxt` | State management |
+| `@nuxtjs/i18n` | Traducciones (es / en) |
 
 ---
 

@@ -9,6 +9,12 @@ import type {
 } from '~/db/types/FrontDBv3'
 import { createAnnualCost, createFreeCost, createInvestmentCost } from '~/lib/mortgage/bindingCatalog'
 
+/**
+ * Seeded names end up persisted in the workspace, so they are translated once at
+ * creation time instead of being resolved on every render.
+ */
+export type Translate = (key: string, params?: Record<string, string | number>) => string
+
 /** Rotating palette with enough contrast in both light and dark mode. */
 export const MORTGAGE_COLORS = [
   '#3b82f6',
@@ -37,16 +43,16 @@ export const SCENARIO_IDS = {
  * so no market value is hardcoded and nothing ages silently.
  * The ±1 pp shift over 5 years is a sensitivity convention, not a forecast.
  */
-export function createSeedScenarios(currentIndexPct: number): MortgageIndexScenario[] {
+export function createSeedScenarios(currentIndexPct: number, t: Translate): MortgageIndexScenario[] {
   return [
     {
       id: SCENARIO_IDS.CURRENT,
-      name: 'Actual (constante)',
+      name: t('mortgage.scenario.current'),
       points: [{ year: 0, valuePct: currentIndexPct }],
     },
     {
       id: SCENARIO_IDS.OPTIMISTIC,
-      name: 'Optimista (−1 pp en 5 años)',
+      name: t('mortgage.scenario.optimistic'),
       points: [
         { year: 0, valuePct: currentIndexPct },
         { year: 5, valuePct: Math.max(0, currentIndexPct - 1) },
@@ -54,7 +60,7 @@ export function createSeedScenarios(currentIndexPct: number): MortgageIndexScena
     },
     {
       id: SCENARIO_IDS.PESSIMISTIC,
-      name: 'Pesimista (+1 pp en 5 años)',
+      name: t('mortgage.scenario.pessimistic'),
       points: [
         { year: 0, valuePct: currentIndexPct },
         { year: 5, valuePct: currentIndexPct + 1 },
@@ -62,7 +68,7 @@ export function createSeedScenarios(currentIndexPct: number): MortgageIndexScena
     },
     {
       id: SCENARIO_IDS.CUSTOM,
-      name: 'Personalizado',
+      name: t('mortgage.scenario.custom'),
       points: [
         { year: 0, valuePct: currentIndexPct },
         { year: 10, valuePct: currentIndexPct },
@@ -119,10 +125,10 @@ export function createDefaultEarlyRepaymentFees(rateType: MortgageRateType): Mor
   return { partial: tiers, total: tiers.map(tier => ({ ...tier })) }
 }
 
-export function createMortgage(index: number, rateType: MortgageRateType = 'fixed'): Mortgage {
+export function createMortgage(index: number, rateType: MortgageRateType, t: Translate): Mortgage {
   return {
     id: crypto.randomUUID(),
-    name: `Hipoteca ${index + 1}`,
+    name: t('mortgage.templates.mortgageName', { index: index + 1 }),
     bankName: '',
     color: colorForIndex(index),
     enabled: true,
@@ -149,15 +155,15 @@ export function createMortgage(index: number, rateType: MortgageRateType = 'fixe
  * Plausible Spanish market figures so the tool is understandable on first open.
  * They are not a real offer nor a recommendation.
  */
-export function createExampleMortgages(): Mortgage[] {
-  const fixed = createMortgage(0, 'fixed')
-  fixed.name = 'Banco A · fija'
-  fixed.bankName = 'Banco A'
+export function createExampleMortgages(t: Translate): Mortgage[] {
+  const fixed = createMortgage(0, 'fixed', t)
+  fixed.name = t('mortgage.templates.exampleFixedName')
+  fixed.bankName = t('mortgage.templates.exampleFixedBank')
   fixed.fixedRatePct = 2.6
   fixed.bindings = [
     {
       id: crypto.randomUUID(),
-      name: 'Nómina domiciliada',
+      name: t('mortgage.bindings.catalog.nomina.label'),
       type: 'nomina',
       required: true,
       active: true,
@@ -165,11 +171,11 @@ export function createExampleMortgages(): Mortgage[] {
       cost: createFreeCost(),
       fromYear: 0,
       toYear: null,
-      requirement: 'Ingreso mínimo de 1.200 €/mes',
+      requirement: t('mortgage.templates.exampleRequirement'),
     },
     {
       id: crypto.randomUUID(),
-      name: 'Seguro de hogar',
+      name: t('mortgage.bindings.catalog.seguroHogar.label'),
       type: 'seguroHogar',
       required: false,
       active: true,
@@ -180,7 +186,7 @@ export function createExampleMortgages(): Mortgage[] {
     },
     {
       id: crypto.randomUUID(),
-      name: 'Seguro de vida',
+      name: t('mortgage.templates.exampleLifeInsurance'),
       type: 'seguroVida',
       required: false,
       active: true,
@@ -191,9 +197,9 @@ export function createExampleMortgages(): Mortgage[] {
     },
   ]
 
-  const variable = createMortgage(1, 'variable')
-  variable.name = 'Banco B · variable'
-  variable.bankName = 'Banco B'
+  const variable = createMortgage(1, 'variable', t)
+  variable.name = t('mortgage.templates.exampleVariableName')
+  variable.bankName = t('mortgage.templates.exampleVariableBank')
   variable.initialRatePct = 2.2
   variable.initialRateMonths = 12
   variable.spreadPct = 0.6
@@ -202,7 +208,7 @@ export function createExampleMortgages(): Mortgage[] {
   variable.bindings = [
     {
       id: crypto.randomUUID(),
-      name: 'Nómina domiciliada',
+      name: t('mortgage.bindings.catalog.nomina.label'),
       type: 'nomina',
       required: true,
       active: true,
@@ -210,11 +216,11 @@ export function createExampleMortgages(): Mortgage[] {
       cost: createFreeCost(),
       fromYear: 0,
       toYear: null,
-      requirement: 'Ingreso mínimo de 1.200 €/mes',
+      requirement: t('mortgage.templates.exampleRequirement'),
     },
     {
       id: crypto.randomUUID(),
-      name: 'Seguro de hogar',
+      name: t('mortgage.bindings.catalog.seguroHogar.label'),
       type: 'seguroHogar',
       required: false,
       active: true,
@@ -225,7 +231,7 @@ export function createExampleMortgages(): Mortgage[] {
     },
     {
       id: crypto.randomUUID(),
-      name: 'Seguro de vida',
+      name: t('mortgage.templates.exampleLifeInsurance'),
       type: 'seguroVida',
       required: false,
       active: true,
@@ -236,7 +242,7 @@ export function createExampleMortgages(): Mortgage[] {
     },
     {
       id: crypto.randomUUID(),
-      name: 'Tarjeta de crédito',
+      name: t('mortgage.bindings.catalog.tarjetaCredito.label'),
       type: 'tarjetaCredito',
       required: false,
       active: true,
@@ -247,7 +253,7 @@ export function createExampleMortgages(): Mortgage[] {
     },
     {
       id: crypto.randomUUID(),
-      name: 'Plan de pensiones',
+      name: t('mortgage.bindings.catalog.planPensiones.label'),
       type: 'planPensiones',
       required: false,
       active: true,
@@ -261,11 +267,11 @@ export function createExampleMortgages(): Mortgage[] {
   return [fixed, variable]
 }
 
-export function createDefaultComparator(): MortgageComparator {
+export function createDefaultComparator(t: Translate): MortgageComparator {
   const common = createDefaultCommon()
   return {
     mortgages: [],
-    scenarios: createSeedScenarios(common.currentIndexPct),
+    scenarios: createSeedScenarios(common.currentIndexPct, t),
     selectedScenarioId: SCENARIO_IDS.CURRENT,
     common,
   }

@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useSidebar } from '@/components/ui/sidebar'
+import LocaleSwitcher from './LocaleSwitcher.vue'
 import type { BreadcrumbItem as BreadcrumbItemType } from '~/types/page-meta'
 
 const { toggleSidebar } = useSidebar()
@@ -51,16 +52,18 @@ const breadcrumbs = computed(() => (route.meta.breadcrumb ?? []) as BreadcrumbIt
                 asChild
               >
                 <NuxtLink :to="crumb.to">
-                  {{ crumb.label }}
+                  {{ $t(crumb.labelKey) }}
                 </NuxtLink>
               </BreadcrumbLink>
               <BreadcrumbPage v-else>
-                {{ crumb.label }}
+                {{ $t(crumb.labelKey) }}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </template>
         </BreadcrumbList>
       </Breadcrumb>
+
+      <LocaleSwitcher class="ml-auto" />
     </div>
   </header>
 </template>

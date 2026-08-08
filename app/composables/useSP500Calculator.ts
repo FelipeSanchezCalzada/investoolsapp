@@ -71,6 +71,7 @@ const DEFAULT_CALCULATOR_DATA = {
 
 export function useSP500Calculator() {
   const { selectedWorkspace } = storeToRefs(useFrontDB())
+  const { t } = useI18n()
 
   // Ensure calculator data exists on workspace
   watchImmediate(selectedWorkspace, (ws) => {
@@ -139,7 +140,7 @@ export function useSP500Calculator() {
         const labels: string[] = []
         for (let m = 0; m <= months; m++) {
           if (m % 12 === 0) {
-            labels.push(`Año ${m / 12}`)
+            labels.push(t('sp500.yearLabel', { year: m / 12 }))
           } else {
             labels.push('')
           }

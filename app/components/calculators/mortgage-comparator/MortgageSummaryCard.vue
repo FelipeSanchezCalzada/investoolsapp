@@ -8,6 +8,7 @@ import { formatCurrency, formatPercent } from '~/composables/useMortgageComparat
 const props = defineProps<{ result: MortgageResult | null }>()
 
 const { isLoading } = useMortgageComparator()
+const { t } = useI18n()
 
 const expandedOnMobile = ref(false)
 
@@ -15,12 +16,12 @@ const metrics = computed(() => {
   const result = props.result
   if (!result) return []
   return [
-    { label: 'Cuota inicial', value: formatCurrency(result.initialInstallment), accent: false },
-    { label: 'Cuota máxima', value: formatCurrency(result.maxInstallment), accent: false },
-    { label: 'TIN efectivo', value: formatPercent(result.effectiveRatePct), accent: false },
-    { label: 'TAE real', value: formatPercent(result.apr.realApr), accent: true },
-    { label: 'Coste total', value: formatCurrency(result.totalCost), accent: false },
-    { label: 'Patrimonio neto', value: formatCurrency(result.netWorth), accent: false },
+    { label: t('mortgage.summary.initialInstallment'), value: formatCurrency(result.initialInstallment), accent: false },
+    { label: t('mortgage.summary.maxInstallment'), value: formatCurrency(result.maxInstallment), accent: false },
+    { label: t('mortgage.summary.effectiveRate'), value: formatPercent(result.effectiveRatePct), accent: false },
+    { label: t('mortgage.summary.realApr'), value: formatPercent(result.apr.realApr), accent: true },
+    { label: t('mortgage.summary.totalCost'), value: formatCurrency(result.totalCost), accent: false },
+    { label: t('mortgage.summary.netWorth'), value: formatCurrency(result.netWorth), accent: false },
   ]
 })
 </script>
@@ -34,8 +35,10 @@ const metrics = computed(() => {
       @click="expandedOnMobile = !expandedOnMobile"
     >
       <span class="text-sm font-semibold">
-        {{ formatCurrency(result?.initialInstallment) }}/mes
-        · TAE real {{ formatPercent(result?.apr.realApr) }}
+        {{ $t('mortgage.summary.mobile', {
+          installment: formatCurrency(result?.initialInstallment),
+          apr: formatPercent(result?.apr.realApr),
+        }) }}
       </span>
       <ChevronDown
         :class="cn('size-4 shrink-0 transition-transform', expandedOnMobile && 'rotate-180')"
@@ -71,14 +74,16 @@ const metrics = computed(() => {
         class="flex items-center gap-2 text-xs text-muted-foreground"
       >
         <Loader2 class="size-3.5 animate-spin" />
-        Recalculando…
+        {{ $t('mortgage.summary.recalculating') }}
       </span>
       <span
         v-else-if="result"
         class="text-xs text-muted-foreground"
       >
-        TAE oficial {{ formatPercent(result.apr.officialApr) }} ·
-        sin vinculaciones opcionales {{ formatPercent(result.apr.aprWithoutBindings) }}
+        {{ $t('mortgage.summary.official', {
+          official: formatPercent(result.apr.officialApr),
+          without: formatPercent(result.apr.aprWithoutBindings),
+        }) }}
       </span>
       <span v-else />
 

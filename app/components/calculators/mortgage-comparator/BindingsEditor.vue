@@ -20,12 +20,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import BindingFormDialog from '~/components/calculators/mortgage-comparator/BindingFormDialog.vue'
-import { BINDING_CATALOG, BINDING_COST_MODE_LABELS, createBindingFromCatalog } from '~/lib/mortgage/bindingCatalog'
+import { BINDING_CATALOG, bindingCostModeKey, bindingLabelKey, createBindingFromCatalog } from '~/lib/mortgage/bindingCatalog'
 import { formatCurrency, formatPp } from '~/composables/useMortgageComparator'
 
 const props = defineProps<{ mortgageId: string, result: MortgageResult | null }>()
 
 const { findMortgage, removeBinding } = useMortgageComparator()
+const { t } = useI18n()
 
 /** The editors write straight into the store object, so only its id travels as a prop. */
 const mortgage = computed(() => findMortgage(props.mortgageId))
@@ -35,7 +36,7 @@ const editingBindingId = ref<string | null>(null)
 function addFromCatalog(entryType: string) {
   const entry = BINDING_CATALOG.find(item => item.type === entryType)
   if (!entry || !mortgage.value) return
-  const binding = createBindingFromCatalog(entry)
+  const binding = createBindingFromCatalog(entry, t(bindingLabelKey(entry.type)))
   mortgage.value.bindings.push(binding)
   editingBindingId.value = binding.id
 }
@@ -47,8 +48,8 @@ function netCostOf(bindingId: string): number | null {
 function bankCostLabel(binding: MortgageBinding): string {
   const cost = binding.cost
   switch (cost.mode) {
-    case 'free': return '—'
-    case 'annual': return `${formatCurrency(cost.bankCost)}/año`
+    case 'free': return t('common.emptyValue')
+    case 'annual': return t('mortgage.bindings.perYear', { value: formatCurrency(cost.bankCost) })
     case 'permille': return `${cost.permille} ‰`
     case 'singlePremium': return formatCurrency(cost.amount)
     case 'investment': return `${cost.bankFeePct} %`
@@ -58,8 +59,8 @@ function bankCostLabel(binding: MortgageBinding): string {
 function marketCostLabel(binding: MortgageBinding): string {
   const cost = binding.cost
   switch (cost.mode) {
-    case 'free': return '—'
-    case 'annual': return `${formatCurrency(cost.marketCost)}/año`
+    case 'free': return t('common.emptyValue')
+    case 'annual': return t('mortgage.bindings.perYear', { value: formatCurrency(cost.marketCost) })
     case 'permille': return `${cost.marketPermille} ‰`
     case 'singlePremium': return formatCurrency(cost.marketAmount)
     case 'investment': return `${cost.alternativeFeePct} %`
@@ -67,9 +68,9 @@ function marketCostLabel(binding: MortgageBinding): string {
 }
 
 function validityLabel(binding: MortgageBinding): string {
-  if (binding.fromYear === 0 && binding.toYear === null) return 'Toda la vida'
-  if (binding.toYear === null) return `Desde año ${binding.fromYear}`
-  return `Años ${binding.fromYear}–${binding.toYear - 1}`
+  if (binding.fromYear === 0 && binding.toYear === null) return t('mortgage.bindings.lifetime')
+  if (binding.toYear === null) return t('mortgage.bindings.fromYear', { year: binding.fromYear })
+  return t('mortgage.bindings.yearRange', { from: binding.fromYear, to: binding.toYear - 1 })
 }
 
 function openEditor(binding: MortgageBinding) {
@@ -84,9 +85,7 @@ function openEditor(binding: MortgageBinding) {
   >
     <div class="flex flex-wrap items-center justify-between gap-2">
       <p class="max-w-2xl text-xs text-muted-foreground">
-        El coste imputable es siempre el diferencial: lo que cuesta en el banco menos lo que
-        gastarías en ese producto si no existiera la hipoteca. Puede salir negativo si el
-        producto del banco es más barato que el tuyo.
+        {{ $t('mortgage.bindings.note') }}
       </p>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -95,7 +94,7 @@ function openEditor(binding: MortgageBinding) {
             variant="outline"
           >
             <Plus class="mr-1 size-4" />
-            Añadir vinculación
+            {{ $t('mortgage.bindings.add') }}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -107,7 +106,7 @@ function openEditor(binding: MortgageBinding) {
             :key="entry.type"
             @select="addFromCatalog(entry.type)"
           >
-            {{ entry.label }}
+            {{ $t(`mortgage.bindings.catalog.${entry.type}.label`) }}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -117,7 +116,7 @@ function openEditor(binding: MortgageBinding) {
       v-if="!mortgage.bindings.length"
       class="rounded-lg border border-dashed py-8 text-center text-sm text-muted-foreground"
     >
-      Sin vinculaciones. Añade las que te exija o te ofrezca el banco para ver su coste real.
+      {{ $t('mortgage.bindings.empty') }}
     </div>
 
     <div v-else>
@@ -125,31 +124,31 @@ function openEditor(binding: MortgageBinding) {
         <TableHeader>
           <TableRow>
             <TableHead class="min-w-52">
-              Producto
+              {{ $t('mortgage.bindings.product') }}
             </TableHead>
             <TableHead class="w-20 text-center">
-              Oblig.
+              {{ $t('mortgage.bindings.requiredShort') }}
             </TableHead>
             <TableHead class="w-24 text-right">
-              Bonif.
+              {{ $t('mortgage.bindings.bonusShort') }}
             </TableHead>
             <TableHead class="w-44">
-              Modelo de coste
+              {{ $t('mortgage.bindings.costModel') }}
             </TableHead>
             <TableHead class="w-32 text-right">
-              En el banco
+              {{ $t('mortgage.bindings.atBank') }}
             </TableHead>
             <TableHead class="w-32 text-right">
-              Fuera
+              {{ $t('mortgage.bindings.outside') }}
             </TableHead>
             <TableHead class="w-36 text-right">
-              Coste neto total
+              {{ $t('mortgage.bindings.netCostTotal') }}
             </TableHead>
             <TableHead class="w-32">
-              Vigencia
+              {{ $t('mortgage.bindings.validity') }}
             </TableHead>
             <TableHead class="w-20 text-center">
-              Activa
+              {{ $t('mortgage.bindings.activeColumn') }}
             </TableHead>
             <TableHead class="w-24" />
           </TableRow>
@@ -181,18 +180,18 @@ function openEditor(binding: MortgageBinding) {
                 variant="outline"
                 class="text-[10px]"
               >
-                Sí
+                {{ $t('common.yes') }}
               </Badge>
               <span
                 v-else
                 class="text-muted-foreground"
-              >—</span>
+              >{{ $t('common.emptyValue') }}</span>
             </TableCell>
             <TableCell class="text-right">
               −{{ formatPp(binding.rateReductionPp) }}
             </TableCell>
             <TableCell class="text-sm text-muted-foreground">
-              {{ BINDING_COST_MODE_LABELS[binding.cost.mode] }}
+              {{ $t(bindingCostModeKey(binding.cost.mode)) }}
             </TableCell>
             <TableCell class="text-right">
               {{ bankCostLabel(binding) }}
@@ -204,7 +203,7 @@ function openEditor(binding: MortgageBinding) {
               class="text-right font-medium"
               :class="(netCostOf(binding.id) ?? 0) < 0 ? 'text-green-600 dark:text-green-400' : ''"
             >
-              {{ netCostOf(binding.id) === null ? '—' : formatCurrency(netCostOf(binding.id)) }}
+              {{ netCostOf(binding.id) === null ? $t('common.emptyValue') : formatCurrency(netCostOf(binding.id)) }}
             </TableCell>
             <TableCell class="text-sm text-muted-foreground">
               {{ validityLabel(binding) }}

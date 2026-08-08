@@ -12,14 +12,15 @@ definePageMeta({
 })
 
 const dbStore = useFrontDB()
+const { t } = useI18n()
 
 const tools = computed(() => [
   {
-    title: 'Rebalanceo de Cartera',
-    description: 'Calcula los traspasos necesarios para rebalancear tu cartera de fondos hacia la distribución objetivo que definas.',
+    title: t('tools.portfolioRebalancing.title'),
+    description: t('tools.portfolioRebalancing.description'),
     icon: ArrowRightLeft,
     routeName: PAGE_NAMES.HELPERS.PORTFOLIO_REBALANCING,
-    category: 'Ayudantes',
+    category: t('tools.portfolioRebalancing.category'),
   },
 ])
 </script>
@@ -29,19 +30,19 @@ const tools = computed(() => [
     <!-- Beta warning -->
     <Alert class="border-orange-500/50 text-orange-700 dark:text-orange-400 [&>svg]:text-current *:data-[slot=alert-description]:text-orange-700/90 dark:*:data-[slot=alert-description]:text-orange-400/90">
       <TriangleAlert class="size-4" />
-      <AlertTitle>Proyecto en fase beta temprana</AlertTitle>
+      <AlertTitle>{{ $t('home.betaTitle') }}</AlertTitle>
       <AlertDescription>
-        Esta aplicación se encuentra en una fase muy temprana de desarrollo. Pueden producirse errores, cambios importantes o pérdidas de datos en cualquier momento. No almacenes información crítica sin tener una copia de seguridad externa.
+        {{ $t('home.betaDescription') }}
       </AlertDescription>
     </Alert>
 
     <!-- Welcome -->
     <div>
       <h1 class="text-2xl font-bold tracking-tight">
-        Bienvenido a Investools
+        {{ $t('home.welcomeTitle') }}
       </h1>
       <p class="text-muted-foreground mt-2 max-w-2xl">
-        Tu caja de herramientas para gestionar inversiones.
+        {{ $t('home.welcomeSubtitle') }}
       </p>
 
       <div class="mt-5 grid gap-4 sm:grid-cols-2 max-w-2xl">
@@ -51,10 +52,10 @@ const tools = computed(() => [
           </div>
           <div>
             <p class="text-sm font-medium">
-              Tus datos son solo tuyos
+              {{ $t('home.privacyTitle') }}
             </p>
             <p class="text-xs text-muted-foreground mt-0.5">
-              Toda la información se almacena localmente en tu navegador. No se envía nada a ningún servidor externo.
+              {{ $t('home.privacyDescription') }}
             </p>
           </div>
         </div>
@@ -64,10 +65,10 @@ const tools = computed(() => [
           </div>
           <div>
             <p class="text-sm font-medium">
-              En constante evolución
+              {{ $t('home.evolvingTitle') }}
             </p>
             <p class="text-xs text-muted-foreground mt-0.5">
-              Se irán añadiendo nuevas herramientas y utilidades periódicamente para cubrir más necesidades de inversión.
+              {{ $t('home.evolvingDescription') }}
             </p>
           </div>
         </div>
@@ -80,10 +81,10 @@ const tools = computed(() => [
     <div>
       <div class="mb-4">
         <h2 class="text-lg font-semibold">
-          Tus workspaces
+          {{ $t('home.workspacesTitle') }}
         </h2>
         <p class="text-sm text-muted-foreground mt-1 max-w-2xl">
-          Cada workspace funciona como una base de datos independiente dentro de la app. Puedes crear varios para separar carteras, estrategias o simulaciones, y cambiar entre ellos en cualquier momento.
+          {{ $t('home.workspacesDescription') }}
         </p>
       </div>
 
@@ -124,7 +125,7 @@ const tools = computed(() => [
                     variant="secondary"
                     class="shrink-0 text-xs"
                   >
-                    Activo
+                    {{ $t('common.active') }}
                   </Badge>
                 </div>
                 <p
@@ -146,10 +147,10 @@ const tools = computed(() => [
     <div>
       <div class="mb-4">
         <h2 class="text-lg font-semibold">
-          Herramientas
+          {{ $t('home.toolsTitle') }}
         </h2>
         <p class="text-sm text-muted-foreground mt-1 max-w-2xl">
-          Accede a las utilidades disponibles para analizar y gestionar tus inversiones. Se irán añadiendo nuevas herramientas con el tiempo.
+          {{ $t('home.toolsDescription') }}
         </p>
       </div>
 

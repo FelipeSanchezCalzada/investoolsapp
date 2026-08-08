@@ -23,6 +23,7 @@ import {
 import { formatCurrency, formatPercent } from '~/composables/useMortgageComparator'
 
 const { comparison } = useMortgageComparator()
+const { t } = useI18n()
 
 const enabledResults = computed(() =>
   (comparison.value?.results ?? []).filter(result => result.mortgage.enabled),
@@ -54,19 +55,19 @@ function numericColumn(
   }
 }
 
-const nameColumn: ColumnDef<MortgageResult> = {
+const nameColumn = computed<ColumnDef<MortgageResult>>(() => ({
   id: 'name',
   accessorFn: result => result.mortgage.name,
-  header: 'Hipoteca',
+  header: t('mortgage.comparisonTable.mortgage'),
   enableSorting: false,
   cell: ({ row }) => {
     const result = row.original
     const rank = rankOf(result)
     const netWorthRank = netWorthRankOf(result)
     const captions: string[] = []
-    if (rank) captions.push(`TAE #${rank}`)
-    if (netWorthRank) captions.push(`patrimonio #${netWorthRank}`)
-    if (!result.viable) captions.push('no viable')
+    if (rank) captions.push(t('mortgage.comparisonTable.captionApr', { rank }))
+    if (netWorthRank) captions.push(t('mortgage.comparisonTable.captionNetWorth', { rank: netWorthRank }))
+    if (!result.viable) captions.push(t('mortgage.comparisonTable.captionNotViable'))
 
     return h('div', { class: 'flex items-center gap-2' }, [
       h('span', {
@@ -82,23 +83,23 @@ const nameColumn: ColumnDef<MortgageResult> = {
         : null,
     ])
   },
-}
+}))
 
-const columns: ColumnDef<MortgageResult>[] = [
-  nameColumn,
-  numericColumn('initialInstallment', 'Cuota inicial', r => r.initialInstallment, r => formatCurrency(r.initialInstallment)),
-  numericColumn('maxInstallment', 'Cuota máxima', r => r.maxInstallment, r => formatCurrency(r.maxInstallment)),
-  numericColumn('totalInterest', 'Intereses', r => r.totalInterest, r => formatCurrency(r.totalInterest)),
-  numericColumn('upfront', 'Gastos', r => r.totalUpfrontCost, r => formatCurrency(r.totalUpfrontCost), 'A tu cargo, comisión de apertura incluida'),
-  numericColumn('bindingGross', 'Vinculaciones (bruto)', r => r.totalBindingGrossCost, r => formatCurrency(r.totalBindingGrossCost), 'Lo que pagas al banco por los productos'),
-  numericColumn('bindingNet', 'Vinculaciones (neto)', r => r.totalBindingNetCost, r => formatCurrency(r.totalBindingNetCost), 'Descontando lo que gastarías igualmente fuera'),
-  numericColumn('totalCost', 'Coste total', r => r.totalCost, r => formatCurrency(r.totalCost)),
-  numericColumn('officialApr', 'TAE oficial', r => r.apr.officialApr, r => formatPercent(r.apr.officialApr), 'Criterio del Banco de España: solo vinculaciones obligatorias, a coste bruto'),
-  numericColumn('realApr', 'TAE real', r => r.apr.realApr, r => formatPercent(r.apr.realApr), 'La métrica que decide el ranking'),
-  numericColumn('downPayment', 'Entrada', r => r.opportunityCost.downPayment, r => formatCurrency(r.opportunityCost.downPayment)),
-  numericColumn('freeCapital', 'Capital libre', r => r.opportunityCost.freeCapital, r => formatCurrency(r.opportunityCost.freeCapital)),
-  numericColumn('netWorth', 'Patrimonio neto', r => r.netWorth, r => formatCurrency(r.netWorth)),
-]
+const columns = computed<ColumnDef<MortgageResult>[]>(() => [
+  nameColumn.value,
+  numericColumn('initialInstallment', t('mortgage.comparisonTable.initialInstallment'), r => r.initialInstallment, r => formatCurrency(r.initialInstallment)),
+  numericColumn('maxInstallment', t('mortgage.comparisonTable.maxInstallment'), r => r.maxInstallment, r => formatCurrency(r.maxInstallment)),
+  numericColumn('totalInterest', t('mortgage.comparisonTable.interest'), r => r.totalInterest, r => formatCurrency(r.totalInterest)),
+  numericColumn('upfront', t('mortgage.comparisonTable.upfront'), r => r.totalUpfrontCost, r => formatCurrency(r.totalUpfrontCost), t('mortgage.comparisonTable.hints.upfront')),
+  numericColumn('bindingGross', t('mortgage.comparisonTable.bindingGross'), r => r.totalBindingGrossCost, r => formatCurrency(r.totalBindingGrossCost), t('mortgage.comparisonTable.hints.bindingGross')),
+  numericColumn('bindingNet', t('mortgage.comparisonTable.bindingNet'), r => r.totalBindingNetCost, r => formatCurrency(r.totalBindingNetCost), t('mortgage.comparisonTable.hints.bindingNet')),
+  numericColumn('totalCost', t('mortgage.comparisonTable.totalCost'), r => r.totalCost, r => formatCurrency(r.totalCost)),
+  numericColumn('officialApr', t('mortgage.comparisonTable.officialApr'), r => r.apr.officialApr, r => formatPercent(r.apr.officialApr), t('mortgage.comparisonTable.hints.officialApr')),
+  numericColumn('realApr', t('mortgage.comparisonTable.realApr'), r => r.apr.realApr, r => formatPercent(r.apr.realApr), t('mortgage.comparisonTable.hints.realApr')),
+  numericColumn('downPayment', t('mortgage.comparisonTable.downPayment'), r => r.opportunityCost.downPayment, r => formatCurrency(r.opportunityCost.downPayment)),
+  numericColumn('freeCapital', t('mortgage.comparisonTable.freeCapital'), r => r.opportunityCost.freeCapital, r => formatCurrency(r.opportunityCost.freeCapital)),
+  numericColumn('netWorth', t('mortgage.comparisonTable.netWorth'), r => r.netWorth, r => formatCurrency(r.netWorth)),
+])
 
 const sorting = ref<SortingState>([{ id: 'realApr', desc: false }])
 
@@ -106,7 +107,9 @@ const table = useVueTable({
   get data() {
     return enabledResults.value
   },
-  columns,
+  get columns() {
+    return columns.value
+  },
   state: {
     get sorting() {
       return sorting.value
@@ -142,7 +145,7 @@ function gapToBest(result: MortgageResult): { euros: number, pp: number | null }
 }
 
 function hintOf(columnId: string): string | undefined {
-  const column = columns.find(item => item.id === columnId)
+  const column = columns.value.find(item => item.id === columnId)
   return (column?.meta as { hint?: string } | undefined)?.hint
 }
 </script>
@@ -151,12 +154,10 @@ function hintOf(columnId: string): string | undefined {
   <Card>
     <CardHeader>
       <CardTitle class="text-lg">
-        Comparativa
+        {{ $t('mortgage.comparisonTable.title') }}
       </CardTitle>
       <CardDescription>
-        La ganadora se decide por <strong>TAE real</strong>: incluye gastos a tu cargo, comisión de
-        apertura y el coste neto de las vinculaciones. El patrimonio neto va al lado como segunda
-        lectura, pero depende de una rentabilidad hipotética y no manda sobre el ranking.
+        {{ $t('mortgage.comparisonTable.description') }}
       </CardDescription>
     </CardHeader>
     <CardContent class="flex flex-col gap-4">
@@ -164,7 +165,7 @@ function hintOf(columnId: string): string | undefined {
         v-if="!enabledResults.length"
         class="rounded-lg border border-dashed py-10 text-center text-sm text-muted-foreground"
       >
-        No hay hipotecas activas en la comparativa.
+        {{ $t('mortgage.comparisonTable.empty') }}
       </div>
 
       <template v-else>
@@ -199,16 +200,16 @@ function hintOf(columnId: string): string | undefined {
               v-if="gapToBest(result)"
               class="mt-1 text-xs text-muted-foreground"
             >
-              {{ formatCurrency(gapToBest(result)?.euros) }} más cara en coste total
+              {{ $t('mortgage.comparisonTable.gap', { amount: formatCurrency(gapToBest(result)?.euros) }) }}
               <template v-if="gapToBest(result)?.pp !== null">
-                ({{ formatPercent(gapToBest(result)?.pp ?? 0, ' pp') }} de TAE real)
+                {{ $t('mortgage.comparisonTable.gapPp', { pp: formatPercent(gapToBest(result)?.pp ?? 0, ' pp') }) }}
               </template>
             </p>
             <p
               v-else
               class="mt-1 text-xs text-muted-foreground"
             >
-              Mejor TAE real · coste total {{ formatCurrency(result.totalCost) }}
+              {{ $t('mortgage.comparisonTable.bestCaption', { value: formatCurrency(result.totalCost) }) }}
             </p>
           </div>
         </div>
@@ -219,10 +220,7 @@ function hintOf(columnId: string): string | undefined {
         >
           <TriangleAlert class="mt-0.5 size-4 shrink-0 text-amber-500" />
           <span>
-            Los dos rankings no coinciden: la oferta con menor TAE real no es la que te deja más
-            patrimonio. Suele pasar cuando la barata exige más entrada y te queda menos ahorro
-            invertido. Se destaca igualmente la de menor TAE real, porque el patrimonio depende de
-            una rentabilidad que aún no ha ocurrido.
+            {{ $t('mortgage.comparisonTable.rankingMismatch') }}
           </span>
         </div>
 
@@ -230,8 +228,7 @@ function hintOf(columnId: string): string | undefined {
           v-if="comparison?.crossoverYear"
           class="text-xs text-muted-foreground"
         >
-          El coste acumulado de las dos mejores ofertas se cruza en el año
-          {{ comparison.crossoverYear }}: antes de ese punto la otra sale mejor.
+          {{ $t('mortgage.comparisonTable.crossover', { year: comparison.crossoverYear }) }}
         </p>
 
         <div>
@@ -304,8 +301,7 @@ function hintOf(columnId: string): string | undefined {
         </div>
 
         <p class="text-xs text-muted-foreground">
-          Pulsa una cabecera para ordenar. Las hipotecas no viables (el ahorro no cubre entrada más
-          gastos) se muestran, pero quedan fuera del ranking.
+          {{ $t('mortgage.comparisonTable.sortHint') }}
         </p>
       </template>
     </CardContent>

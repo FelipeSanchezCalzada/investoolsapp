@@ -17,6 +17,7 @@ type PortfolioRebalancingHelper = NonNullable<Workspace['portfolioRebalancingHel
 type Transfer = PortfolioRebalancingHelper['dcaTransfers'][number][number]
 
 const { selectedWorkspace } = storeToRefs(useFrontDB())
+const { t } = useI18n()
 
 const portfolio = computed<PortfolioRebalancingHelper | null>(() =>
   selectedWorkspace.value?.portfolioRebalancingHelper ?? null,
@@ -129,9 +130,9 @@ function calculateRebalancing() {
 
   const totalTransfers = fullTransfers.length
   if (totalTransfers === 0) {
-    toast.success('Tu cartera ya está balanceada')
+    toast.success(t('portfolioRebalancing.calculate.balancedToast'))
   } else {
-    toast.success('Traspasos calculados')
+    toast.success(t('portfolioRebalancing.calculate.calculatedToast'))
   }
 }
 </script>
@@ -145,7 +146,7 @@ function calculateRebalancing() {
             for="dca-parts"
             class="text-sm font-medium whitespace-nowrap"
           >
-            Dividir en partes (DCA)
+            {{ $t('portfolioRebalancing.calculate.dcaParts') }}
           </label>
           <NumberField
             id="dca-parts"
@@ -168,13 +169,13 @@ function calculateRebalancing() {
           @click="calculateRebalancing"
         >
           <ArrowRightLeft class="size-4 mr-2" />
-          Calcular traspasos
+          {{ $t('portfolioRebalancing.calculate.action') }}
         </Button>
       </div>
       <p class="text-xs text-muted-foreground text-center mt-3">
         {{ dcaParts > 1
-          ? `Los traspasos se dividirán en ${dcaParts} partes iguales para hacer DCA.`
-          : 'Se calculará un único traspaso por movimiento.'
+          ? $t('portfolioRebalancing.calculate.splitHint', { parts: dcaParts })
+          : $t('portfolioRebalancing.calculate.singleHint')
         }}
       </p>
     </CardContent>
