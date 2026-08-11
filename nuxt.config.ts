@@ -31,6 +31,11 @@ export default defineNuxtConfig({
   colorMode: {
     classSuffix: '',
   },
+  // `nuxt-echarts` enables `componentIslands`, which makes Nuxt force `ssr: true`
+  // internally and breaks the SPA i18n message loading. Islands are unused here.
+  experimental: {
+    componentIslands: false,
+  },
   compatibilityDate: '2025-07-15',
   vite: {
     plugins: [
