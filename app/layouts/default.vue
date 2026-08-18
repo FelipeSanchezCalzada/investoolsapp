@@ -48,6 +48,9 @@ import {
         <span class="hidden sm:inline">&middot;</span>
         <span>{{ $t('layout.footer.license') }}</span>
       </div>
+      <p class="mx-auto mt-2 max-w-2xl text-[0.7rem] leading-relaxed text-muted-foreground/50">
+        {{ $t('layout.footer.privacy') }}
+      </p>
     </footer>
   </div>
 </template>

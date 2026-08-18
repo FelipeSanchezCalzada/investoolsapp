@@ -38,7 +38,8 @@
     "footer": {
       "madeWith": "Hecho con",
       "by": "por",
-      "license": "Licencia AGPL-3.0"
+      "license": "Licencia AGPL-3.0",
+      "privacy": "Esta web no usa cookies ni recopila datos personales. Tus datos se guardan únicamente en tu navegador y nunca se envían a ningún servidor. Solo se miden visitas de forma anónima y agregada con Umami, sin cookies ni seguimiento entre sitios."
     },
     "nav": {
       "groupLabel": "Herramientas",

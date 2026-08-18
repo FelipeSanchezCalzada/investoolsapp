@@ -38,7 +38,8 @@
     "footer": {
       "madeWith": "Made with",
       "by": "by",
-      "license": "AGPL-3.0 License"
+      "license": "AGPL-3.0 License",
+      "privacy": "This site uses no cookies and collects no personal data. Your data is stored only in your browser and is never sent to any server. Visits are measured anonymously and in aggregate with Umami, without cookies or cross-site tracking."
     },
     "nav": {
       "groupLabel": "Tools",

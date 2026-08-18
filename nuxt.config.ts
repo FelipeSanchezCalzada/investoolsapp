@@ -18,6 +18,15 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
       ],
+      script: process.env.NODE_ENV === 'production'
+        ? [
+            {
+              'src': 'https://u.fstechlabs.com/script.js',
+              'defer': true,
+              'data-website-id': '38a2ca31-923f-46b1-bdb0-b7c80282fb6c',
+            },
+          ]
+        : [],
     },
     pageTransition: {
       name: 'page',
